@@ -247,6 +247,26 @@
     border-left: 9px solid #fb7a73;
 }
 
+.bar-holder {
+    width: 80px;
+    height: 200px;
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    position: relative;
+    float: left;
+}
+
+#consumption-bar-holder {
+    margin-left: 16px;
+}
+
+.bar-element {
+    position: absolute;
+    width: 100%;
+}
+
 .arrow-kw {
     width: 100%;
     text-align: center;

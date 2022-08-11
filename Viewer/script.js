@@ -148,7 +148,7 @@ var setArrow = function (from, to, fromId, toId, value, isPositive) {
         arrowId,
         isPositive,
         value,
-        5 * (1 - Math.pow(0.85, value))
+        5 * (1 - Math.pow(0.7, value))
     );
 }
 
@@ -315,10 +315,45 @@ var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
     } else {
         setBatteryToPVArrow(batteryCharge * -1);
     }
+
+    fillConsumptionBars(
+        pvInput, gridOutput, batteryCharge
+    )
 }
 
 var placeInfoBox = function () {
     $("#info-box").css({top: `${ $("#flow-graph").outerHeight() + 16 }px`});
+}
+
+var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
+    let consumption = pvInput - batteryCharge - gridOutput;
+
+    let upperBound = Math.max(consumption, pvInput);
+    let consumptionPercent = consumption / upperBound * 100;
+    let pvPercent = pvInput / upperBound * 100;
+    let batteryPercent = Math.min(batteryCharge, 0) / upperBound * -100;
+    let gridPercent = Math.min(gridOutput, 0) / upperBound * -100;
+
+    $('#consumption-bar').css({
+        bottom: 0,
+        height: `${consumptionPercent}%`
+    });
+
+    $('#pv-bar').css({
+        bottom: 0,
+        height: `${pvPercent}%`
+    });
+
+    $('#battery-bar').css({
+        bottom: `${pvPercent}%`,
+        height: `${batteryPercent}%`
+    });
+
+    $('#grid-bar').css({
+        bottom: `${pvPercent + batteryPercent}%`,
+        height: `${gridPercent}%`
+    });
+
 }
 
 $(window).on('load', function () {
@@ -343,8 +378,8 @@ $(window).on('load', function () {
 
     placeInfoBox();
 
-    setTimeout(() => {
-        location.reload();
-    }, 180000)
+    // setTimeout(() => {
+    //     location.reload();
+    // }, 180000)
   
 })
