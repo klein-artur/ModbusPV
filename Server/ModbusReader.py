@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+import collections
 import sched, time
+import json 
+import pathlib
 
 from pymodbus.client import ModbusTcpClient
 from pymodbus.constants import Defaults
@@ -11,6 +14,17 @@ Defaults.Timeout = 5
 Defaults.Retries = 20
 
 UNIT = 0x01
+PATH = pathlib.Path(__file__).parent.resolve()
+MOVING_AVERAGE = 2
+
+
+gridOutputValues = collections.deque([], MOVING_AVERAGE)
+pvActivePowerValues = collections.deque([], MOVING_AVERAGE)
+batteryChargeValues = collections.deque([], MOVING_AVERAGE)
+pvInputValues = collections.deque([], MOVING_AVERAGE)
+
+
+print(PATH)
 
 print("starting now")
 
@@ -62,15 +76,7 @@ def getAllData():
 
 while (True):
 
-    startTime = time.time()
-
-    gridOutputValues = []
-    pvActivePowerValues = []
-    batteryChargeValues = []
-    pvInputValues = []
-
-    while(time.time() - startTime < 60):
-        getAllData()
+    getAllData()
 
     # s = sched.scheduler(time.time, time.sleep)
     # def do_something(sc):
@@ -92,8 +98,21 @@ while (True):
     print("PV Active Power: " + str(averagePActivePower))
     print("battery Charche: " + str(averageBatteryCharge))
     print("PV Input Power: " + str(averagePvInput))
-    print("Battery: " + str(readData(37760, 1)))
+
+    batteryState = readData(37760, 1)
+
+    print("Battery: " + str(batteryState))
     print("")
     print("Potential usage: " + str(averagePvInput - averageBatteryCharge - averageGridOutput))
+
+    resultDict = {
+        "pvInput": averagePvInput / 1000,
+        "gridOutput": averageGridOutput / 1000,
+        "batteryCharge": averageBatteryCharge / 1000,
+        "batteryState": batteryState / 10
+    }
+
+    with open(str(PATH) + "/state.json", "w") as outfile:
+        json.dump(resultDict, outfile)
 
 # TODO: Disconnect!

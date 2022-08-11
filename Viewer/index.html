@@ -12,16 +12,16 @@
 
     <meta property="og:title" content="PV Leistung">
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./Viewer/styles.css">
 
-    <script src="jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
+    <script src="./Viewer/jquery-3.6.0.min.js"></script>
+    <script src="./Viewer/script.js"></script>
 </head>
 
 <body class="text-bg-dark">
     <div class="align-items-center pvbox" id="flow-graph">
         <div id="pv-system" class="position-relative align-items-center text-center float-left bordered">
-            <img id="pv" class="pictogram" src="solar-panel.png" />
+            <img id="pv" class="pictogram" src="./Viewer/solar-panel.png" /><br />
             <span id="pv-output" class="power-string cool">29.500 KW</span><br />
             <div id="battery-holder" class="center-h" >
                 <div id="battery-top"></div>
@@ -41,12 +41,12 @@
         </div>
 
         <div id="house" class="float-left text-center center bordered">
-            <img class="pictogram"  src="low-energy.png" /><br />
+            <img class="pictogram"  src="./Viewer/low-energy.png" /><br />
             <span id="house-consumption" class="power-string">29.500 KW</span>
         </div>
 
         <div id="grid" class="right-center text-center float-left align-right bordered">
-            <img class="pictogram"  src="electricity.png" />
+            <img class="pictogram"  src="./Viewer/electricity.png" /><br />
             <span id="grid-consumption" class="power-string">29.500 KW</span>
         </div>
     </div>

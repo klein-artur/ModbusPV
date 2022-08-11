@@ -1,3 +1,5 @@
+var activeArrows = {}
+
 $.fn.extend({
 
     rotateArrow: function (radiants) {
@@ -17,14 +19,26 @@ $.fn.extend({
         return $(this);
     },
 
-    showArrow: function (from, to, id, positive, value, speed) {
-        var arrowHtml = "<div class='arrow-holder' id='" + id + "'>\
-            <span class='arrow-kw'>" + (value != 0 ? `${value.toFixed(3)} KW` : "") + "</span> \
-            <div class='arrow-line'>\
-            </div>\
-        </div>"
-    
-        this.append(arrowHtml);
+    showArrow: function (from, to, id, positive, value, speed, redraw = false) {
+        var elementExists = id in activeArrows
+
+        let forceRedraw = !elementExists || activeArrows[id].positive != positive || (activeArrows[id].value == 0 && value != 0) || (activeArrows[id].value != 0 && value == 0) || redraw
+
+        if (forceRedraw) {
+            if (elementExists) {
+                $("#"+id).remove()
+            }
+
+            var arrowHtml = "<div class='arrow-holder' id='" + id + "'>\
+                <span class='arrow-kw'>" + (value != 0 ? `${value.toFixed(3)} KW` : "") + "</span> \
+                <div class='arrow-line'>\
+                </div>\
+            </div>"
+        
+            this.append(arrowHtml);
+        } else {
+            $(`#${id} > .arrow-kw`).text(value != 0 ? `${value.toFixed(3)} KW` : "")
+        }
 
         let xOffset = to[0] - from[0];
         let yOffset = to[1] - from[1];
@@ -46,22 +60,32 @@ $.fn.extend({
             nrOfPushers += 1;
         }
 
-        for (let i = 0; i < nrOfPushers; i++) {
-            let pusherId = `${id}-pusher-${i}`;
-            let leftPosition = i * 20 - 20;
+        if (forceRedraw) {
 
-            let zIndex = 100000000 - leftPosition;
+            $(`#${id} > .arrow-line`).empty();
 
-            let firstOrSecond = i % 2 == 0 ? 'first' : 'second';
+            for (let i = 0; i < nrOfPushers; i++) {
+                let pusherId = `${id}-pusher-${i}`;
+                let leftPosition = i * 20 - 20;
 
-            let positiveOrNegative = positive ? 'positive' : 'negative';
+                let zIndex = 100000000 - leftPosition;
 
-            let pusher = `<div id="${pusherId}" class="${(value != 0 ? 'arrow-pusher' : 'arrow-pusher-still')} arrow-pusher-${firstOrSecond}-${positiveOrNegative}" style="z-index: ${zIndex}; left: ${leftPosition}px"></div>`;
+                let firstOrSecond = i % 2 == 0 ? 'first' : 'second';
 
-            $(`#${id} > .arrow-line`).append(pusher);
+                let positiveOrNegative = positive ? 'positive' : 'negative';
+
+                let pusher = `<div id="${pusherId}" class="${(value != 0 ? 'arrow-pusher' : 'arrow-pusher-still')} arrow-pusher-${firstOrSecond}-${positiveOrNegative}" style="z-index: ${zIndex}; left: ${leftPosition}px"></div>`;
+
+                $(`#${id} > .arrow-line`).append(pusher);
+            }
         }
 
-        window.setInterval(
+        if (elementExists) {
+            window.clearTimeout(activeArrows[id]["intervalId"]);
+            delete activeArrows[id];
+        }
+
+        let intervalId = window.setInterval(
             function () {
 
                 $(`#${id}`).rotateArrow(0);
@@ -95,6 +119,12 @@ $.fn.extend({
         $(`#${id}`).arrowLength(length);
         $(`#${id}`).rotateArrow(angle);
 
+        activeArrows[id] = {
+            "intervalId": intervalId,
+            "positive": positive,
+            "value": value
+        }
+
         return $(this);
     }
 });
@@ -108,8 +138,6 @@ var setBatteryProgress = function(progress) {
 var setArrow = function (from, to, fromId, toId, value, isPositive) {
     let arrowId = `${fromId}-to-${toId}`;
 
-    $(`#${arrowId}`).remove();
-
     if (value === null) {
         return;
     }
@@ -120,7 +148,7 @@ var setArrow = function (from, to, fromId, toId, value, isPositive) {
         arrowId,
         isPositive,
         value,
-        Math.ceil(5 * (value/ 20))
+        5 * (1 - Math.pow(0.85, value))
     );
 }
 
@@ -128,6 +156,7 @@ var setPVToHomeArrow = function (value) {
     let pvSystem = $("#pv-system");
     let house = $("#house");
 
+    
     setArrow(
         [pvSystem.offset().left + pvSystem.outerWidth() + 10, pvSystem.offset().top + pvSystem.outerHeight() / 2], 
         [house.offset().left - 10, house.offset().top + house.outerHeight() / 2],
@@ -135,6 +164,21 @@ var setPVToHomeArrow = function (value) {
         'home',
         value,
         true
+    )
+};
+
+var setHomeToPVArrow = function (value) {
+    let pvSystem = $("#pv-system");
+    let house = $("#house");
+
+    
+    setArrow(
+        [house.offset().left - 10, house.offset().top + house.outerHeight() / 2],
+        [pvSystem.offset().left + pvSystem.outerWidth() + 10, pvSystem.offset().top + pvSystem.outerHeight() / 2], 
+        'pv-system',
+        'home',
+        value,
+        false
     )
 };
 
@@ -160,8 +204,8 @@ var setBatteryToPVArrow = function (value) {
     setArrow( 
         [batteryHolder.offset().left + batteryHolder.outerWidth() / 2, batteryHolder.offset().top - 10],
         [pvImage.offset().left + pvImage.outerWidth() / 2, pvImage.offset().top + pvImage.outerHeight() + 10], 
-        'battery-holder',
         'pv',
+        'battery-holder',
         value,
         false
     )
@@ -195,61 +239,81 @@ var setHomeToPowerPlantArrow = function (value) {
     )
 };
 
-var setConsumption = function (usage, pv, batteryOutput) {
+var setGridOutput = function (gridOutput) {
+    $("#grid-consumption").text(`${Math.abs(gridOutput.toFixed(3))} KW`)
+
+    $('#grid-consumption').removeClass('fatal');
+    $('#grid-consumption').removeClass('cool');
+
+    if (gridOutput >= 0) {
+        $('#grid-consumption').addClass('cool')
+    } else {
+        $('#grid-consumption').addClass('fatal');
+    }
+}
+
+var setConsumption = function (usage, pvNetOutput) {
     $('#house-consumption').text(`${usage.toFixed(3)} KW`);
 
     $('#house-consumption').removeClass('fatal');
     $('#house-consumption').removeClass('warning');
     $('#house-consumption').removeClass('cool');
 
-    console.log(usage / pv);
-    if (usage / (pv + batteryOutput) < 0.7) {
+    if (usage / pvNetOutput < 0.7) {
         $('#house-consumption').addClass('cool')
-    } else if (usage / (pv + batteryOutput) > 1) {
-        $('#house-consumption').addClass('fatalr');
+    } else if (usage / pvNetOutput > 1) {
+        $('#house-consumption').addClass('fatal');
     } else {
         $('#house-consumption').addClass('warning');
     }
 
-    let topValue = Math.max(usage, pv) * 1.05;
-    let pvPercent = Math.round(pv / topValue * 100);
-    let homePercent = Math.round(usage / topValue * 100);
+    // let topValue = Math.max(usage, pv) * 1.05;
+    // let pvPercent = Math.round(pv / topValue * 100);
+    // let homePercent = Math.round(usage / topValue * 100);
 }
 
 var setPVOutput = function (pv) {
     $('#pv-output').text(`${pv.toFixed(3)} KW`);
 }
 
-var setData = function (batteryState, batteryOutput, consumption, pvOutput) {
+var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
+
+    let pvNetOutput = pvInput - batteryCharge;
+    let consumption = pvInput - batteryCharge - gridOutput;
 
     setConsumption(
         consumption,
-        pvOutput,
-        batteryOutput
+        pvNetOutput
     );
 
     setPVOutput(
-        pvOutput
+        pvInput
     );
 
-    let pvRest = pvOutput - batteryOutput;
-
-    let gridFeed = pvRest - consumption;
+    setGridOutput(
+        gridOutput
+    );
 
     setBatteryProgress(batteryState);
 
-    setPVToHomeArrow(pvRest);
+    setPVToHomeArrow(pvNetOutput);
 
-    if (gridFeed >= 0) {
-        setHomeToPowerPlantArrow(gridFeed);
+    if (pvNetOutput >= 0) {
+        setPVToHomeArrow(pvNetOutput);
     } else {
-        setPowerPlantToHomeArrow(gridFeed * -1);
+        setHomeToPVArrow(pvNetOutput * -1);
     }
 
-    if (batteryOutput >= 0) {
-        setPVToBatteryArrow(batteryOutput);
+    if (gridOutput >= 0) {
+        setHomeToPowerPlantArrow(gridOutput);
     } else {
-        setBatteryToPVArrow(batteryOutput * -1);
+        setPowerPlantToHomeArrow(gridOutput * -1);
+    }
+
+    if (batteryCharge >= 0) {
+        setPVToBatteryArrow(batteryCharge);
+    } else {
+        setBatteryToPVArrow(batteryCharge * -1);
     }
 }
 
@@ -259,14 +323,28 @@ var placeInfoBox = function () {
 
 $(window).on('load', function () {
 
-    let batteryState = 100;
-    let batteryOutput = 0;
+    var doneFunction = function( data ) {
+        setData(data.pvInput, data.gridOutput, data.batteryCharge, data.batteryState)
+    }
 
-    let consumption = 2.335;
-    let pvOutput = 18.335;
+    $.ajax({
+        url: "http://localhost:8000/Server/data.php"
+      })
+        .done(doneFunction);
 
-    setData(batteryState, batteryOutput, consumption, pvOutput);
+    setInterval(
+        () => {
+            $.ajax({
+                url: "http://localhost:8000/Server/data.php"
+              })
+                .done(doneFunction);
+        }, 1000
+    )
 
     placeInfoBox();
+
+    setTimeout(() => {
+        location.reload();
+    }, 180000)
   
 })
