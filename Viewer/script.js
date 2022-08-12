@@ -276,18 +276,15 @@ var setPVOutput = function (pv) {
     $('#pv-output').text(`${pv.toFixed(3)} KW`);
 }
 
-var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
-
-    let pvNetOutput = pvInput - Math.min(batteryCharge, 0);
-    let consumption = pvInput - Math.min(batteryCharge, 0) - gridOutput;
+var setData = function (gridOutput, batteryCharge, batteryState, consumption, pvSystemOutput, pvInput) {
 
     setConsumption(
         consumption,
-        pvNetOutput
+        pvSystemOutput
     );
 
     setPVOutput(
-        pvInput + Math.max(batteryCharge, 0)
+        pvInput
     );
 
     setGridOutput(
@@ -296,12 +293,10 @@ var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
 
     setBatteryProgress(batteryState);
 
-    setPVToHomeArrow(pvNetOutput);
-
-    if (pvNetOutput >= 0) {
-        setPVToHomeArrow(pvNetOutput);
+    if (pvSystemOutput >= 0) {
+        setPVToHomeArrow(pvSystemOutput);
     } else {
-        setHomeToPVArrow(pvNetOutput * -1);
+        setHomeToPVArrow(pvSystemOutput * -1);
     }
 
     if (gridOutput >= 0) {
@@ -359,7 +354,7 @@ var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
 $(window).on('load', function () {
 
     var doneFunction = function( data ) {
-        setData(data.pvInput, data.gridOutput, data.batteryCharge, data.batteryState)
+        setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
     }
 
     $.ajax({
