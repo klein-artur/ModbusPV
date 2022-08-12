@@ -316,3 +316,11 @@
 #footer-box {
     position: absolute;
 }
+
+.bar-description {
+    font-size: 15px;
+}
+
+#bar-description-provide {
+    margin-right: 12px;
+}

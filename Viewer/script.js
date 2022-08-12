@@ -362,14 +362,14 @@ $(window).on('load', function () {
     }
 
     $.ajax({
-        url: "http://localhost:8000/Server/data.php"
+        url: "Server/data.php"
       })
         .done(doneFunction);
 
     setInterval(
         () => {
             $.ajax({
-                url: "http://localhost:8000/Server/data.php"
+                url: "Server/data.php"
               })
                 .done(doneFunction);
         }, 1000

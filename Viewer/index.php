@@ -56,6 +56,12 @@
     </div>
     <div class="align-items-center pvbox" id="info-box">
         <div id="relative-usage" class="position-relative align-items-center text-center float-left bordered">
+            <div id="bar-description-provide" class="bar-description float-left">
+                Versorgung
+            </div>
+            <div class="bar-description float-none">
+                Verbrauch
+            </div>
             <div class="bar-holder">
                 <div class="bar-element bg-cool" id="pv-bar"></div>
                 <div class="bar-element bg-warning" id="battery-bar"></div>
