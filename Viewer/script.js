@@ -278,8 +278,8 @@ var setPVOutput = function (pv) {
 
 var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
 
-    let pvNetOutput = pvInput - batteryCharge;
-    let consumption = pvInput - batteryCharge - gridOutput;
+    let pvNetOutput = pvInput - Math.min(batteryCharge, 0);
+    let consumption = pvInput - Math.min(batteryCharge, 0) - gridOutput;
 
     setConsumption(
         consumption,
@@ -287,7 +287,7 @@ var setData = function (pvInput, gridOutput, batteryCharge, batteryState) {
     );
 
     setPVOutput(
-        pvInput
+        pvInput + Math.max(batteryCharge, 0)
     );
 
     setGridOutput(
@@ -326,9 +326,9 @@ var placeInfoBox = function () {
 }
 
 var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
-    let consumption = pvInput - batteryCharge - gridOutput;
+    let consumption = pvInput - Math.min(batteryCharge, 0) - gridOutput;
 
-    let upperBound = Math.max(consumption, pvInput);
+    let upperBound = Math.max(consumption, pvInput, gridOutput * -1, Math.min(batteryCharge, 0) * -1);
     let consumptionPercent = consumption / upperBound * 100;
     let pvPercent = pvInput / upperBound * 100;
     let batteryPercent = Math.min(batteryCharge, 0) / upperBound * -100;

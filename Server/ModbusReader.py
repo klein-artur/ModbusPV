@@ -17,12 +17,12 @@ UNIT = 0x01
 PATH = pathlib.Path(__file__).parent.resolve()
 MOVING_AVERAGE = 2
 
+maxDischargePower = 0
 
 gridOutputValues = collections.deque([], MOVING_AVERAGE)
 pvActivePowerValues = collections.deque([], MOVING_AVERAGE)
 batteryChargeValues = collections.deque([], MOVING_AVERAGE)
 pvInputValues = collections.deque([], MOVING_AVERAGE)
-
 
 print(PATH)
 
@@ -69,10 +69,22 @@ def average(list):
     return sum(list) / len(list)
 
 def getAllData():
-    gridOutputValues.append(readData(37113, 2))
-    pvActivePowerValues.append(readData(32080, 2))
-    batteryChargeValues.append(readData(37765, 2))
-    pvInputValues.append(readData(32064, 2))
+    gridOutput = readData(37113, 2)
+    pvActivePower = readData(32080, 2)
+    batteryCharge = readData(37765, 2)
+    pvInput = readData(32064, 2)
+
+    gridOutputValues.append(gridOutput)
+    pvActivePowerValues.append(pvActivePower)
+    batteryChargeValues.append(batteryCharge)
+    pvInputValues.append(pvInput)
+
+    print("gridOutput: " + str(gridOutput))
+    print("pvActivePower: " + str(pvActivePower))
+    print("batteryCharge: " + str(batteryCharge))
+    print("pvInput: " + str(pvInput))
+
+counter = 0
 
 while (True):
 
@@ -94,25 +106,27 @@ while (True):
     averagePActivePower = average(pvActivePowerValues)
     averageBatteryCharge = average(batteryChargeValues)
     averagePvInput = average(pvInputValues)
-    print("Grid output: " + str(averageGridOutput))
-    print("PV Active Power: " + str(averagePActivePower))
-    print("battery Charche: " + str(averageBatteryCharge))
-    print("PV Input Power: " + str(averagePvInput))
+    averagePvActivePower = average(pvActivePowerValues)
 
     batteryState = readData(37760, 1)
 
-    print("Battery: " + str(batteryState))
-    print("")
-    print("Potential usage: " + str(averagePvInput - averageBatteryCharge - averageGridOutput))
+    print("update")
+
+    if (counter % 1000 == 0):
+        maxDischargePower = readData(37048, 2)
 
     resultDict = {
         "pvInput": averagePvInput / 1000,
         "gridOutput": averageGridOutput / 1000,
         "batteryCharge": averageBatteryCharge / 1000,
-        "batteryState": batteryState / 10
+        "batteryState": batteryState / 10,
+        "maxDischargePower": maxDischargePower / 1000,
+        "pvActivePower": averagePvActivePower / 1000
     }
 
     with open(str(PATH) + "/state.json", "w") as outfile:
         json.dump(resultDict, outfile)
+
+    counter += 1
 
 # TODO: Disconnect!
