@@ -1,5 +1,9 @@
 <!doctype html>
 
+<?php
+    $SHOW_CONTRIBUTIONS = false;
+?>
+
 <html lang="en">
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -62,5 +66,12 @@
             </div>
         </div>
     </div>
+
+    <?php if ($SHOW_CONTRIBUTIONS): ?>
+        <div id="footer-box">
+            <a href="https://www.flaticon.com/free-icons/low-energy" title="low energy icons">Low energy icons created by Flat Icons - Flaticon</a><br />
+        </div>
+    <?php endif; ?>
+
 </body>
 </html>

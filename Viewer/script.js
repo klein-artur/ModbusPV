@@ -320,6 +320,10 @@ var placeInfoBox = function () {
     $("#info-box").css({top: `${ $("#flow-graph").outerHeight() + 16 }px`});
 }
 
+var placeFooterBox = function () {
+    $("#footer-box").css({top: `${ $("#flow-graph").outerHeight() + $("#info-box").outerHeight() + 32 }px`});
+}
+
 var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
     let consumption = pvInput - Math.min(batteryCharge, 0) - gridOutput;
 
@@ -372,6 +376,8 @@ $(window).on('load', function () {
     )
 
     placeInfoBox();
+
+    placeFooterBox();
 
     // setTimeout(() => {
     //     location.reload();

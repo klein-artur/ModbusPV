@@ -312,3 +312,7 @@
 .bg-cool {
     background-color: #5ca945;
 }
+
+#footer-box {
+    position: absolute;
+}

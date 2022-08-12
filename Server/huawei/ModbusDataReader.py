@@ -55,8 +55,6 @@ class ModbusDataReader:
         averageBatteryCharge = self.batteryChargeSmoothed()
         averagePVInput = self.pvInputSmoothed()
 
-        print(str(self.reader.readData(32114, 2)))
-
         batteryState = self.batteryState()
 
         return {
