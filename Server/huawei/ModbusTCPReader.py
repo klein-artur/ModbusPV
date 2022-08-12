@@ -15,6 +15,10 @@ class ModbusTCPReader:
 
     def handleResult(self, data, length):
         result = 0
+
+        if (len(data.registers) < length):
+            return 0
+
         for item in range(length):
             result |= data.registers[item] << ((length - 1 - item) * 16)
 

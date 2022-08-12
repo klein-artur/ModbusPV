@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
 
         <div id="house" class="float-left text-center center bordered">
             <img class="pictogram"  src="./Viewer/low-energy.png" /><br />
