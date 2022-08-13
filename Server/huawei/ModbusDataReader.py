@@ -2,6 +2,8 @@ from . import ModbusRegisters
 from . import ModbusTCPReader
 import collections
 
+from time import time
+
 def average(list):
     return sum(list) / len(list)
 
@@ -61,7 +63,6 @@ class ModbusDataReader:
             "gridOutput": averageGridOutput,
             "batteryCharge": averageBatteryCharge,
             "batteryState": batteryState,
-            "consumption": averagePVInput - min(averageBatteryCharge, 0) - averageGridOutput,
-            "pvSystemOutput": averagePVInput - min(averageBatteryCharge, 0),
-            "pvInput": averagePVInput
+            "pvInput": averagePVInput,
+            "timestamp": int(time())
         }

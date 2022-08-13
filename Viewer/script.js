@@ -356,12 +356,6 @@ var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
 
 }
 
-var everyNthElement = function (arr, ratio) {
-    return arr.filter(function (value, index, ar) {
-        return (index % ratio == 0);
-    } );
-}
-
 var createChart = function (data) {
     console.log(data)
     let ctx = $("#chart")
@@ -436,8 +430,7 @@ $(window).on('load', function () {
     }
 
     var historyDoneFunction = function (data) {
-        let ratio = Math.ceil(data.length / 31)
-        createChart(everyNthElement(data, ratio))
+        createChart(data)
     }
 
     $.ajax({
