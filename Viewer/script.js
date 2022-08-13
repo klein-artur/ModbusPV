@@ -1,4 +1,5 @@
 var activeArrows = {}
+var chart
 
 $.fn.extend({
 
@@ -355,23 +356,111 @@ var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
 
 }
 
+var everyNthElement = function (arr, ratio) {
+    return arr.filter(function (value, index, ar) {
+        return (index % ratio == 0);
+    } );
+}
+
+var createChart = function (data) {
+    console.log(data)
+    let ctx = $("#chart")
+
+    let batteryStates = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.batteryState
+        }
+        
+    })
+
+    if (chart) {
+        chart.destroy()
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Batterieladung',
+                data: batteryStates,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                yAxis: {
+                    max: 100,
+                    min: 0,
+                    ticks: {
+                        color: "white"
+                    }
+                },
+                xAxis: {
+                    ticks: {
+                        color: "white"
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Batterieladung',
+                    color: "white"
+
+                },
+            },
+            animation: false
+        }
+    });
+
+    chart.height = 261
+}
+
 $(window).on('load', function () {
 
     var doneFunction = function( data ) {
         setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
     }
 
+    var historyDoneFunction = function (data) {
+        let ratio = Math.ceil(data.length / 31)
+        createChart(everyNthElement(data, ratio))
+    }
+
     $.ajax({
-        url: "Server/data.php"
-      })
+        url: "Server/state.php"
+    })
         .done(doneFunction);
+
+    $.ajax({
+        url: "Server/history.php"
+    })
+        .done(historyDoneFunction)
 
     setInterval(
         () => {
             $.ajax({
-                url: "Server/data.php"
-              })
+                url: "Server/state.php"
+            })
                 .done(doneFunction);
+
+            $.ajax({
+                url: "Server/history.php"
+            })
+                .done(historyDoneFunction)
         }, 1000
     )
 
@@ -379,8 +468,8 @@ $(window).on('load', function () {
 
     placeFooterBox();
 
-    // setTimeout(() => {
-    //     location.reload();
-    // }, 180000)
+    setTimeout(() => {
+        location.reload();
+    }, 180000)
   
 })

@@ -324,3 +324,9 @@
 #bar-description-provide {
     margin-right: 12px;
 }
+
+#chart-holder {
+    max-height: 261px;
+    float: left;
+    margin-left: 16px;
+}
