@@ -416,7 +416,13 @@ var createChart = function (data) {
 
                 },
             },
-            animation: false
+            animation: false,
+
+            elements: {
+                point:{
+                    radius: 0
+                }
+            }
         }
     });
 

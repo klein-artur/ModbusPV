@@ -20,7 +20,7 @@
             $numberStatement->bindValue(':right', $currentTimestamp);
             $number = $numberStatement->execute()->fetchArray()[0];
 
-            $ratio = ceil($number / 31);
+            $ratio = ceil($number / 50);
 
             $dataStatement = $this->prepare("SELECT * FROM readings WHERE timestamp BETWEEN :left and :right AND ROWID % :ratio = 0 ORDER BY timestamp ASC;");
             $dataStatement->bindValue(':left', $h24);
