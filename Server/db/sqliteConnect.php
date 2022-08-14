@@ -22,7 +22,7 @@
 
             $ratio = ceil($number / 50);
 
-            $dataStatement = $this->prepare("SELECT * FROM readings WHERE timestamp BETWEEN :left and :right AND ROWID % :ratio = 0 ORDER BY timestamp ASC;");
+            $dataStatement = $this->prepare("SELECT * FROM readings WHERE timestamp BETWEEN :left and :right AND ROWID % :ratio = :ratio - 1 ORDER BY timestamp ASC;");
             $dataStatement->bindValue(':left', $h24);
             $dataStatement->bindValue(':right', $currentTimestamp);
             $dataStatement->bindValue(':ratio', $ratio);
