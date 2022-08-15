@@ -1,5 +1,6 @@
 var activeArrows = {}
-var chart
+var chartBattery
+var chartConsumption
 
 $.fn.extend({
 
@@ -356,9 +357,8 @@ var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
 
 }
 
-var createChart = function (data) {
-    console.log(data)
-    let ctx = $("#chart")
+var createBatteryChart = function (data) {
+    let ctx = $("#chart-battery")
 
     let batteryStates = data.map(element => {
 
@@ -374,11 +374,11 @@ var createChart = function (data) {
         
     })
 
-    if (chart) {
-        chart.destroy()
+    if (chartBattery) {
+        chartBattery.destroy()
     }
 
-    chart = new Chart(ctx, {
+    chartBattery = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
@@ -386,7 +386,7 @@ var createChart = function (data) {
                 data: batteryStates,
                 cubicInterpolationMode: 'monotone',
                 fill: false,
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgb(92, 169, 69)',
                 tension: 0.1
             }]
         },
@@ -426,7 +426,98 @@ var createChart = function (data) {
         }
     });
 
-    chart.height = 261
+    chartBattery.height = 261
+}
+
+var createConsumptionChart = function (data) {
+    let ctx = $("#chart-consumption")
+
+    let consumptions = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.consumption
+        }
+        
+    })
+
+    let creations = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.pvInput
+        }
+        
+    })
+
+    if (chartConsumption) {
+        chartConsumption.destroy()
+    }
+
+    chartConsumption = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Verbrauch',
+                data: consumptions,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(219, 53, 69)',
+                tension: 0.1
+            },{
+                label: 'Erzeugung',
+                data: creations,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(92, 169, 69)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                yAxis: {
+                    ticks: {
+                        color: "white"
+                    }
+                },
+                xAxis: {
+                    ticks: {
+                        color: "white"
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Verbrauch',
+                    color: "white"
+
+                },
+            },
+            animation: false,
+
+            elements: {
+                point:{
+                    radius: 0
+                }
+            }
+        }
+    });
+
+    chartConsumption.height = 261
 }
 
 $(window).on('load', function () {
@@ -436,7 +527,8 @@ $(window).on('load', function () {
     }
 
     var historyDoneFunction = function (data) {
-        createChart(data)
+        createBatteryChart(data)
+        createConsumptionChart(data)
     }
 
     $.ajax({

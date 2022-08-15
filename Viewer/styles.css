@@ -33,6 +33,7 @@
     width: calc(100% - 32px);
     margin: 16px;
     padding: 16px;
+    min-width: 1080px;
     /* top: 50%;
     transform: translateY(-50%); */
 }
@@ -325,7 +326,13 @@
     margin-right: 12px;
 }
 
-#chart-holder {
+#chart-holder-consumption {
+    max-height: 261px;
+    float: left;
+    margin-left: 16px;
+}
+
+#chart-holder-battery {
     max-height: 261px;
     float: left;
     margin-left: 16px;

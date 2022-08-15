@@ -1,6 +1,7 @@
 <?php
     class MyDB extends SQLite3
     {
+        
         function __construct() {
             $this->open('db/data/database.db');
         }
@@ -11,21 +12,15 @@
             return $this->parse($result);
         }
 
-        function get_daily_history() {
-            $currentTimestamp = time() + 1;
+        function get_daily_history($number) {
             $h24 = time() - 86400;
+            $range = 86400 / $number;
 
-            $numberStatement = $this->prepare("SELECT COUNT(*) FROM readings WHERE timestamp BETWEEN :left and :right;");
-            $numberStatement->bindValue(':left', $h24);
-            $numberStatement->bindValue(':right', $currentTimestamp);
-            $number = $numberStatement->execute()->fetchArray()[0];
+            $fetchedResult = [];
 
-            $ratio = ceil($number / 50);
-
-            $dataStatement = $this->prepare("SELECT * FROM readings WHERE timestamp BETWEEN :left and :right AND ROWID % :ratio = :ratio - 1 ORDER BY timestamp ASC;");
+            $dataStatement = $this->prepare("SELECT avg(id), avg(grid_output), avg(battery_charge), avg(pv_input), avg(battery_state), avg(timestamp) FROM readings WHERE timestamp BETWEEN :left and :right GROUP BY timestamp / 60 / 29  ORDER BY timestamp ASC;");
             $dataStatement->bindValue(':left', $h24);
-            $dataStatement->bindValue(':right', $currentTimestamp);
-            $dataStatement->bindValue(':ratio', $ratio);
+            $dataStatement->bindValue(':right', time());
             $dataResult = $dataStatement->execute();
 
             $result = [];
@@ -40,13 +35,13 @@
 
         private function parse($data) {
             return [
-                "gridOutput" => $data["grid_output"],
-                "batteryCharge" => $data["battery_charge"],
-                "pvInput" => $data["pv_input"],
-                "batteryState" => $data["battery_state"],
-                "consumption" => $data["pv_input"] - min($data["battery_charge"], 0) - $data["grid_output"],
-                "pvSystemOutput" => $data["pv_input"] - min($data["battery_charge"], 0),
-                "timestamp" => $data["timestamp"]
+                "gridOutput" => $data[1],
+                "batteryCharge" => $data[2],
+                "pvInput" => $data[3] + max($data[2], 0),
+                "batteryState" => $data[4],
+                "consumption" => $data[3] - min($data[2], 0) - $data[1],
+                "pvSystemOutput" => $data[3] - min($data[2], 0),
+                "timestamp" => $data[5]
             ];
         }
     }

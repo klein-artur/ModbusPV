@@ -73,8 +73,11 @@
                 <div class="bar-element bg-cool" id="consumption-bar"></div>
             </div>
         </div>
-        <div id="chart-holder">
-            <canvas id="chart" width="400" height="260"></canvas>
+        <div id="chart-holder-battery">
+            <canvas id="chart-battery" width="400" height="260"></canvas>
+        </div>
+        <div id="chart-holder-consumption">
+            <canvas id="chart-consumption" width="400" height="260"></canvas>
         </div>
     </div>
 
