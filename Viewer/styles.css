@@ -28,12 +28,16 @@
     transform: translateY(-50%); */
 }
 
+#content {
+    position: absolute;
+    min-width: 1110px;
+}
+
 #info-box {
     position: absolute;
     width: calc(100% - 32px);
     margin: 16px;
     padding: 16px;
-    min-width: 1080px;
     /* top: 50%;
     transform: translateY(-50%); */
 }

@@ -460,6 +460,20 @@ var createConsumptionChart = function (data) {
         
     })
 
+    let gridOutput = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.gridOutput
+        }
+        
+    })
+
     if (chartConsumption) {
         chartConsumption.destroy()
     }
@@ -480,6 +494,13 @@ var createConsumptionChart = function (data) {
                 cubicInterpolationMode: 'monotone',
                 fill: false,
                 borderColor: 'rgb(92, 169, 69)',
+                tension: 0.1
+            }, {
+                label: 'Einspeisung',
+                data: gridOutput,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(249, 160, 27)',
                 tension: 0.1
             }]
         },
