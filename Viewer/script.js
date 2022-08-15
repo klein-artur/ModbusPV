@@ -523,7 +523,7 @@ var createConsumptionChart = function (data) {
                 },
                 title: {
                     display: true,
-                    text: 'Verbrauch',
+                    text: 'Leistung',
                     color: "white"
 
                 },

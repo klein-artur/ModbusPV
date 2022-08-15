@@ -9,6 +9,7 @@ def createTable(conn, sql):
         c.execute(sql)
     except Error as e:
         print(e)
+        
 
 def getDatabaseConnection():
     conn = None

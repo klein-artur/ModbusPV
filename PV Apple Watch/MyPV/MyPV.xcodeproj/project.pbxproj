@@ -20,6 +20,9 @@
 		FE8FDFA928AA738400581578 /* MyPVTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFA828AA738400581578 /* MyPVTests.swift */; };
 		FE8FDFB328AA738400581578 /* MyPVUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFB228AA738400581578 /* MyPVUITests.swift */; };
 		FE8FDFB528AA738400581578 /* MyPVUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFB428AA738400581578 /* MyPVUITestsLaunchTests.swift */; };
+		FE8FDFCA28AA73C900581578 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFC928AA73C900581578 /* Constants.swift */; };
+		FE8FDFCC28AA741A00581578 /* DataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFCB28AA741A00581578 /* DataRepository.swift */; };
+		FE8FDFCE28AA777400581578 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFCD28AA777400581578 /* MainViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +100,9 @@
 		FE8FDFAE28AA738400581578 /* MyPVUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyPVUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8FDFB228AA738400581578 /* MyPVUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPVUITests.swift; sourceTree = "<group>"; };
 		FE8FDFB428AA738400581578 /* MyPVUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPVUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		FE8FDFC928AA73C900581578 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FE8FDFCB28AA741A00581578 /* DataRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRepository.swift; sourceTree = "<group>"; };
+		FE8FDFCD28AA777400581578 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +173,9 @@
 				FE8FDF9E28AA738400581578 /* Info.plist */,
 				FE8FDF9F28AA738400581578 /* PushNotificationPayload.apns */,
 				FE8FDF9B28AA738400581578 /* Preview Content */,
+				FE8FDFC928AA73C900581578 /* Constants.swift */,
+				FE8FDFCB28AA741A00581578 /* DataRepository.swift */,
+				FE8FDFCD28AA777400581578 /* MainViewModel.swift */,
 			);
 			path = "MyPV WatchKit Extension";
 			sourceTree = "<group>";
@@ -388,6 +397,9 @@
 				FE8FDF9828AA738300581578 /* ComplicationController.swift in Sources */,
 				FE8FDF9028AA738300581578 /* MyPVApp.swift in Sources */,
 				FE8FDF9628AA738300581578 /* NotificationView.swift in Sources */,
+				FE8FDFCE28AA777400581578 /* MainViewModel.swift in Sources */,
+				FE8FDFCA28AA73C900581578 /* Constants.swift in Sources */,
+				FE8FDFCC28AA741A00581578 /* DataRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,8 +569,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyPV WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "MyPV WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CFBundleDisplayName = MyPV;
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = MyPV_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -589,8 +601,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyPV WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "MyPV WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CFBundleDisplayName = MyPV;
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = MyPV_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
