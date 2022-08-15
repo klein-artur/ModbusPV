@@ -12,13 +12,12 @@
             return $this->parse($result);
         }
 
-        function get_daily_history($number) {
+        function get_daily_history() {
             $h24 = time() - 86400;
-            $range = 86400 / $number;
 
             $fetchedResult = [];
 
-            $dataStatement = $this->prepare("SELECT avg(id), avg(grid_output), avg(battery_charge), avg(pv_input), avg(battery_state), avg(timestamp) FROM readings WHERE timestamp BETWEEN :left and :right GROUP BY timestamp / 60 / 29  ORDER BY timestamp ASC;");
+            $dataStatement = $this->prepare("SELECT avg(id), avg(grid_output), avg(battery_charge), avg(pv_input), avg(battery_state), avg(timestamp) FROM readings WHERE timestamp BETWEEN :left and :right GROUP BY timestamp / 60 / 20  ORDER BY timestamp ASC;");
             $dataStatement->bindValue(':left', $h24);
             $dataStatement->bindValue(':right', time());
             $dataResult = $dataStatement->execute();
