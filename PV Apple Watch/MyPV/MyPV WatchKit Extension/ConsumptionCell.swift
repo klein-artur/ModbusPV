@@ -22,7 +22,7 @@ struct ConsumptionCell: View {
                 HStack {
                     Text("PV")
                     Spacer()
-                    Text(state.pvInput.kwString)
+                    Text(state.pvProportionOfConsumption.kwString)
                 }
                 Gauge(value: state.pvPercent) { }
                     .gaugeStyle(LinearGaugeStyle(tint: Gradient(colors: [.green, .yellow, .orange, .red].reversed())))
@@ -30,7 +30,7 @@ struct ConsumptionCell: View {
                 HStack {
                     Text("Batterie")
                     Spacer()
-                    Text((state.batteryCharge <= 0 ? state.batteryCharge * -1 : 0.0).kwString)
+                    Text(abs(state.batteryCharge <= 0 ? state.batteryCharge * -1 : 0.0).kwString)
                 }
                 Gauge(value: state.batteryPercent) { }
                     .gaugeStyle(LinearGaugeStyle(tint: Gradient(colors: [.green, .yellow, .orange])))
@@ -38,7 +38,7 @@ struct ConsumptionCell: View {
                 HStack {
                     Text("Netz")
                     Spacer()
-                    Text((state.gridOutput <= 0 ? state.gridOutput * -1 : 0.0).kwString)
+                    Text(abs(state.gridOutput <= 0 ? state.gridOutput * -1 : 0.0).kwString)
                 }
                 Gauge(value: state.gridPercent) { }
                     .gaugeStyle(LinearGaugeStyle(tint: Gradient(colors: [.green, .yellow, .orange, .red])))

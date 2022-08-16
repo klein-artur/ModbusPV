@@ -14,8 +14,7 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
 
     func getComplicationDescriptors(handler: @escaping ([CLKComplicationDescriptor]) -> Void) {
         let descriptors = [
-            CLKComplicationDescriptor(identifier: "complication", displayName: "MyPV", supportedFamilies: CLKComplicationFamily.allCases)
-            // Multiple complication support can be added here with more descriptors
+            CLKComplicationDescriptor(identifier: "batteryState", displayName: "Batterieladung", supportedFamilies: CLKComplicationFamily.allCases)
         ]
         
         // Call the handler with the currently supported complication descriptors
