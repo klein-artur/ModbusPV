@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FE04A0F928AB74E400EA6EED /* BatteryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE04A0F828AB74E400EA6EED /* BatteryCell.swift */; };
 		FE30B98B28AB6FC1009D4FC5 /* PvCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */; };
+		FE664EB928ABBF9B006ECF91 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE664EB828ABBF9B006ECF91 /* Color+Extensions.swift */; };
 		FE794BA528AAD29600265FAB /* ConsumptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE794BA428AAD29600265FAB /* ConsumptionCell.swift */; };
 		FE8FDF8028AA738200581578 /* MyPV WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = FE8FDF7F28AA738200581578 /* MyPV WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FE8FDF8528AA738300581578 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE8FDF8428AA738300581578 /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 		FE8FDFCA28AA73C900581578 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFC928AA73C900581578 /* Constants.swift */; };
 		FE8FDFCC28AA741A00581578 /* DataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFCB28AA741A00581578 /* DataRepository.swift */; };
 		FE8FDFCE28AA777400581578 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8FDFCD28AA777400581578 /* MainViewModel.swift */; };
+		FECEB7E828ABCF55001C478D /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECEB7E728ABCF55001C478D /* ExtensionDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,7 @@
 /* Begin PBXFileReference section */
 		FE04A0F828AB74E400EA6EED /* BatteryCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryCell.swift; sourceTree = "<group>"; };
 		FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PvCell.swift; sourceTree = "<group>"; };
+		FE664EB828ABBF9B006ECF91 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		FE794BA428AAD29600265FAB /* ConsumptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionCell.swift; sourceTree = "<group>"; };
 		FE8FDF7B28AA738200581578 /* MyPV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8FDF7F28AA738200581578 /* MyPV WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MyPV WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,6 +112,7 @@
 		FE8FDFC928AA73C900581578 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FE8FDFCB28AA741A00581578 /* DataRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRepository.swift; sourceTree = "<group>"; };
 		FE8FDFCD28AA777400581578 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		FECEB7E728ABCF55001C478D /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FE664EB728ABBF80006ECF91 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FE664EB828ABBF9B006ECF91 /* Color+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		FE8FDF7428AA738200581578 = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +182,7 @@
 		FE8FDF8E28AA738300581578 /* MyPV WatchKit Extension */ = {
 			isa = PBXGroup;
 			children = (
+				FE664EB728ABBF80006ECF91 /* Extensions */,
 				FE04A0F828AB74E400EA6EED /* BatteryCell.swift */,
 				FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */,
 				FE8FDF8F28AA738300581578 /* MyPVApp.swift */,
@@ -185,6 +198,7 @@
 				FE8FDFCB28AA741A00581578 /* DataRepository.swift */,
 				FE8FDFCD28AA777400581578 /* MainViewModel.swift */,
 				FE794BA428AAD29600265FAB /* ConsumptionCell.swift */,
+				FECEB7E728ABCF55001C478D /* ExtensionDelegate.swift */,
 			);
 			path = "MyPV WatchKit Extension";
 			sourceTree = "<group>";
@@ -404,6 +418,7 @@
 				FE8FDF9428AA738300581578 /* NotificationController.swift in Sources */,
 				FE8FDF9228AA738300581578 /* ContentView.swift in Sources */,
 				FE794BA528AAD29600265FAB /* ConsumptionCell.swift in Sources */,
+				FECEB7E828ABCF55001C478D /* ExtensionDelegate.swift in Sources */,
 				FE30B98B28AB6FC1009D4FC5 /* PvCell.swift in Sources */,
 				FE8FDF9828AA738300581578 /* ComplicationController.swift in Sources */,
 				FE8FDF9028AA738300581578 /* MyPVApp.swift in Sources */,
@@ -412,6 +427,7 @@
 				FE8FDFCE28AA777400581578 /* MainViewModel.swift in Sources */,
 				FE8FDFCA28AA73C900581578 /* Constants.swift in Sources */,
 				FE8FDFCC28AA741A00581578 /* DataRepository.swift in Sources */,
+				FE664EB928ABBF9B006ECF91 /* Color+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

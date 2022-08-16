@@ -14,7 +14,7 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
 
     func getComplicationDescriptors(handler: @escaping ([CLKComplicationDescriptor]) -> Void) {
         let descriptors = [
-            CLKComplicationDescriptor(identifier: "batteryState", displayName: "Batterieladung", supportedFamilies: CLKComplicationFamily.allCases)
+            CLKComplicationDescriptor(identifier: "batteryState", displayName: "Batterieladung", supportedFamilies: [.graphicCorner])
         ]
         
         // Call the handler with the currently supported complication descriptors
@@ -40,8 +40,28 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     // MARK: - Timeline Population
     
     func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> Void) {
-        // Call the handler with the current timeline entry
-        handler(nil)
+
+        guard let currentData = DataRepository.shared.lastStatus else {
+            handler(nil)
+            return
+        }
+
+        let timelineEntry = CLKComplicationTimelineEntry(
+            date: .now,
+            complicationTemplate: CLKComplicationTemplateGraphicCornerGaugeImage(
+                gaugeProvider: CLKSimpleGaugeProvider(
+                    style: .fill,
+                    gaugeColors: [.green, .yellow, .orange, .red].reversed(),
+                    gaugeColorLocations: [0, 0.25, 0.5, 0.75],
+                    fillFraction: Float(currentData.batteryState) / 100.0
+                ),
+                leadingTextProvider: nil,
+                trailingTextProvider: CLKSimpleTextProvider(text: currentData.batteryState.pcString),
+                imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
+            )
+        )
+
+        handler(timelineEntry)
     }
     
     func getTimelineEntries(for complication: CLKComplication, after date: Date, limit: Int, withHandler handler: @escaping ([CLKComplicationTimelineEntry]?) -> Void) {
@@ -53,6 +73,18 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     
     func getLocalizableSampleTemplate(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTemplate?) -> Void) {
         // This method will be called once per supported complication, and the results will be cached
-        handler(nil)
+        handler(
+            CLKComplicationTemplateGraphicCornerGaugeImage(
+                gaugeProvider: CLKSimpleGaugeProvider(
+                    style: .fill,
+                    gaugeColors: [.green, .yellow, .orange, .red].reversed(),
+                    gaugeColorLocations: [0, 0.25, 0.5, 0.75],
+                    fillFraction: 0.5
+                ),
+                leadingTextProvider: CLKSimpleTextProvider(text: "0"),
+                trailingTextProvider: CLKSimpleTextProvider(text: "100"),
+                imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
+            )
+        )
     }
 }

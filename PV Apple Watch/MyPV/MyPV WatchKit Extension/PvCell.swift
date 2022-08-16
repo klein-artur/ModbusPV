@@ -24,6 +24,14 @@ struct PvCell: View {
                     Text(abs(state.gridOutput).kwString)
                         .foregroundColor(state.gridOutputColor)
                 }
+                if state.batteryCharge > 0 {
+                    HStack {
+                        Text("Batterie:")
+                        Spacer()
+                        Text(abs(state.batteryCharge).kwString)
+                            .foregroundColor(Color.green)
+                    }
+                }
             }
         }
     }

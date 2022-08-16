@@ -26,7 +26,6 @@ class MainViewModel: ObservableObject {
     func loadData() async {
         do {
             self.data = try await self.dataRepository.getStatus()
-            print(data)
         } catch {
             print(error)
         }

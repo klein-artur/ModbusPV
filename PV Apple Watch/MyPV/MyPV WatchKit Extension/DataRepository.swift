@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import ClockKit
 
 typealias DataListener = (PVState) -> Void
 
@@ -20,7 +21,9 @@ struct PVState: Codable {
     let timestamp: Int
 }
 
-class DataRepository {
+class DataRepository: NSObject {
+
+    static let stateURL = "\(SERVER_ADRESS)/state.php"
 
     static let LAST_DATA_KEY = "LAST_DATA_KEY"
 
@@ -32,10 +35,18 @@ class DataRepository {
 
     private var currentListener: DataListener?
 
+    var lastStatus: PVState? {
+        guard let data = defaults.data(forKey: Self.LAST_DATA_KEY) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(PVState.self, from: data)
+    }
+
     func getStatus() async throws -> PVState? {
-        if let url = URL(string: "\(SERVER_ADRESS)/state.php") {
+        if let url = URL(string: Self.stateURL) {
             let (data, _) = try! await URLSession.shared.data(from: url) // (try! JSONEncoder().encode(PVState(gridOutput: -0.4055, batteryCharge: 3.978, pvInput: 6.005, batteryState: 66, consumption: 2.4325, pvSystemOutput: 2.027, timestamp: 1660632147)), nil as Any?)
             defaults.set(data, forKey: Self.LAST_DATA_KEY)
+            defaults.synchronize()
             return try JSONDecoder().decode(PVState.self, from: data)
         } else {
             return nil
@@ -46,6 +57,12 @@ class DataRepository {
 extension Float {
     var kwString: String {
         String(format: "%.3f KW", self)
+    }
+}
+
+extension Int {
+    var pcString: String {
+        String(format: "%d %%", self)
     }
 }
 

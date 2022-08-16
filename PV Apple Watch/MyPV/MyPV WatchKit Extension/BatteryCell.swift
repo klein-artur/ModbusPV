@@ -16,29 +16,23 @@ struct BatteryCell: View {
                 Text("Batterie")
                     .font(.caption2)
 
-                HStack {
-                    Text("Ladung")
-                    Spacer()
-                    Gauge(value: Double(state.batteryState), in: 0.0...100.0) {
+                Gauge(value: Double(state.batteryState), in: 0.0...100.0) {
                     } currentValueLabel: {
                         Text("\(state.batteryState)")
                             .foregroundColor(Color.green)
                     } minimumValueLabel: {
                         Text("\(0)")
-                            .foregroundColor(Color.green)
+                            .foregroundColor(Color.red)
                     } maximumValueLabel: {
                         Text("\(100)")
-                            .foregroundColor(Color.red)
+                            .foregroundColor(Color.green)
                     }
                     .gaugeStyle(CircularGaugeStyle(tint: Gradient(colors: [.green, .yellow, .orange, .red].reversed())))
-                }
 
-                if state.batteryCharge > 0 {
-                    HStack {
-                        Text("Ladestrom:")
-                        Spacer()
-                        Text(state.batteryCharge.kwString)
-                    }
+                HStack {
+                    Text(state.batteryCharge >= 0 ? "Lädt:" : "Entlädt:")
+                    Spacer()
+                    Text(state.batteryCharge.kwString)
                 }
 
             }
