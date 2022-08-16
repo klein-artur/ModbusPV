@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE04A0F928AB74E400EA6EED /* BatteryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE04A0F828AB74E400EA6EED /* BatteryCell.swift */; };
+		FE30B98B28AB6FC1009D4FC5 /* PvCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */; };
+		FE794BA528AAD29600265FAB /* ConsumptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE794BA428AAD29600265FAB /* ConsumptionCell.swift */; };
 		FE8FDF8028AA738200581578 /* MyPV WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = FE8FDF7F28AA738200581578 /* MyPV WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FE8FDF8528AA738300581578 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE8FDF8428AA738300581578 /* Assets.xcassets */; };
 		FE8FDF8B28AA738300581578 /* MyPV WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = FE8FDF8A28AA738300581578 /* MyPV WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -82,6 +85,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FE04A0F828AB74E400EA6EED /* BatteryCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryCell.swift; sourceTree = "<group>"; };
+		FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PvCell.swift; sourceTree = "<group>"; };
+		FE794BA428AAD29600265FAB /* ConsumptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionCell.swift; sourceTree = "<group>"; };
 		FE8FDF7B28AA738200581578 /* MyPV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8FDF7F28AA738200581578 /* MyPV WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MyPV WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8FDF8428AA738300581578 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -164,6 +170,8 @@
 		FE8FDF8E28AA738300581578 /* MyPV WatchKit Extension */ = {
 			isa = PBXGroup;
 			children = (
+				FE04A0F828AB74E400EA6EED /* BatteryCell.swift */,
+				FE30B98A28AB6FC1009D4FC5 /* PvCell.swift */,
 				FE8FDF8F28AA738300581578 /* MyPVApp.swift */,
 				FE8FDF9128AA738300581578 /* ContentView.swift */,
 				FE8FDF9328AA738300581578 /* NotificationController.swift */,
@@ -176,6 +184,7 @@
 				FE8FDFC928AA73C900581578 /* Constants.swift */,
 				FE8FDFCB28AA741A00581578 /* DataRepository.swift */,
 				FE8FDFCD28AA777400581578 /* MainViewModel.swift */,
+				FE794BA428AAD29600265FAB /* ConsumptionCell.swift */,
 			);
 			path = "MyPV WatchKit Extension";
 			sourceTree = "<group>";
@@ -394,9 +403,12 @@
 			files = (
 				FE8FDF9428AA738300581578 /* NotificationController.swift in Sources */,
 				FE8FDF9228AA738300581578 /* ContentView.swift in Sources */,
+				FE794BA528AAD29600265FAB /* ConsumptionCell.swift in Sources */,
+				FE30B98B28AB6FC1009D4FC5 /* PvCell.swift in Sources */,
 				FE8FDF9828AA738300581578 /* ComplicationController.swift in Sources */,
 				FE8FDF9028AA738300581578 /* MyPVApp.swift in Sources */,
 				FE8FDF9628AA738300581578 /* NotificationView.swift in Sources */,
+				FE04A0F928AB74E400EA6EED /* BatteryCell.swift in Sources */,
 				FE8FDFCE28AA777400581578 /* MainViewModel.swift in Sources */,
 				FE8FDFCA28AA73C900581578 /* Constants.swift in Sources */,
 				FE8FDFCC28AA741A00581578 /* DataRepository.swift in Sources */,

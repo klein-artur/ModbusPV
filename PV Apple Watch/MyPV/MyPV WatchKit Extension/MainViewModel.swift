@@ -8,13 +8,14 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 class MainViewModel: ObservableObject {
 
     @Published var data: PVState?
 
     private let dataRepository = DataRepository.shared
 
-    // private let timer: Timer
+    private var timer: Timer?
 
     init() {
         Task {
@@ -23,7 +24,21 @@ class MainViewModel: ObservableObject {
     }
 
     func loadData() async {
-        self.data = await self.dataRepository.getStatus()
+        do {
+            self.data = try await self.dataRepository.getStatus()
+            print(data)
+        } catch {
+            print(error)
+        }
+    }
+
+    func startViewModelObservation() {
+        print("Starting overservation")
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            Task {
+                await self?.loadData()
+            }
+        }
     }
 
 }

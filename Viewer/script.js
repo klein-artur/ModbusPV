@@ -32,14 +32,14 @@ $.fn.extend({
             }
 
             var arrowHtml = "<div class='arrow-holder' id='" + id + "'>\
-                <span class='arrow-kw'>" + (value != 0 ? `${value.toFixed(3)} KW` : "") + "</span> \
+                <span class='arrow-kw'>" + (value != 0 ? `${(Math.round( value * 1000 ) / 1000).toFixed(3)} KW` : "") + "</span> \
                 <div class='arrow-line'>\
                 </div>\
             </div>"
         
             this.append(arrowHtml);
         } else {
-            $(`#${id} > .arrow-kw`).text(value != 0 ? `${value.toFixed(3)} KW` : "")
+            $(`#${id} > .arrow-kw`).text(value != 0 ? `${(Math.round( value * 1000 ) / 1000).toFixed(3)} KW` : "")
         }
 
         let xOffset = to[0] - from[0];
@@ -242,7 +242,7 @@ var setHomeToPowerPlantArrow = function (value) {
 };
 
 var setGridOutput = function (gridOutput) {
-    $("#grid-consumption").text(`${Math.abs(gridOutput.toFixed(3))} KW`)
+    $("#grid-consumption").text(`${Math.abs((Math.round( gridOutput * 1000 ) / 1000).toFixed(3))} KW`)
 
     $('#grid-consumption').removeClass('fatal');
     $('#grid-consumption').removeClass('cool');
@@ -255,7 +255,7 @@ var setGridOutput = function (gridOutput) {
 }
 
 var setConsumption = function (usage, pvNetOutput) {
-    $('#house-consumption').text(`${usage.toFixed(3)} KW`);
+    $('#house-consumption').text(`${(Math.round( usage * 1000 ) / 1000).toFixed(3)} KW`);
 
     $('#house-consumption').removeClass('fatal');
     $('#house-consumption').removeClass('warning');
@@ -275,7 +275,7 @@ var setConsumption = function (usage, pvNetOutput) {
 }
 
 var setPVOutput = function (pv) {
-    $('#pv-output').text(`${pv.toFixed(3)} KW`);
+    $('#pv-output').text(`${(Math.round( pv * 1000 ) / 1000).toFixed(3)} KW`);
 }
 
 var setData = function (gridOutput, batteryCharge, batteryState, consumption, pvSystemOutput, pvInput) {
