@@ -65,7 +65,17 @@ class DataRepository: NSObject {
 
 extension Float {
     var kwString: String {
-        String(format: "%.3f KW", self)
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 3
+        formatter.minimumFractionDigits = 3
+        formatter.decimalSeparator = ","
+
+
+        let number = NSNumber(value: self)
+        let formattedValue = formatter.string(from: number)!
+        return "\(formattedValue) KW"
     }
 }
 
