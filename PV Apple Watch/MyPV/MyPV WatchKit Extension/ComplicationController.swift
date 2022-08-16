@@ -55,8 +55,8 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
                     gaugeColorLocations: [0, 0.25, 0.5, 0.75],
                     fillFraction: Float(currentData.batteryState) / 100.0
                 ),
-                leadingTextProvider: nil,
-                trailingTextProvider: CLKSimpleTextProvider(text: currentData.batteryState.pcString),
+                leadingTextProvider: CLKSimpleTextProvider(text: currentData.batteryState.pcString),
+                trailingTextProvider: nil,
                 imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
             )
         )

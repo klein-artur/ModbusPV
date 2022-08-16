@@ -14,8 +14,11 @@ struct ContentView: View {
     var body: some View {
         List {
             PvCell(state: viewModel.data)
+                .padding(.vertical, 8.0)
             ConsumptionCell(state: viewModel.data)
+                .padding(.vertical, 8.0)
             BatteryCell(state: viewModel.data)
+                .padding(.vertical, 8.0)
         }
         .refreshable {
             await self.viewModel.loadData()

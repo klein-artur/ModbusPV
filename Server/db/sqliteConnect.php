@@ -19,7 +19,7 @@
 
             $dataStatement = $this->prepare("SELECT avg(id), avg(grid_output), avg(battery_charge), avg(pv_input), avg(battery_state), avg(timestamp) FROM readings WHERE timestamp BETWEEN :left and :right GROUP BY timestamp / 60 / 20  ORDER BY timestamp ASC;");
             $dataStatement->bindValue(':left', $h24);
-            $dataStatement->bindValue(':right', time());
+            $dataStatement->bindValue(':right', time() + 3600);
             $dataResult = $dataStatement->execute();
 
             $result = [];

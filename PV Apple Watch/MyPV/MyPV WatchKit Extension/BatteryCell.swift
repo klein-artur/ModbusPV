@@ -32,7 +32,8 @@ struct BatteryCell: View {
                 HStack {
                     Text(state.batteryCharge >= 0 ? "Lädt:" : "Entlädt:")
                     Spacer()
-                    Text(state.batteryCharge.kwString)
+                    Text(abs(state.batteryCharge).kwString)
+                        .foregroundColor(state.batteryCharge >= 0 ? .green : .red)
                 }
 
             }
