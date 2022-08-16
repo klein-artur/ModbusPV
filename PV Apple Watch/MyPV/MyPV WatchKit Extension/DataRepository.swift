@@ -47,6 +47,15 @@ class DataRepository: NSObject {
             let (data, _) = try! await URLSession.shared.data(from: url) // (try! JSONEncoder().encode(PVState(gridOutput: -0.4055, batteryCharge: 3.978, pvInput: 6.005, batteryState: 66, consumption: 2.4325, pvSystemOutput: 2.027, timestamp: 1660632147)), nil as Any?)
             defaults.set(data, forKey: Self.LAST_DATA_KEY)
             defaults.synchronize()
+
+            let server = CLKComplicationServer.sharedInstance()
+
+            server.activeComplications?.forEach({ complication in
+                server.reloadTimeline(for: complication)
+            })
+
+            server.reloadComplicationDescriptors()
+
             return try JSONDecoder().decode(PVState.self, from: data)
         } else {
             return nil

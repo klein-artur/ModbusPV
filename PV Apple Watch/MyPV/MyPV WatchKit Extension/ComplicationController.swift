@@ -48,17 +48,7 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
 
         let timelineEntry = CLKComplicationTimelineEntry(
             date: .now,
-            complicationTemplate: CLKComplicationTemplateGraphicCornerGaugeImage(
-                gaugeProvider: CLKSimpleGaugeProvider(
-                    style: .fill,
-                    gaugeColors: [.green, .yellow, .orange, .red].reversed(),
-                    gaugeColorLocations: [0, 0.25, 0.5, 0.75],
-                    fillFraction: Float(currentData.batteryState) / 100.0
-                ),
-                leadingTextProvider: CLKSimpleTextProvider(text: currentData.batteryState.pcString),
-                trailingTextProvider: nil,
-                imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
-            )
+            complicationTemplate: complicationTemplate(for: currentData)
         )
 
         handler(timelineEntry)
@@ -74,17 +64,21 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     func getLocalizableSampleTemplate(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTemplate?) -> Void) {
         // This method will be called once per supported complication, and the results will be cached
         handler(
-            CLKComplicationTemplateGraphicCornerGaugeImage(
-                gaugeProvider: CLKSimpleGaugeProvider(
-                    style: .fill,
-                    gaugeColors: [.green, .yellow, .orange, .red].reversed(),
-                    gaugeColorLocations: [0, 0.25, 0.5, 0.75],
-                    fillFraction: 0.5
-                ),
-                leadingTextProvider: CLKSimpleTextProvider(text: "0"),
-                trailingTextProvider: CLKSimpleTextProvider(text: "100"),
-                imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
-            )
+            complicationTemplate(for: nil)
+        )
+    }
+
+    private func complicationTemplate(for pvState: PVState?) -> CLKComplicationTemplate {
+        CLKComplicationTemplateGraphicCornerGaugeImage(
+            gaugeProvider: CLKSimpleGaugeProvider(
+                style: .fill,
+                gaugeColors: [.green, .yellow, .orange, .red].reversed(),
+                gaugeColorLocations: [0, 0.25, 0.5, 0.75],
+                fillFraction: Float(pvState?.batteryState ?? 50) / 100.0
+            ),
+            leadingTextProvider: CLKSimpleTextProvider(text: pvState?.batteryState.pcString ?? "50 %"),
+            trailingTextProvider: nil,
+            imageProvider: CLKFullColorImageProvider(fullColorImage: UIImage(systemName: "bolt.batteryblock")!.withTintColor(.orange, renderingMode: .alwaysTemplate))
         )
     }
 }

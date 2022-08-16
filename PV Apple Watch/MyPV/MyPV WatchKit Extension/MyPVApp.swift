@@ -17,11 +17,6 @@ struct MyPVApp: App {
         WindowGroup {
             NavigationView {
                 ContentView()
-                    .onAppear {
-                        WKExtension.shared().scheduleBackgroundRefresh(
-                            withPreferredDate: Date.now.addingTimeInterval(15 * 60),
-                            userInfo: nil) { _ in }
-                    }
             }
         }
 
