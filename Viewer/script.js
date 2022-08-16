@@ -2,6 +2,27 @@ var activeArrows = {}
 var chartBattery
 var chartConsumption
 
+function number_format(number, decimals, dec_point, thousands_sep) {
+    var n = !isFinite(+number) ? 0 : +number, 
+        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+        toFixedFix = function (n, prec) {
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            var k = Math.pow(10, prec);
+            return Math.round(n * k) / k;
+        },
+        s = (prec ? toFixedFix(n, prec) : Math.round(n)).toString().split('.');
+    if (s[0].length > 3) {
+        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+    }
+    if ((s[1] || '').length < prec) {
+        s[1] = s[1] || '';
+        s[1] += new Array(prec - s[1].length + 1).join('0');
+    }
+    return s.join(dec);
+}
+
 $.fn.extend({
 
     rotateArrow: function (radiants) {
@@ -32,14 +53,14 @@ $.fn.extend({
             }
 
             var arrowHtml = "<div class='arrow-holder' id='" + id + "'>\
-                <span class='arrow-kw'>" + (value != 0 ? `${(Math.round( value * 1000 ) / 1000).toFixed(3)} KW` : "") + "</span> \
+                <span class='arrow-kw'>" + (value != 0 ? `${number_format(value, 3, ',')} KW` : "") + "</span> \
                 <div class='arrow-line'>\
                 </div>\
             </div>"
         
             this.append(arrowHtml);
         } else {
-            $(`#${id} > .arrow-kw`).text(value != 0 ? `${(Math.round( value * 1000 ) / 1000).toFixed(3)} KW` : "")
+            $(`#${id} > .arrow-kw`).text(value != 0 ? `${number_format(value, 3, ',')} KW` : "")
         }
 
         let xOffset = to[0] - from[0];
@@ -242,7 +263,7 @@ var setHomeToPowerPlantArrow = function (value) {
 };
 
 var setGridOutput = function (gridOutput) {
-    $("#grid-consumption").text(`${Math.abs((Math.round( gridOutput * 1000 ) / 1000).toFixed(3))} KW`)
+    $("#grid-consumption").text(`${number_format(Math.abs(gridOutput), 3, ',')} KW`)
 
     $('#grid-consumption').removeClass('fatal');
     $('#grid-consumption').removeClass('cool');
@@ -255,7 +276,7 @@ var setGridOutput = function (gridOutput) {
 }
 
 var setConsumption = function (usage, pvNetOutput) {
-    $('#house-consumption').text(`${(Math.round( usage * 1000 ) / 1000).toFixed(3)} KW`);
+    $('#house-consumption').text(`${number_format(usage, 3, ',')} KW`);
 
     $('#house-consumption').removeClass('fatal');
     $('#house-consumption').removeClass('warning');
@@ -275,7 +296,7 @@ var setConsumption = function (usage, pvNetOutput) {
 }
 
 var setPVOutput = function (pv) {
-    $('#pv-output').text(`${(Math.round( pv * 1000 ) / 1000).toFixed(3)} KW`);
+    $('#pv-output').text(`${number_format(pv, 3, ',')} KW`);
 }
 
 var setData = function (gridOutput, batteryCharge, batteryState, consumption, pvSystemOutput, pvInput) {
