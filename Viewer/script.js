@@ -181,9 +181,8 @@ var setPVToHomeArrow = function (value) {
     let pvSystem = $("#pv-system");
     let house = $("#house");
 
-    
     setArrow(
-        [pvSystem.offset().left + pvSystem.outerWidth() + 10, pvSystem.offset().top + pvSystem.outerHeight() / 2], 
+        [pvSystem.offset().left + pvSystem.outerWidth() + 10, house.offset().top + house.outerHeight() / 2], 
         [house.offset().left - 10, house.offset().top + house.outerHeight() / 2],
         'pv-system',
         'home',
@@ -196,10 +195,9 @@ var setHomeToPVArrow = function (value) {
     let pvSystem = $("#pv-system");
     let house = $("#house");
 
-    
     setArrow(
         [house.offset().left - 10, house.offset().top + house.outerHeight() / 2],
-        [pvSystem.offset().left + pvSystem.outerWidth() + 10, pvSystem.offset().top + pvSystem.outerHeight() / 2], 
+        [pvSystem.offset().left + pvSystem.outerWidth() + 10, house.offset().top + house.outerHeight() / 2], 
         'pv-system',
         'home',
         value,
@@ -241,8 +239,8 @@ var setPowerPlantToHomeArrow = function (value) {
     let house = $("#house");
 
     setArrow(
-        [grid.offset().left - 10, grid.offset().top + grid.outerHeight() / 2], 
-        [house.offset().left + house.outerWidth() + 10, house.offset().top + house.outerHeight() / 2],
+        [grid.offset().left + grid.outerWidth() / 2, grid.offset().top - 10], 
+        [house.offset().left + house.outerWidth() / 2, house.offset().top + house.outerHeight() + 10],
         'power-plant',
         'house-plug',
         value,
@@ -342,7 +340,7 @@ var setData = function (gridOutput, batteryCharge, batteryState, consumption, pv
 }
 
 var placeInfoBox = function () {
-    $("#info-box").css({top: `${ $("#flow-graph").outerHeight() + 16 }px`});
+    $("#info-box").css({top: `${ $("#flow-graph").outerHeight() + 12 }px`});
 }
 
 var placeFooterBox = function () {
@@ -449,7 +447,8 @@ var createBatteryChart = function (data) {
         }
     });
 
-    chartBattery.height = 261
+    chartBattery.height = 430
+    chartBattery.width = 740
 }
 
 var createConsumptionChart = function (data) {
@@ -542,7 +541,9 @@ var createConsumptionChart = function (data) {
             },
             plugins: {
                 legend: {
-                    display: false
+                    labels: {
+                        color: "white"
+                    }
                 },
                 title: {
                     display: true,
@@ -561,10 +562,19 @@ var createConsumptionChart = function (data) {
         }
     });
 
-    chartConsumption.height = 261
+    chartConsumption.height = 430
+    chartConsumption.width = 740
+}
+
+function startTimeout() {
+    window.tid = setTimeout(() => {
+        $(document).scrollTop(0);
+    }, 30000)
 }
 
 $(window).on('load', function () {
+
+    $(document).scrollTop(0);
 
     var doneFunction = function( data ) {
         setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
@@ -603,8 +613,11 @@ $(window).on('load', function () {
 
     placeFooterBox();
 
-    setTimeout(() => {
-        location.reload();
-    }, 180000)
+    startTimeout();
   
+})
+
+$(document).scroll(() => {
+    window.tid && clearTimeout(window.tid);
+    startTimeout();
 })

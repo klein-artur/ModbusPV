@@ -14,6 +14,19 @@
     -webkit-tap-highlight-color: transparent;
 } */
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+  
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    cursor: none !important;
+    font-weight: bold !important;
+} 
+
 .pictogram {
     max-width: 60px;
     max-height: 60px;
@@ -21,35 +34,37 @@
 
 #flow-graph {
     position: absolute;
-    width: calc(100% - 32px);
-    margin: 16px;
-    padding: 16px;
+    width: 538px;
+    margin: 12px;
+    padding: 12px;
     /* top: 50%;
     transform: translateY(-50%); */
 }
 
 #content {
     position: absolute;
-    min-width: 1110px;
+    width: 800px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #info-box {
     position: absolute;
-    width: calc(100% - 32px);
-    margin: 16px;
-    padding: 16px;
+    width: 774px;
+    margin: 12px;
+    padding: 12px;
     /* top: 50%;
     transform: translateY(-50%); */
 }
 
 #house {
     position: absolute !important;
-    padding: 16px;
+    padding: 12px;
     width: 160px;
 }
 
 #grid {
-    padding: 16px;
+    padding: 12px;
     width: 160px;
 }
 
@@ -67,6 +82,20 @@
     transform: translateY(-50%);
 }
 
+.right-top {
+    position: absolute !important;
+    margin-top: 12px;
+    top: 0;
+    right: 0;
+}
+
+.right-bottom {
+    position: absolute !important;
+    margin-bottom: 12px;
+    right: 0;
+    bottom: 0;
+}
+
 .center-v {
     position: absolute;
     top: 50%;
@@ -82,7 +111,7 @@
 .align-right {
     position: absolute;
     right: 0;
-    margin-right: 16px;
+    margin-right: 12px;
 }
 
 .position-relative {
@@ -99,7 +128,7 @@
     border-width: 3px;
     border-color: #5ad8fe;
     border-radius: 15px;
-    padding: 16px;
+    padding: 12px;
 }
 
 .pvbox {
@@ -108,14 +137,14 @@
 }
 
 #pv-system {
-    padding: 16px;
+    padding: 12px;
     width: 160px;
 }
 
 /* This is the battery */
 #battery-holder {
     width: 50px;
-    margin: 150px 0px 0px 0px;
+    margin: 208px 0px 0px 0px;
 }
 #battery-body {
     width: 50px;
@@ -253,7 +282,7 @@
 }
 
 .bar-holder {
-    width: 80px;
+    width: 94px;
     height: 200px;
     border-color: white;
     border-width: 1px;
@@ -263,8 +292,16 @@
     float: left;
 }
 
+#consumption-box {
+    position: absolute;
+    right: 0;
+    margin-top: 12px;
+    margin-right: 12px;
+    padding: 12px;
+}
+
 #consumption-bar-holder {
-    margin-left: 16px;
+    margin-left: 12px;
 }
 
 .bar-element {
@@ -328,16 +365,17 @@
 
 #bar-description-provide {
     margin-right: 12px;
+    margin-left: 3px;
 }
 
 #chart-holder-consumption {
-    max-height: 261px;
+    max-height: 430px;
     float: left;
-    margin-left: 16px;
+    margin-left: 12px;
 }
 
 #chart-holder-battery {
-    max-height: 261px;
+    max-height: 430px;
     float: left;
-    margin-left: 16px;
+    margin-left: 12px;
 }

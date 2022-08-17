@@ -47,18 +47,18 @@
                 </div>
             </div> 
 
-            <div id="house" class="float-left text-center center bordered">
+            <div id="house" class="float-left right-top text-center align-right bordered">
                 <img class="pictogram"  src="./Viewer/low-energy.png" /><br />
                 <span id="house-consumption" class="power-string">29.500 KW</span>
             </div>
 
-            <div id="grid" class="right-center text-center float-left align-right bordered">
+            <div id="grid" class="right-bottom text-center float-left align-right bordered">
                 <img class="pictogram"  src="./Viewer/electricity.png" /><br />
                 <span id="grid-consumption" class="power-string">29.500 KW</span>
             </div>
         </div>
-        <div class="align-items-center pvbox" id="info-box">
-            <div id="relative-usage" class="position-relative align-items-center text-center float-left bordered">
+        <div id="consumption-box" class="pvbox">
+            <div id="relative-usage" class="position-relative align-items-center text-center float-left">
                 <div id="bar-description-provide" class="bar-description float-left">
                     Versorgung
                 </div>
@@ -74,11 +74,13 @@
                     <div class="bar-element bg-cool" id="consumption-bar"></div>
                 </div>
             </div>
+        </div>
+        <div class="align-items-center pvbox" id="info-box">
             <div id="chart-holder-consumption">
-                <canvas id="chart-consumption" width="400" height="260"></canvas>
+                <canvas id="chart-consumption" width="740" height="430"></canvas>
             </div>
             <div id="chart-holder-battery">
-                <canvas id="chart-battery" width="400" height="260"></canvas>
+                <canvas id="chart-battery" width="740" height="430"></canvas>
             </div>
         </div>
 
