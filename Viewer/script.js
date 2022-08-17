@@ -2,6 +2,8 @@ var activeArrows = {}
 var chartBattery
 var chartConsumption
 
+var charPointRadius = 1
+
 function number_format(number, decimals, dec_point, thousands_sep) {
     var n = !isFinite(+number) ? 0 : +number, 
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
@@ -408,7 +410,7 @@ var createBatteryChart = function (data) {
                 cubicInterpolationMode: 'monotone',
                 fill: false,
                 borderColor: 'rgb(92, 169, 69)',
-                tension: 0.1
+                tension: 3
             }]
         },
         options: {
@@ -441,7 +443,7 @@ var createBatteryChart = function (data) {
 
             elements: {
                 point:{
-                    radius: 0
+                    radius: charPointRadius
                 }
             }
         }
@@ -553,7 +555,7 @@ var createConsumptionChart = function (data) {
 
             elements: {
                 point:{
-                    radius: 0
+                    radius: charPointRadius
                 }
             }
         }
