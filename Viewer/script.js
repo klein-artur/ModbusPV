@@ -253,8 +253,8 @@ var setHomeToPowerPlantArrow = function (value) {
     let house = $("#house");
 
     setArrow(
-        [house.offset().left + house.outerWidth() + 10, house.offset().top + house.outerHeight() / 2],
-        [grid.offset().left - 10, grid.offset().top + grid.outerHeight() / 2], 
+        [house.offset().left + house.outerWidth() / 2, house.offset().top + house.outerHeight() + 10],
+        [grid.offset().left + grid.outerWidth() / 2, grid.offset().top - 10], 
         'power-plant',
         'house-plug',
         value,
