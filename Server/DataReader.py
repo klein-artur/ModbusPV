@@ -36,10 +36,13 @@ while (True):
 
     if currentTime - lastForecastRead > 360:
         print("read forecast")
-        forecast = combinedForecasts([
-                        ForecastPlane("48,05,28", "12,38,12", "17", "98", "21.6"),
-                        ForecastPlane("48,05,28", "12,38,12", "30", "-82", "7.9")
-                    ])
+        try:
+            forecast = combinedForecasts([
+                            ForecastPlane("48,05,28", "12,38,12", "17", "98", "21.6"),
+                            ForecastPlane("48,05,28", "12,38,12", "30", "-82", "7.9")
+                        ])
+        except Exception as err:
+            print(f"error reading forecast: {err}")
         lastForecastRead = currentTime
 
     print("Done, write")

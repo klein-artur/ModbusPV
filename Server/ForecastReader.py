@@ -38,6 +38,6 @@ def readForecast(plane: ForecastPlane):
 
     for date, value in watts.items():
         newKey = int(time.mktime(datetime.strptime(date, '%Y-%m-%d %H:%M:%S').timetuple()))
-        result[newKey] = value
+        result[newKey] = value / 1000
     
     return result

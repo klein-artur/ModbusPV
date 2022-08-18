@@ -1,6 +1,7 @@
 var activeArrows = {}
 var chartBattery
 var chartConsumption
+var chartForecast
 
 var charPointRadius = 1
 
@@ -510,7 +511,7 @@ var createConsumptionChart = function (data) {
                 fill: false,
                 borderColor: 'rgb(219, 53, 69)',
                 tension: 0.1
-            },{
+            }, {
                 label: 'Erzeugung',
                 data: creations,
                 cubicInterpolationMode: 'monotone',
@@ -566,6 +567,100 @@ var createConsumptionChart = function (data) {
     chartConsumption.width = 740
 }
 
+var createForecastChart = function (data) {
+    let ctx = $("#chart-forecast")
+
+    let forecastData = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.forecast
+        }
+        
+    })
+
+    let creations = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.data
+        }
+        
+    })
+
+    if (chartForecast) {
+        chartForecast.destroy()
+    }
+
+    chartForecast = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Erzeugung',
+                data: creations,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(92, 169, 69)',
+                tension: 0.1
+            }, {
+                label: 'Schätzung',
+                data: forecastData,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(254, 254, 254)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                yAxis: {
+                    ticks: {
+                        color: "white"
+                    }
+                },
+                xAxis: {
+                    ticks: {
+                        color: "white"
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Leistung',
+                    color: "white"
+
+                },
+            },
+            animation: false,
+
+            elements: {
+                point:{
+                    radius: charPointRadius
+                }
+            }
+        }
+    });
+
+    chartForecast.height = 430
+    chartForecast.width = 740
+}
+
 function startTimeout() {
     window.tid = setTimeout(() => {
         $(document).scrollTop(0);
@@ -595,6 +690,13 @@ $(window).on('load', function () {
     })
         .done(historyDoneFunction)
 
+    $.ajax({
+        url: `Server/forecasts.php`
+    })
+        .done(forecasts => {
+            createForecastChart(forecasts)
+        })
+
     setInterval(
         () => {
             $.ajax({
@@ -606,6 +708,13 @@ $(window).on('load', function () {
                 url: `Server/history.php`
             })
                 .done(historyDoneFunction)
+
+            $.ajax({
+                url: `Server/forecasts.php`
+            })
+                .done(forecasts => {
+                    createForecastChart(forecasts)
+                })
         }, 1000
     )
 

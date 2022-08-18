@@ -383,3 +383,9 @@ body {
     float: left;
     margin-left: 12px;
 }
+
+#chart-holder-forecast {
+    max-height: 430px;
+    float: left;
+    margin-left: 12px;
+}

@@ -82,6 +82,9 @@
             <div id="chart-holder-battery">
                 <canvas id="chart-battery" width="740" height="430"></canvas>
             </div>
+            <div id="chart-holder-forecast">
+                <canvas id="chart-forecast" width="740" height="430"></canvas>
+            </div>
         </div>
 
         <?php if ($SHOW_CONTRIBUTIONS): ?>
