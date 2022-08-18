@@ -22,31 +22,36 @@ print("connected")
 lastForecastRead = 0
 
 while (True):
+    try:
+        print("")
+        print("Read Modbus")
 
-    print("")
-    print("Read Modbus")
+        resultDict = reader.getPVDataSmoothed()
 
-    resultDict = reader.getPVDataSmoothed()
+        print("Modbus read.")
 
-    print("Modbus read.")
+        currentTime = time()
 
-    currentTime = time()
+        forecast = None
 
-    forecast = None
+        if currentTime - lastForecastRead > 600:
+            print("read forecast")
+            try:
+                forecast = combinedForecasts([
+                                ForecastPlane("48,05,28", "12,38,12", "17", "98", "21.6"),
+                                ForecastPlane("48,05,28", "12,38,12", "30", "-82", "7.9")
+                            ])
+            except Exception as err:
+                print(f"error reading forecast: {err}")
+            lastForecastRead = currentTime
 
-    if currentTime - lastForecastRead > 360:
-        print("read forecast")
-        try:
-            forecast = combinedForecasts([
-                            ForecastPlane("48,05,28", "12,38,12", "17", "98", "21.6"),
-                            ForecastPlane("48,05,28", "12,38,12", "30", "-82", "7.9")
-                        ])
-        except Exception as err:
-            print(f"error reading forecast: {err}")
-        lastForecastRead = currentTime
+        print("Done, write")
 
-    print("Done, write")
-
-    insertReading(resultDict, forecast)
+        insertReading(resultDict, forecast)
+    except Exception as err:
+        print(f"error reading forecast: {err}")
+        reader = ModbusDataReader(
+            ModbusTCPReader(IP_ADDRESS)
+        )
 
 #TODO: Disconnect!
