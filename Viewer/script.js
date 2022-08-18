@@ -173,7 +173,7 @@ var setArrow = function (from, to, fromId, toId, value, isPositive) {
         arrowId,
         isPositive,
         value,
-        5 * (1 - Math.pow(0.7, value))
+        5 * (1 - Math.pow(0.5, value))
     );
 }
 
