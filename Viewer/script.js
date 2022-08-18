@@ -586,24 +586,24 @@ $(window).on('load', function () {
     }
 
     $.ajax({
-        url: `${window.location.origin}/Server/state.php`
+        url: `Server/state.php`
     })
         .done(doneFunction);
 
     $.ajax({
-        url: `${window.location.origin}/Server/history.php`
+        url: `Server/history.php`
     })
         .done(historyDoneFunction)
 
     setInterval(
         () => {
             $.ajax({
-                url: `${window.location.origin}/Server/state.php`
+                url: `Server/state.php`
             })
                 .done(doneFunction);
 
             $.ajax({
-                url: `${window.location.origin}/Server/history.php`
+                url: `Server/history.php`
             })
                 .done(historyDoneFunction)
         }, 1000

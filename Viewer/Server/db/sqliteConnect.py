@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 
-DATABASE = r"Server/db/data/database.db"
+DATABASE = r"db/data/database.db"
 
 def createTable(conn, sql):
     try:
