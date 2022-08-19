@@ -618,14 +618,14 @@ var createForecastChart = function (data) {
         type: 'line',
         data: {
             datasets: [{
-                label: 'Erzeugung',
+                label: 'Realwert',
                 data: creations,
                 cubicInterpolationMode: 'monotone',
                 fill: false,
                 borderColor: 'rgb(92, 169, 69)',
                 tension: 0.1
             }, {
-                label: 'Schätzung',
+                label: 'Vorhersage',
                 data: forecastData,
                 cubicInterpolationMode: 'monotone',
                 fill: false,
@@ -654,7 +654,7 @@ var createForecastChart = function (data) {
                 },
                 title: {
                     display: true,
-                    text: 'Leistung',
+                    text: 'Vorhersage',
                     color: "white"
 
                 },
