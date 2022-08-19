@@ -5,6 +5,16 @@ var chartForecast
 
 var charPointRadius = 1
 
+const days = [
+    'So',
+    'Mo',
+    'Di',
+    'Mi',
+    'Do',
+    'Fr',
+    'Sa'
+  ]
+
 function number_format(number, decimals, dec_point, thousands_sep) {
     var n = !isFinite(+number) ? 0 : +number, 
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
@@ -573,12 +583,13 @@ var createForecastChart = function (data) {
     let forecastData = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
+        const day = days[date.getDay()];
         const hours = date.getHours();
         const minutes = "0" + date.getMinutes();
         const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${day}, ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
             y: element.forecast
         }
         
@@ -587,12 +598,13 @@ var createForecastChart = function (data) {
     let creations = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
+        const day = days[date.getDay()];
         const hours = date.getHours();
         const minutes = "0" + date.getMinutes();
         const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${day}, ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
             y: element.data
         }
         

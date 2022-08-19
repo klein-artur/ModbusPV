@@ -25,11 +25,15 @@
             $result = [];
 
             while ($element = $dataResult->fetchArray()) {
-
+                
+                $foundHistory = false;
                 $timestamp = $element[0];
-                $nearestValueStatement = $this->prepare("SELECT * FROM readings WHERE ABS(:searchStamp - timestamp) < 1800 ORDER BY ABS(:searchStamp - timestamp) LIMIT 1;");
-                $nearestValueStatement->bindValue(':searchStamp', $timestamp);
-                $foundHistory = $nearestValueStatement->execute()->fetchArray();
+                if ($timestamp <= time()) {
+                    $nearestValueStatement = $this->prepare("SELECT avg(pv_input), avg(battery_charge) FROM readings WHERE timestamp BETWEEN :left and :right;");
+                    $nearestValueStatement->bindValue(':left', $timestamp - 3600);
+                    $nearestValueStatement->bindValue(':right', $timestamp);
+                    $foundHistory = $nearestValueStatement->execute()->fetchArray();
+                }
 
                 $result[] = $this->parseForecast($element, $foundHistory);
             }
@@ -73,7 +77,7 @@
             return [
                 "timestamp" => $data[0],
                 "forecast" => $data[1],
-                "data" => $realData ? $realData[3] + max($realData[2], 0) : NULL
+                "data" => $realData ? $realData[1] + max($realData[0], 0) : NULL
             ];
         }
     }
