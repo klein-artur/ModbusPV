@@ -48,6 +48,6 @@ def readForecast(plane: ForecastPlane):
 
     for value in watts:
         newKey = value['timestamp'] / 1000
-        result[newKey] = value['wh']
+        result[newKey] = value['wh'] / 1000
     
     return result
