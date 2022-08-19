@@ -24,17 +24,11 @@ lastForecastRead = 0
 while (True):
     try:
         print("")
-        print("Read Modbus")
-
-        resultDict = reader.getPVDataSmoothed()
-
-        print("Modbus read.")
-
         currentTime = time()
 
         forecast = None
 
-        if currentTime - lastForecastRead > 600:
+        if currentTime - lastForecastRead > 1200:
             print("read forecast")
             try:
                 forecast = combinedForecasts([
@@ -45,11 +39,17 @@ while (True):
                 print(f"error reading forecast: {err}")
             lastForecastRead = currentTime
 
+        print("Read Modbus")
+
+        resultDict = reader.getPVDataSmoothed()
+
+        print("Modbus read.")
+
         print("Done, write")
 
         insertReading(resultDict, forecast)
     except Exception as err:
-        print(f"error reading forecast: {err}")
+        print(f"error reading data: {err}")
         reader = ModbusDataReader(
             ModbusTCPReader(IP_ADDRESS)
         )
