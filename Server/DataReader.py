@@ -47,7 +47,9 @@ while (True):
 
         print("Done, write")
 
-        insertReading(resultDict, forecast)
+        if resultDict is not None:
+            insertReading(resultDict, forecast)
+            
     except Exception as err:
         print(f"error reading data: {err}")
         reader = ModbusDataReader(
