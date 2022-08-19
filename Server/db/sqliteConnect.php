@@ -18,7 +18,7 @@
 
             $fetchedResult = [];
             $dataStatement = $this->prepare("SELECT * FROM forecasts WHERE timestamp BETWEEN :left and :right ORDER BY timestamp ASC;");
-            $dataStatement->bindValue(':left', $hMin4);
+            $dataStatement->bindValue(':left', $hMin3);
             $dataStatement->bindValue(':right', $hPlu24);
             $dataResult = $dataStatement->execute();
             
