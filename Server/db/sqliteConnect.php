@@ -13,12 +13,12 @@
         }
 
         function get_forecasts() {
-            $hMin24 = time() - 86400;
+            $hMin3 = time() - 10800;
             $hPlu24 = time() + 86400;
 
             $fetchedResult = [];
             $dataStatement = $this->prepare("SELECT * FROM forecasts WHERE timestamp BETWEEN :left and :right ORDER BY timestamp ASC;");
-            $dataStatement->bindValue(':left', $hMin24);
+            $dataStatement->bindValue(':left', $hMin4);
             $dataStatement->bindValue(':right', $hPlu24);
             $dataResult = $dataStatement->execute();
             

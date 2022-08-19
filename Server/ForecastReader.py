@@ -6,6 +6,8 @@ from datetime import datetime
 import time
 import functools
 
+from config import xrapidkey
+
 FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp"
 
 @dataclass
@@ -36,7 +38,7 @@ def readForecast(plane: ForecastPlane):
             .replace(':az', plane.azimuth)
             .replace(':wp', plane.wattpeak),
             headers={
-                'X-RapidAPI-Key': 'somekey',
+                'X-RapidAPI-Key': xrapidkey,
                 'X-RapidAPI-Host': 'solarenergyprediction.p.rapidapi.com'
             }
         )
