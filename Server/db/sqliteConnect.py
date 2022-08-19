@@ -9,6 +9,17 @@ def createTable(conn, sql):
         c.execute(sql)
     except Error as e:
         print(e)
+
+def createForecastFactors(conn):
+    sql = """INSERT INTO forecastFactor (month, hour, factor)
+    values (?, ?, ?)
+    """
+
+    cursor = conn.cursor()
+
+    for month in range(12):
+        for hour in range(24):
+            cursor.execute(sql, [month, hour, 1.0])
         
 
 def getDatabaseConnection():
@@ -30,12 +41,26 @@ def getDatabaseConnection():
                                         forecast real
                                     )"""
 
+        createForecastFactorTable = """ CREATE TABLE IF NOT EXISTS forecastFactor (
+                                        id integer PRIMARY KEY AUTOINCREMENT,
+                                        month integer,
+                                        hour integer,
+                                        factor real,
+                                        UNIQUE(month, hour)
+                                    )"""
+
         createTable(conn, createReadingsTable)
         createTable(conn, createForecastTable)
+        createTable(conn, createForecastFactorTable)
 
         return conn
     except Error as e:
         print(e)
+
+    try:
+        createForecastFactors(conn)
+    except:
+        pass
 
     return conn
 
