@@ -77,7 +77,7 @@
             return [
                 "timestamp" => $data[0],
                 "forecast" => $data[1],
-                "data" => $realData ? $realData[1] + max($realData[0], 0) : NULL
+                "data" => $realData ? max($realData[1] + max($realData[0], 0)) : NULL
             ];
         }
     }
