@@ -31,7 +31,7 @@
                 if ($timestamp <= time()) {
                     $nearestValueStatement = $this->prepare("SELECT avg(pv_input), avg(battery_charge) FROM readings WHERE timestamp BETWEEN :left and :right;");
                     $nearestValueStatement->bindValue(':left', $timestamp - 3600);
-                    $nearestValueStatement->bindValue(':right', $timestamp + 3600);
+                    $nearestValueStatement->bindValue(':right', $timestamp);
                     $foundHistory = $nearestValueStatement->execute()->fetchArray();
                 }
 
