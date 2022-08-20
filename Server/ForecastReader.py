@@ -8,7 +8,7 @@ import functools
 
 from config import xrapidkey
 
-FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp&tech=crystSi"
+FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp&tech=crystSi&loss=35"
 
 @dataclass
 class ForecastPlane:
@@ -49,7 +49,7 @@ def readForecast(plane: ForecastPlane):
     result = {}
 
     for value in watts:
-        newKey = value['timestamp'] / 1000
+        newKey = value['timestamp'] / 1000 - 7200
         result[newKey] = value['wh'] / 1000
     
     return result
