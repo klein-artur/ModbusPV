@@ -7,6 +7,7 @@ import pathlib
 from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
 from time import time
+from datetime import datetime
 
 PATH = pathlib.Path(__file__).parent.resolve()
 IP_ADDRESS = "192.168.178.77"
@@ -24,7 +25,7 @@ lastForecastRead = 0
 while (True):
     try:
         print("")
-        currentTime = time()
+        currentTime = int(time())
 
         forecast = None
 
@@ -38,6 +39,8 @@ while (True):
             except Exception as err:
                 print(f"error reading forecast: {err}")
             lastForecastRead = currentTime
+
+        print("Last time forecast read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S'))
 
         print("Read Modbus")
 
