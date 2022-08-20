@@ -40,7 +40,7 @@ while (True):
                 print(f"error reading forecast: {err}")
             lastForecastRead = currentTime
 
-        print("Last time forecast read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S'))
+        print("Last time forecast was read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
         print("Read Modbus")
 
