@@ -8,7 +8,7 @@ import functools
 
 from config import xrapidkey
 
-FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp&tech=crystSi&loss=35"
+FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp&tech=crystSi"
 
 @dataclass
 class ForecastPlane:
