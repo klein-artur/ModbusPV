@@ -17,7 +17,15 @@
             $end = time() + 86400;
 
             $fetchedResult = [];
-            $dataStatement = $this->prepare("SELECT * FROM forecasts WHERE timestamp BETWEEN :left and :right ORDER BY timestamp ASC;");
+            $dataStatement = $this->prepare("
+            SELECT a.'timestamp', a.forecast * c.factor, avg(b.pv_input), avg(b.battery_charge) 
+            from forecasts a 
+                left join readings b on b.'timestamp' between a.'timestamp' - 3600 and a.'timestamp' 
+                left join forecastFactor c on c.'month' = strftime('%m', DATETIME(a.'timestamp', 'unixepoch')) and c.'hour' = strftime('%H', DATETIME(a.'timestamp', 'unixepoch'))
+            where a.'timestamp' between :left and :right 
+            group by a.'timestamp' 
+            order by a.'timestamp' ASC ;
+            ");
             $dataStatement->bindValue(':left', $begin);
             $dataStatement->bindValue(':right', $end);
             $dataResult = $dataStatement->execute();
@@ -25,17 +33,8 @@
             $result = [];
 
             while ($element = $dataResult->fetchArray()) {
-                
-                $foundHistory = false;
-                $timestamp = $element[0];
-                if ($timestamp <= time()) {
-                    $nearestValueStatement = $this->prepare("SELECT avg(pv_input), avg(battery_charge) FROM readings WHERE timestamp BETWEEN :left and :right;");
-                    $nearestValueStatement->bindValue(':left', $timestamp - 3600);
-                    $nearestValueStatement->bindValue(':right', $timestamp);
-                    $foundHistory = $nearestValueStatement->execute()->fetchArray();
-                }
 
-                $result[] = $this->parseForecast($element, $foundHistory);
+                $result[] = $this->parseForecast($element);
             }
             
             return $result;
@@ -73,11 +72,11 @@
             ];
         }
 
-        private function parseForecast($data, $realData) {
+        private function parseForecast($data) {
             return [
                 "timestamp" => $data[0],
                 "forecast" => $data[1],
-                "data" => $realData ? max($realData[1] + max($realData[0], 0), 0) : NULL
+                "data" => $data[2] ? max($data[2] + max($data[3], 0), 0) : NULL
             ];
         }
     }
