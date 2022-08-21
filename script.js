@@ -683,59 +683,64 @@ $(window).on('load', function () {
 
     $(document).scrollTop(0);
 
+    var loadData = function () {
+        console.log("Load new data.")
+        $.ajax({
+            url: `Server/state.php`
+        })
+            .done(doneFunction)
+            .always(() => {
+                console.log("Data got, set new timeout for data.")
+                setTimeout(() => {
+                    loadData()
+                }, 1000)
+            })
+    }
+
+    var loadHistory = function () {
+        console.log("load new history.")
+        $.ajax({
+            url: `Server/history.php`
+        })
+            .done(historyDoneFunction)
+            .always(() => {
+                console.log("History got, set new timeout for history.")
+                setTimeout(() => {
+                    loadHistory()
+                }, 1000)
+            })
+    }
+
+    var loadForecast = function () {
+        console.log("load new forecast.")
+        $.ajax({
+            url: `Server/forecasts.php`
+        })
+            .done(forecastDoneFunction)
+            .always(() => {
+                console.log("Forecast got, set new timeout for forecast.")
+                setTimeout(() => {
+                    loadForecast()
+                }, 1000)
+            })
+    }
+
     var doneFunction = function( data ) {
         setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
-        console.log("Data got, set new timeout for data.")
-        setTimeout(() => {
-            console.log("Load new data.")
-            $.ajax({
-                url: `Server/state.php`
-            })
-                .done(doneFunction);
-        }, 1000)
     }
 
     var historyDoneFunction = function (data) {
         createBatteryChart(data)
         createConsumptionChart(data)
-
-        console.log("history got, set new timeout for history.")
-        setTimeout(() => {
-            console.log("load new history.")
-            $.ajax({
-                url: `Server/history.php`
-            })
-                .done(historyDoneFunction)
-        }, 1000)
     }
 
     var forecastDoneFunction = function (forecasts) {
         createForecastChart(forecasts)
-
-        console.log("forecast got, set new timeout for forecast.")
-        setTimeout(() => {
-            console.log("load new forecast.")
-            $.ajax({
-                url: `Server/forecasts.php`
-            })
-                .done(forecastDoneFunction)
-        }, 1000)
     }
 
-    $.ajax({
-        url: `Server/state.php`
-    })
-        .done(doneFunction);
-
-    $.ajax({
-        url: `Server/history.php`
-    })
-        .done(historyDoneFunction)
-
-    $.ajax({
-        url: `Server/forecasts.php`
-    })
-        .done(forecastDoneFunction)
+    loadData();
+    loadHistory();
+    loadForecast();
 
     placeInfoBox();
     placeFooterBox();
