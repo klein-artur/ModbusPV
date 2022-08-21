@@ -685,7 +685,9 @@ $(window).on('load', function () {
 
     var doneFunction = function( data ) {
         setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
+        console.log("Data got, set new timeout for data.")
         setTimeout(() => {
+            console.log("Load new data.")
             $.ajax({
                 url: `Server/state.php`
             })
@@ -697,7 +699,9 @@ $(window).on('load', function () {
         createBatteryChart(data)
         createConsumptionChart(data)
 
+        console.log("history got, set new timeout for history.")
         setTimeout(() => {
+            console.log("load new history.")
             $.ajax({
                 url: `Server/history.php`
             })
@@ -708,7 +712,9 @@ $(window).on('load', function () {
     var forecastDoneFunction = function (forecasts) {
         createForecastChart(forecasts)
 
+        console.log("forecast got, set new timeout for forecast.")
         setTimeout(() => {
+            console.log("load new forecast.")
             $.ajax({
                 url: `Server/forecasts.php`
             })
