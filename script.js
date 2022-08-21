@@ -685,11 +685,35 @@ $(window).on('load', function () {
 
     var doneFunction = function( data ) {
         setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
+        setTimeout(() => {
+            $.ajax({
+                url: `Server/state.php`
+            })
+                .done(doneFunction);
+        }, 1000)
     }
 
     var historyDoneFunction = function (data) {
         createBatteryChart(data)
         createConsumptionChart(data)
+
+        setTimeout(() => {
+            $.ajax({
+                url: `Server/history.php`
+            })
+                .done(historyDoneFunction)
+        }, 1000)
+    }
+
+    var forecastDoneFunction = function (forecasts) {
+        createForecastChart(forecasts)
+
+        setTimeout(() => {
+            $.ajax({
+                url: `Server/forecasts.php`
+            })
+                .done(forecastDoneFunction)
+        }, 1000)
     }
 
     $.ajax({
@@ -705,33 +729,9 @@ $(window).on('load', function () {
     $.ajax({
         url: `Server/forecasts.php`
     })
-        .done(forecasts => {
-            createForecastChart(forecasts)
-        })
-
-    setInterval(
-        () => {
-            $.ajax({
-                url: `Server/state.php`
-            })
-                .done(doneFunction);
-
-            $.ajax({
-                url: `Server/history.php`
-            })
-                .done(historyDoneFunction)
-
-            $.ajax({
-                url: `Server/forecasts.php`
-            })
-                .done(forecasts => {
-                    createForecastChart(forecasts)
-                })
-        }, 1000
-    )
+        .done(forecastDoneFunction)
 
     placeInfoBox();
-
     placeFooterBox();
 
     startTimeout();
