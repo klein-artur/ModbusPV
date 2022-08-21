@@ -19,7 +19,7 @@ def createForecastFactors(conn):
 
     for month in range(12):
         for hour in range(24):
-            cursor.execute(sql, [month, hour, 1.0])
+            cursor.execute(sql, [month + 1, hour, 1.0])
         
 
 def getDatabaseConnection():
