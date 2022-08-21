@@ -53,7 +53,6 @@ def getDatabaseConnection():
         createTable(conn, createForecastTable)
         createTable(conn, createForecastFactorTable)
 
-        return conn
     except Error as e:
         print(e)
 
