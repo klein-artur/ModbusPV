@@ -134,7 +134,7 @@
 
                 $result[] = [
                     "consumption" => $consumption,
-                    "timestamp" => $forecast["timestamp"] + (3600 * $step) + $secondsIntoHour,
+                    "timestamp" => $forecast["timestamp"] + $secondsIntoHour,
                     "maxValue" => $maxValue,
                     "excess" => $excess,
                     "state" => $state
