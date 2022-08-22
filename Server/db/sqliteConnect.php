@@ -120,9 +120,15 @@
             for ($step = 0; $step < $number; $step++) {
                 $forecast = $forecasts[$step];
                 $consumption = $currentState["consumption"];
-                $maxValue = $step == 0 ?
-                    $currentState["pvInput"] :
-                    $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+                
+                // THIS PART SHOULD BE CHANGED WHEN PV IS NOT LOWERED!!!
+                
+                // $maxValue = $step == 0 ?
+                //     $currentState["pvInput"] :
+                //     $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+
+                $maxValue = $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+                
                 $excess = max($maxValue - $consumption, 0);
 
                 $state = 0;
