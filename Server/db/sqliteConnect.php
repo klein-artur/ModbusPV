@@ -127,7 +127,7 @@
                 //     $currentState["pvInput"] :
                 //     $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
 
-                $maxValue = $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+                $maxValue = Math.max($forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour, $currentState["pvInput"]);
                 
                 $excess = max($maxValue - $consumption, 0);
 
