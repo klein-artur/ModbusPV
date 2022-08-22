@@ -12,9 +12,9 @@
             return $this->parse($result);
         }
 
-        function get_forecasts() {
-            $begin = time() - 86400;
-            $end = time() + 86400;
+        function get_forecasts($backwardsSeconds, $forwardsSeconds) {
+            $begin = time() - $backwardsSeconds;
+            $end = time() + $forwardsSeconds;
 
             $fetchedResult = [];
             $dataStatement = $this->prepare("
@@ -56,6 +56,91 @@
                 $result[] = $this->parse($element);
             }
             
+            return $result;
+
+        }
+
+        function get_next_hours_forecast($number) {
+            $current = time();
+            $timespan = $number * 3600;
+
+            $currentState = $this->get_current_state();
+            $forecasts = $this->get_forecasts(3600, $timespan);
+
+            $secondsIntoHour = $current - $forecasts[0]["timestamp"];
+            $partOfHour = $secondsIntoHour / 3600;
+
+            // $result = [
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time(),
+            //         "maxValue" => 2,
+            //         "excess" => 1,
+            //         "state" => 1
+            //     ],
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time() + 3600,
+            //         "maxValue" => 1.5,
+            //         "excess" => 0.5,
+            //         "state" => 0
+            //     ],
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time() + 3600 + 3600,
+            //         "maxValue" => 2.5,
+            //         "excess" => 1.5,
+            //         "state" => 1
+            //     ],
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time() + 3600 + 3600 + 3600,
+            //         "maxValue" => 3.5,
+            //         "excess" => 2.5,
+            //         "state" => 2
+            //     ],
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time() + 3600 + 3600 + 3600 + 3600,
+            //         "maxValue" => 3.5,
+            //         "excess" => 2.5,
+            //         "state" => 2
+            //     ],
+            //     [
+            //         "consumption" => 1,
+            //         "timestamp" => time() + 3600 + 3600 + 3600 + 3600 + 3600,
+            //         "maxValue" => 1.5,
+            //         "excess" => 0.5,
+            //         "state" => 1
+            //     ]
+            // ];
+
+            $result = [];
+
+            for ($step = 0; $step < $number; $step++) {
+                $forecast = $forecasts[$step];
+                $consumption = $currentState["consumption"];
+                $maxValue = $step == 0 ?
+                    $currentState["pvInput"] :
+                    $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+                $excess = max($maxValue - $consumption, 0);
+
+                $state = 0;
+                if ($excess > 2000) {
+                    $state = 2;
+                } else if ($excess > 1000) {
+                    $state = 1;
+                }
+
+                $result[] = [
+                    "consumption" => $consumption,
+                    "timestamp" => $forecast["timestamp"] + (3600 * $step) + $secondsIntoHour,
+                    "maxValue" => $maxValue,
+                    "excess" => $excess,
+                    "state" => $state
+                ];
+            }
+
             return $result;
 
         }

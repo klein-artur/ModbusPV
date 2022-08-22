@@ -7,5 +7,5 @@
 
     include 'db/sqliteConnect.php';
 
-    echo json_encode((new MyDB())->get_forecasts(86400, 86400));
+    echo json_encode((new MyDB())->get_next_hours_forecast(6));
 ?>

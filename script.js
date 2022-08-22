@@ -350,12 +350,8 @@ var setData = function (gridOutput, batteryCharge, batteryState, consumption, pv
     )
 }
 
-var placeInfoBox = function () {
-    $("#info-box").css({top: `${ $("#flow-graph").outerHeight() + 12 }px`});
-}
-
 var placeFooterBox = function () {
-    $("#footer-box").css({top: `${ $("#flow-graph").outerHeight() + $("#info-box").outerHeight() + 32 }px`});
+    $("#footer-box").css({top: `${ $("#info-box").offset().top + $("#info-box").outerHeight() }px`});
 }
 
 var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
@@ -395,12 +391,9 @@ var createBatteryChart = function (data) {
     let batteryStates = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.batteryState
         }
         
@@ -468,12 +461,9 @@ var createConsumptionChart = function (data) {
     let consumptions = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.consumption
         }
         
@@ -482,12 +472,9 @@ var createConsumptionChart = function (data) {
     let batteryConsumption = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.batteryCharge * -1
         }
         
@@ -496,12 +483,9 @@ var createConsumptionChart = function (data) {
     let creations = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.pvInput
         }
         
@@ -510,12 +494,9 @@ var createConsumptionChart = function (data) {
     let gridOutput = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.gridOutput
         }
         
@@ -605,12 +586,9 @@ var createForecastChart = function (data) {
 
         const date = new Date(element.timestamp * 1000);
         const day = days[date.getDay()];
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${day}, ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${day}, ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.forecast
         }
         
@@ -620,12 +598,9 @@ var createForecastChart = function (data) {
 
         const date = new Date(element.timestamp * 1000);
         const day = days[date.getDay()];
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
 
         return {
-            x: `${day}, ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            x: `${day}, ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             y: element.data
         }
         
@@ -694,6 +669,42 @@ var createForecastChart = function (data) {
     chartForecast.width = 740
 }
 
+function setNextHours(nextHours) {
+    let numberOfHours = nextHours.length
+
+    for (i=0; i<numberOfHours; i++) {
+        let hour = nextHours[i]
+        let barId = `#tl-bar-${i}`
+
+        $(barId).removeClass('bg-cool')
+        $(barId).removeClass('bg-warning')
+        $(barId).removeClass('bg-fatal')
+
+        switch (hour.state) {
+            case 0:
+                $(barId).addClass('bg-fatal')
+                break;
+            case 1:
+                $(barId).addClass('bg-warning')
+                break;
+            case 2:
+                $(barId).addClass('bg-cool')
+                break;
+        }
+
+        let percentage = Math.min(hour.excess, 2) / 2.0
+        let realPercentage = 80 * percentage + 20
+
+        $(barId).css({'height': `${realPercentage}%`})
+
+        var date = new Date(hour.timestamp * 1000);
+
+        if (i > 0)
+            $(`#tl-${i}-text`).text(date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
+
+    }
+}
+
 function startTimeout() {
     window.tid = setTimeout(() => {
         $(document).scrollTop(0);
@@ -703,6 +714,23 @@ function startTimeout() {
 $(window).on('load', function () {
 
     $(document).scrollTop(0);
+
+    var doneFunction = function( data ) {
+        setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
+    }
+
+    var historyDoneFunction = function (data) {
+        createBatteryChart(data)
+        createConsumptionChart(data)
+    }
+
+    var forecastDoneFunction = function (forecasts) {
+        createForecastChart(forecasts)
+    }
+
+    var nextHoursDoneFunction = function (nextHours) {
+        setNextHours(nextHours)
+    }
 
     var loadData = function () {
         console.log("Load new data.")
@@ -746,24 +774,25 @@ $(window).on('load', function () {
             })
     }
 
-    var doneFunction = function( data ) {
-        setData(data.gridOutput, data.batteryCharge, data.batteryState, data.consumption, data.pvSystemOutput, data.pvInput)
-    }
-
-    var historyDoneFunction = function (data) {
-        createBatteryChart(data)
-        createConsumptionChart(data)
-    }
-
-    var forecastDoneFunction = function (forecasts) {
-        createForecastChart(forecasts)
+    var loadNextHours = function () {
+        console.log("load new nextHours")
+        $.ajax({
+            url: `Server/nextHours.php`
+        })
+            .done(nextHoursDoneFunction)
+            .always(() => {
+                console.log("nextHours got, set new timeout for nextHours.")
+                setTimeout(() => {
+                    loadNextHours()
+                }, 1000)
+            })
     }
 
     loadData();
     loadHistory();
     loadForecast();
+    loadNextHours();
 
-    placeInfoBox();
     placeFooterBox();
 
     startTimeout();

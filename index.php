@@ -26,6 +26,46 @@
 
 <body class="text-bg-dark">
     <div id="content">
+        <div class="align-items-center pvbox" id="trafficlights">
+            <div id="traffic-light-bars">
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-0">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-0"></div>
+                    </div>
+                    <span id="tl-0-text">Jetzt</span>
+                </div>
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-1">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-1"></div>
+                    </div>
+                    <span id="tl-1-text">Jetzt</span>
+                </div>
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-2">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-2"></div>
+                    </div>
+                    <span id="tl-2-text">Jetzt</span>
+                </div>
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-3">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-3"></div>
+                    </div>
+                    <span id="tl-3-text">Jetzt</span>
+                </div>
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-4">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-4"></div>
+                    </div>
+                    <span id="tl-4-text">Jetzt</span>
+                </div>
+                <div class="traffic-light-bar-holder float-left text-center" id="tl-5">
+                    <div class="tl-bar-content">
+                        <div class="tl-bar bg-cool" id="tl-bar-5"></div>
+                    </div>
+                    <span id="tl-5-text">Jetzt</span>
+                </div>
+            </div>
+        </div>
         <div class="align-items-center pvbox" id="flow-graph">
             <div id="pv-system" class="position-relative align-items-center text-center float-left bordered">
                 <img id="pv" class="pictogram" src="solar-panel.png" /><br />

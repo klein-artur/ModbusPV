@@ -41,6 +41,15 @@ body {
     width: 538px;
     margin: 12px;
     padding: 12px;
+    top: 468px;
+}
+
+#trafficlights {
+    position: absolute;
+    width: calc(100% - 24px);
+    height: 456px;
+    margin: 12px;
+    padding: 12px;
     /* top: 50%;
     transform: translateY(-50%); */
 }
@@ -57,6 +66,7 @@ body {
     width: 774px;
     margin: 12px;
     padding: 12px;
+    top: 936px;
     /* top: 50%;
     transform: translateY(-50%); */
 }
@@ -299,6 +309,7 @@ body {
 #consumption-box {
     position: absolute;
     right: 0;
+    top: 468px;
     margin-top: 12px;
     margin-right: 12px;
     padding: 12px;
@@ -388,4 +399,26 @@ body {
     max-height: 430px;
     float: left;
     margin-left: 12px;
+}
+
+.traffic-light-bar-holder {
+    width: 101px;
+    height: 370px;
+    margin-left: 12px;
+}
+
+#traffic-light-bars {
+    margin: 30px 0px 0px 30px;
+}
+
+.tl-bar {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.tl-bar-content {
+    position: relative;
+    height: 342px;
 }
