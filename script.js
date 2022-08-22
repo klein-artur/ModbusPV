@@ -479,6 +479,20 @@ var createConsumptionChart = function (data) {
         
     })
 
+    let batteryConsumption = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = "0" + date.getMinutes();
+        const seconds = "0" + date.getSeconds();
+
+        return {
+            x: `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`,
+            y: element.batteryCharge * -1
+        }
+        
+    })
+
     let creations = data.map(element => {
 
         const date = new Date(element.timestamp * 1000);
@@ -534,6 +548,13 @@ var createConsumptionChart = function (data) {
                 cubicInterpolationMode: 'monotone',
                 fill: false,
                 borderColor: 'rgb(249, 160, 27)',
+                tension: 0.1
+            }, {
+                label: 'Batterie',
+                data: batteryConsumption,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(254, 254, 254)',
                 tension: 0.1
             }]
         },
