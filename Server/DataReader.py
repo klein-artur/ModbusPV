@@ -36,9 +36,10 @@ while (True):
                                 ForecastPlane("48.091284", "12.6368852", "17", "98", "22000"),
                                 ForecastPlane("48.091284", "12.6368852", "30", "-82", "7900")
                             ])
+
+                lastForecastRead = currentTime
             except Exception as err:
                 print(f"error reading forecast: {err}")
-            lastForecastRead = currentTime
 
         print("Last time forecast was read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
