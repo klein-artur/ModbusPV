@@ -138,7 +138,7 @@
                     $state = 1;
                 }
 
-                $percent = max($excess, 2) / 2;
+                $percent = min($excess, 2) / 2;
 
                 $result[] = [
                     "consumption" => $consumption,
