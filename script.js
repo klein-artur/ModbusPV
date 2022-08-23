@@ -3,6 +3,9 @@ var chartBattery
 var chartConsumption
 var chartForecast
 
+var chartConsumptionInactiveLegends = []
+var chartForecastInactiveLegends = [2]
+
 var charPointRadius = 1
 
 const days = [
@@ -14,6 +17,14 @@ const days = [
     'Fr',
     'Sa'
   ]
+
+function removeFromArray(array, value) {
+    for( var i = 0; i < array.length; i++){ 
+        if ( array[i] === value) { 
+            array.splice(i, 1); 
+        }
+    }
+}
 
 function number_format(number, decimals, dec_point, thousands_sep) {
     var n = !isFinite(+number) ? 0 : +number, 
@@ -556,6 +567,19 @@ var createConsumptionChart = function (data) {
                 legend: {
                     labels: {
                         color: "white"
+                    },
+                    onClick: function(e, legendItem, legend) {
+                        const index = legendItem.datasetIndex;
+                        const ci = legend.chart;
+                        if (ci.isDatasetVisible(index)) {
+                            ci.hide(index);
+                            legendItem.hidden = true;
+                            chartConsumptionInactiveLegends.push(index)
+                        } else {
+                            ci.show(index);
+                            legendItem.hidden = false;
+                            removeFromArray(chartConsumptionInactiveLegends, index)
+                        }
                     }
                 },
                 title: {
@@ -577,6 +601,10 @@ var createConsumptionChart = function (data) {
 
     chartConsumption.height = 430
     chartConsumption.width = 740
+
+    for (index of chartConsumptionInactiveLegends) {
+        chartConsumption.hide(index)
+    }
 }
 
 var createForecastChart = function (data) {
@@ -666,6 +694,19 @@ var createForecastChart = function (data) {
                 legend: {
                     labels: {
                         color: "white"
+                    },
+                    onClick: function(e, legendItem, legend) {
+                        const index = legendItem.datasetIndex;
+                        const ci = legend.chart;
+                        if (ci.isDatasetVisible(index)) {
+                            ci.hide(index);
+                            legendItem.hidden = true;
+                            chartForecastInactiveLegends.push(index)
+                        } else {
+                            ci.show(index);
+                            legendItem.hidden = false;
+                            removeFromArray(chartForecastInactiveLegends, index)
+                        }
                     }
                 },
                 title: {
@@ -687,6 +728,10 @@ var createForecastChart = function (data) {
 
     chartForecast.height = 430
     chartForecast.width = 740
+
+    for (index of chartForecastInactiveLegends) {
+        chartForecast.hide(index)
+    }
 }
 
 function setNextHours(nextHours) {
