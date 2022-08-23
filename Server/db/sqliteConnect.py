@@ -77,6 +77,10 @@ def insertReading(reading, forecasts):
             forecastUpdateSql = "insert or replace into forecasts (timestamp, forecast) values (?, ?);"
             cur.execute(forecastUpdateSql, [timestamp, forecast])
 
+    updateForecastSql = '''update forecastFactor set factor = (select avg(pv_input) from readings where "timestamp" between (select "timestamp" from forecasts where "timestamp" between ?-3600 and ?) and ? ) / (select forecast from forecasts where "timestamp" between ?-3600 and ?) where "month" = strftime('%m', DATETIME(?, 'unixepoch')) and "hour" = strftime('%H', DATETIME(?, 'unixepoch'))'''
+
+    cur.execute(updateForecastSql, [reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"]])
+
     conn.commit()
 
     conn.close()
