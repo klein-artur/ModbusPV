@@ -475,7 +475,7 @@ var createConsumptionChart = function (data) {
 
         return {
             x: `${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
-            y: element.batteryCharge * -1
+            y: element.batteryCharge
         }
         
     })
