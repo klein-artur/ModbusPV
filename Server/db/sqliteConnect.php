@@ -123,11 +123,11 @@
                 
                 // THIS PART SHOULD BE CHANGED WHEN PV IS NOT LOWERED!!!
                 
-                // $maxValue = $step == 0 ?
-                //     $currentState["pvSystemOutput"] :
-                //     $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
+                $maxValue = $step == 0 ?
+                    $currentState["pvSystemOutput"] :
+                    $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
 
-                $maxValue = max($forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour, $currentState["pvInput"]);
+                // $maxValue = max($forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour, $currentState["pvInput"]);
                 
                 $excess = max($maxValue - $consumption, 0);
 
