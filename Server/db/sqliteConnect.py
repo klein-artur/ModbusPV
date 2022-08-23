@@ -78,18 +78,19 @@ def insertReading(reading, forecasts):
             cur.execute(forecastUpdateSql, [timestamp, forecast])
 
     updateForecastSql = ''' update forecastFactor set 
-                                factor = (factor * numberOfInputs + (
-                                    select avg(pv_input) from readings where "timestamp" between (
-                                        select "timestamp" from forecasts where "timestamp" between ?-3600 and ?
-                                    ) and ?
-                                ) / (
-                                    select forecast from forecasts where "timestamp" between ? and ?+3600
-                                ) 
-                                ) / (numberOfInputs + 1),
+                                factor = (factor * numberOfInputs + IIF(
+                                	( select forecast from forecasts where "timestamp" between ? and ?+3600 ) = 0.0, 
+                                	1.0, 
+                                	(
+	                                    select avg(pv_input) from readings where "timestamp" between (
+	                                        select "timestamp" from forecasts where "timestamp" between ?-3600 and ?
+	                                    ) and ?
+                                	) / (select forecast from forecasts where "timestamp" between ? and ?+3600)
+                                )) / (numberOfInputs + 1),
                                 numberOfInputs = numberOfInputs + 1
                                 where "month" = strftime('%m', DATETIME(?, 'unixepoch')) and "hour" = strftime('%H', DATETIME(?, 'unixepoch'));'''
 
-    cur.execute(updateForecastSql, [reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"]])
+    cur.execute(updateForecastSql, [reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"]])
 
     conn.commit()
 
