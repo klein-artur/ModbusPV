@@ -43,7 +43,7 @@ class ModbusDataReader:
         return average(self.gridOutputValues)
 
     def pvInput(self):
-        return self.reader.readData(ModbusRegisters.PV_INPUT[0], ModbusRegisters.PV_INPUT[1]) / 1000
+        return (self.reader.readData(ModbusRegisters.PV_INPUT[0], ModbusRegisters.PV_INPUT[1], 0x01) + self.reader.readData(ModbusRegisters.PV_INPUT[0], ModbusRegisters.PV_INPUT[1], 0x02)) / 1000
 
     def pvInputSmoothed(self):
         self.pvInputValues.append(self.pvInput())

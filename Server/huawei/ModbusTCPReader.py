@@ -1,3 +1,4 @@
+import unittest
 from pymodbus.client import ModbusTcpClient
 from pymodbus.constants import Defaults
 
@@ -38,9 +39,9 @@ class ModbusTCPReader:
 
         return result
 
-    def readData(self, register, len):
+    def readData(self, register, len, unit=UNIT):
         while (True):
-            rr = self.client.read_holding_registers(register, len, unit=UNIT)
+            rr = self.client.read_holding_registers(register, len, unit=unit)
             if not rr.isError():
                 return self.handleResult(rr, len)
 

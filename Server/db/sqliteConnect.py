@@ -46,6 +46,7 @@ def getDatabaseConnection():
                                         month integer,
                                         hour integer,
                                         factor real,
+                                        numberOfInputs integer,
                                         UNIQUE(month, hour)
                                     )"""
 
