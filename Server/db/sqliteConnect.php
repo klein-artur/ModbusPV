@@ -132,7 +132,7 @@
                 $excess = max($maxValue - $consumption, 0);
 
                 $state = 0;
-                if ($excess > 2) {
+                if ($excess > 2.5) {
                     $state = 2;
                 } else if ($excess > 1) {
                     $state = 1;
