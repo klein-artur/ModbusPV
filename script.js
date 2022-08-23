@@ -692,7 +692,7 @@ function setNextHours(nextHours) {
                 break;
         }
 
-        let percentage = Math.min(hour.excess, 2) / 2.0
+        let percentage = Math.min(hour.excess, 2.5) / 2.5
         let realPercentage = 80 * percentage + 20
 
         $(barId).css({'height': `${realPercentage}%`})
