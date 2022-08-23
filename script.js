@@ -606,6 +606,18 @@ var createForecastChart = function (data) {
         
     })
 
+    let originalForecast = data.map(element => {
+
+        const date = new Date(element.timestamp * 1000);
+        const day = days[date.getDay()];
+
+        return {
+            x: `${day}, ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
+            y: element.origForecast
+        }
+        
+    })
+
     if (chartForecast) {
         chartForecast.destroy()
     }
@@ -626,6 +638,14 @@ var createForecastChart = function (data) {
                 cubicInterpolationMode: 'monotone',
                 fill: false,
                 borderColor: 'rgb(254, 254, 254)',
+                tension: 0.1
+            }, {
+                label: 'Original Vorhersage',
+                data: originalForecast,
+                cubicInterpolationMode: 'monotone',
+                fill: false,
+                borderColor: 'rgb(100, 200, 100)',
+                borderDash: [10,5],
                 tension: 0.1
             }]
         },

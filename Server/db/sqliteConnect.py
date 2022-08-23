@@ -81,13 +81,13 @@ def insertReading(reading, forecasts):
                                 factor = (factor * numberOfInputs + (
                                     select avg(pv_input) from readings where "timestamp" between (
                                         select "timestamp" from forecasts where "timestamp" between ?-3600 and ?
-                                    ) and ? 
+                                    ) and ?
                                 ) / (
-                                    select forecast from forecasts where "timestamp" between ?-3600 and ?
+                                    select forecast from forecasts where "timestamp" between ? and ?+3600
                                 ) 
                                 ) / (numberOfInputs + 1),
                                 numberOfInputs = numberOfInputs + 1
-                                where "month" = strftime('%m', DATETIME(?, 'unixepoch')) and "hour" = strftime('%H', DATETIME(?, 'unixepoch'))'''
+                                where "month" = strftime('%m', DATETIME(?, 'unixepoch')) and "hour" = strftime('%H', DATETIME(?, 'unixepoch'));'''
 
     cur.execute(updateForecastSql, [reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"]])
 

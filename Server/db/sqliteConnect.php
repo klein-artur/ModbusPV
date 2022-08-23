@@ -18,14 +18,14 @@
 
             $fetchedResult = [];
             $dataStatement = $this->prepare("
-            SELECT a.'timestamp' - 3600, a.forecast * c.factor, avg(b.pv_input), avg(b.battery_charge) 
+            SELECT a.'timestamp', a.forecast * IIF(a.'timestamp' > :timestamp, c.factor, 1), avg(b.pv_input), avg(b.battery_charge), a.forecast
             from forecasts a 
-                left join readings b on b.'timestamp' between a.'timestamp' - 7200 and a.'timestamp' - 3600 
-                left join forecastFactor c on c.'month' = strftime('%m', DATETIME(a.'timestamp', 'unixepoch')) and c.'hour' = strftime('%H', DATETIME(a.'timestamp', 'unixepoch'))
-            where a.'timestamp' between :left and :right 
+                left join readings b on b.'timestamp' between a.'timestamp' - 3600  and a.'timestamp'
+                left join forecastFactor c on c.'month' = strftime('%m', DATETIME(a.'timestamp', 'unixepoch')) and c.'hour' = strftime('%H', DATETIME(a.'timestamp' - 3600, 'unixepoch'))
+            where a.'timestamp' between :left and :right
             group by a.'timestamp' 
-            order by a.'timestamp' ASC ;
-            ");
+            order by a.'timestamp' ASC ;");
+            $dataStatement->bindValue(':timestamp', time());
             $dataStatement->bindValue(':left', $begin);
             $dataStatement->bindValue(':right', $end);
             $dataResult = $dataStatement->execute();
@@ -170,7 +170,8 @@
             return [
                 "timestamp" => $data[0],
                 "forecast" => $data[1],
-                "data" => $data[2] ? max($data[2] + max($data[3], 0), 0) : NULL
+                "data" => $data[2] ? max($data[2] + max($data[3], 0), 0) : NULL,
+                "origForecast" => $data[4]
             ];
         }
     }
