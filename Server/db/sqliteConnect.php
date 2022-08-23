@@ -132,18 +132,21 @@
                 $excess = max($maxValue - $consumption, 0);
 
                 $state = 0;
-                if ($excess > 2.5) {
+                if ($excess > 2) {
                     $state = 2;
                 } else if ($excess > 1) {
                     $state = 1;
                 }
+
+                $percent = max($excess, 2) / 2;
 
                 $result[] = [
                     "consumption" => $consumption,
                     "timestamp" => $forecast["timestamp"] + $secondsIntoHour,
                     "maxValue" => $maxValue,
                     "excess" => $excess,
-                    "state" => $state
+                    "state" => $state,
+                    "percent" => $percent
                 ];
             }
 
