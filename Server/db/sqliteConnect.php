@@ -170,7 +170,7 @@
             return [
                 "timestamp" => $data[0],
                 "forecast" => $data[1],
-                "data" => $data[2] ? max($data[2] + max($data[3], 0), 0) : NULL,
+                "data" => !is_null($data[2]) ? max($data[2] + max($data[3], 0), 0) : NULL,
                 "origForecast" => $data[4]
             ];
         }
