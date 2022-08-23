@@ -57,16 +57,47 @@ body {
 #content {
     position: absolute;
     width: 800px;
+    height: 2352px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-#info-box {
+#chart-consumption-box {
     position: absolute;
     width: 774px;
     margin: 12px;
     padding: 12px;
     top: 936px;
+    /* top: 50%;
+    transform: translateY(-50%); */
+}
+
+#chart-consumption-box {
+    position: absolute;
+    width: 774px;
+    margin: 12px;
+    padding: 12px;
+    top: 936px;
+    /* top: 50%;
+    transform: translateY(-50%); */
+}
+
+#chart-battery-box {
+    position: absolute;
+    width: 774px;
+    margin: 12px;
+    padding: 12px;
+    top: 1404px;
+    /* top: 50%;
+    transform: translateY(-50%); */
+}
+
+#chart-forecast-box {
+    position: absolute;
+    width: 774px;
+    margin: 12px;
+    padding: 12px;
+    top: 1872px;
     /* top: 50%;
     transform: translateY(-50%); */
 }

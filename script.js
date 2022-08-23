@@ -370,9 +370,9 @@ var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
 
     let upperBound = Math.max(consumption, pvInput, gridOutput * -1, Math.min(batteryCharge, 0) * -1);
     let consumptionPercent = consumption / upperBound * 100;
-    let pvPercent = pvInput / upperBound * 100;
     let batteryPercent = Math.min(batteryCharge, 0) / upperBound * -100;
     let gridPercent = Math.min(gridOutput, 0) / upperBound * -100;
+    let pvPercent = 100 - batteryPercent - gridPercent;
 
     $('#consumption-bar').css({
         bottom: 0,

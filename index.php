@@ -115,15 +115,19 @@
                 </div>
             </div>
         </div>
-        <div class="align-items-center pvbox" id="info-box">
+        <div class="align-items-center pvbox" id="chart-consumption-box">
             <div id="chart-holder-consumption">
-                <canvas id="chart-consumption" width="740" height="430"></canvas>
+                <canvas id="chart-consumption" width="740" height="432"></canvas>
             </div>
+        </div>
+        <div class="align-items-center pvbox" id="chart-battery-box">
             <div id="chart-holder-battery">
-                <canvas id="chart-battery" width="740" height="430"></canvas>
+                <canvas id="chart-battery" width="740" height="432"></canvas>
             </div>
+        </div>
+        <div class="align-items-center pvbox" id="chart-forecast-box">
             <div id="chart-holder-forecast">
-                <canvas id="chart-forecast" width="740" height="430"></canvas>
+                <canvas id="chart-forecast" width="740" height="432"></canvas>
             </div>
         </div>
 
