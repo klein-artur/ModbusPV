@@ -78,7 +78,7 @@ def insertReading(reading, forecasts):
             forecastUpdateSql = "insert or replace into forecasts (timestamp, forecast) values (?, ?);"
             cur.execute(forecastUpdateSql, [timestamp, forecast])
 
-            if timestamp < time() and forecast > 0:
+            if timestamp < time() - 3600 and forecast > 0:
                 factorUpdateSQL = '''      
                                     UPDATE
                                         forecastFactor
