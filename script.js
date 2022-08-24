@@ -325,7 +325,7 @@ var setData = function (gridOutput, batteryCharge, batteryState, consumption, pv
 
     setConsumption(
         consumption,
-        pvSystemOutput
+        pvInput
     );
 
     setPVOutput(
