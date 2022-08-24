@@ -21,7 +21,7 @@
             SELECT a.'timestamp', a.forecast * IIF(a.'timestamp' > :timestamp, c.factor, 1), avg(b.pv_input), avg(b.battery_charge), a.forecast
             from forecasts a 
                 left join readings b on b.'timestamp' between a.'timestamp' - 3600  and a.'timestamp'
-                left join forecastFactor c on c.'month' = strftime('%m', DATETIME(a.'timestamp', 'unixepoch')) and c.'hour' = strftime('%H', DATETIME(a.'timestamp' - 3600, 'unixepoch'))
+                left join forecastFactor c on c.'month' = strftime('%m', DATETIME(a.'timestamp', 'unixepoch')) and c.'hour' = strftime('%H', DATETIME(a.'timestamp', 'unixepoch'))
             where a.'timestamp' between :left and :right
             group by a.'timestamp' 
             order by a.'timestamp' ASC ;");
