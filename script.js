@@ -357,7 +357,7 @@ var setData = function (gridOutput, batteryCharge, batteryState, consumption, pv
     }
 
     fillConsumptionBars(
-        pvInput, gridOutput, batteryCharge
+        pvInput, gridOutput, batteryCharge, consumption
     )
 }
 
@@ -365,8 +365,7 @@ var placeFooterBox = function () {
     $("#footer-box").css({top: `${ $("#info-box").offset().top + $("#info-box").outerHeight() }px`});
 }
 
-var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge) {
-    let consumption = pvInput - Math.min(batteryCharge, 0) - gridOutput;
+var fillConsumptionBars = function (pvInput, gridOutput, batteryCharge, consumption) {
 
     let upperBound = Math.max(consumption, pvInput, gridOutput * -1, Math.min(batteryCharge, 0) * -1);
     let consumptionPercent = consumption / upperBound * 100;
