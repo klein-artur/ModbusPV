@@ -1,4 +1,5 @@
 import sqlite3
+from time import time
 from sqlite3 import Error
 
 DATABASE = r"db/data/database.db"
@@ -77,20 +78,25 @@ def insertReading(reading, forecasts):
             forecastUpdateSql = "insert or replace into forecasts (timestamp, forecast) values (?, ?);"
             cur.execute(forecastUpdateSql, [timestamp, forecast])
 
-    updateForecastSql = ''' update forecastFactor set 
-                                factor = (factor * numberOfInputs + IIF(
-                                	( select forecast from forecasts where "timestamp" between ? and ?+3600 ) = 0.0, 
-                                	1.0, 
-                                	(
-	                                    select avg(pv_input) from readings where "timestamp" between (
-	                                        select "timestamp" from forecasts where "timestamp" between ?-3600 and ?
-	                                    ) and ?
-                                	) / (select forecast from forecasts where "timestamp" between ? and ?+3600)
-                                )) / (numberOfInputs + 1),
-                                numberOfInputs = numberOfInputs + 1
-                                where "month" = strftime('%m', DATETIME(?, 'unixepoch')) and "hour" = strftime('%H', DATETIME(?, 'unixepoch'));'''
-
-    cur.execute(updateForecastSql, [reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"], reading["timestamp"]])
+            if timestamp < time() and forecast > 0:
+                factorUpdateSQL = '''      
+                                    UPDATE
+                                        forecastFactor
+                                    SET
+                                        factor = (factor * numberOfInputs + (
+                                                SELECT
+                                                    avg(pv_input)
+                                                FROM
+                                                    readings
+                                                WHERE
+                                                    "timestamp" BETWEEN ? - 3600 AND ?) / ?) / (numberOfInputs + 1), numberOfInputs = numberOfInputs + 1
+                                        WHERE
+                                            "month" = strftime ("%m", DATETIME (?, "unixepoch"))
+                                            AND "hour" = strftime ("%H", DATETIME (?, "unixepoch"));
+                                            
+                                '''
+                
+                cur.execute(factorUpdateSQL, [timestamp, timestamp, forecast, timestamp, timestamp])
 
     conn.commit()
 
