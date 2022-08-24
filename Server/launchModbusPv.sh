@@ -1,5 +1,5 @@
 #!/bin/sh
 
-chromium-browser localhost/ModbusPV?ciosc --kiosk
+chromium-browser localhost/ModbusPV?ciosc --kiosk &
 
 ./DataReader.py
