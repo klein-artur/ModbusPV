@@ -3,7 +3,7 @@
     {
         
         function __construct() {
-            $this->open('db/data/database.db');
+            $this->open('../Server/db/data/database.db');
         }
 
         function get_current_state() {
