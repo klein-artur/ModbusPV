@@ -124,7 +124,7 @@
                 // THIS PART SHOULD BE CHANGED WHEN PV IS NOT LOWERED!!!
                 
                 $maxValue = $step == 0 ?
-                    $currentState["pvSystemOutput"] :
+                    $currentState["pvInput"] :
                     $forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour;
 
                 // $maxValue = max($forecast["forecast"] + ($forecasts[$step + 1]["forecast"] - $forecast["forecast"]) * $partOfHour, $currentState["pvInput"]);
