@@ -20,6 +20,10 @@
 
     <link rel="stylesheet" href="styles.css">
 
+    <?php if (isset($_GET["ciosc"])): ?>
+        <link rel="stylesheet" href="ciosc.css">
+    <?php endif; ?>
+
     <script src="jquery-3.6.0.min.js"></script>
     <script src="script.js"></script>
 </head>
