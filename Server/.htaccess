@@ -1,0 +1,5 @@
+<Directory /folder_name>
+Order Deny,Allow
+Deny from all
+</Directory> 
+
