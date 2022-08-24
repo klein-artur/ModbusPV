@@ -1,5 +1,4 @@
-<Directory /folder_name>
-Order Deny,Allow
-Deny from all
-</Directory> 
-
+RewriteEngine On
+RewriteCond %{REQUEST_URI} foldername
+RewriteCond %{REMOTE_ADDR} !^111\.222\.333\.44$
+RewriteRule . - [R=404,L]
