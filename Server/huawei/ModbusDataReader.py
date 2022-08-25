@@ -1,6 +1,9 @@
 from . import ModbusRegisters
 from . import ModbusTCPReader
 import collections
+from time import sleep
+
+DEBUG = False
 
 from time import time
 
@@ -52,7 +55,26 @@ class ModbusDataReader:
     def batteryState(self):
         return self.reader.readData(ModbusRegisters.BATTERY_STATE[0], ModbusRegisters.BATTERY_STATE[1]) / 10
 
+    def accGridOutput(self):
+        return self.reader.readData(ModbusRegisters.ACC_GRID_OUTPUT[0], ModbusRegisters.ACC_GRID_OUTPUT[1]) / 100
+
+    def accGridInput(self):
+        return self.reader.readData(ModbusRegisters.ACC_GRID_INPUT[0], ModbusRegisters.ACC_GRID_INPUT[1]) / 100
+
     def getPVDataSmoothed(self):
+
+        if DEBUG:
+            sleep(1.5)
+            return {
+                "gridOutput": 18.6115,
+                "batteryCharge": 0.0,
+                "batteryState": 100,
+                "pvInput": 19.1125,
+                "timestamp": int(time()),
+                "accGridOutput": 421.02,
+                "accGridInput": 47.5
+            }
+
         averageGridOutput = self.gridOutputSmoothed()
         averageBatteryCharge = self.batteryChargeSmoothed()
         averagePVInput = self.pvInputSmoothed()
@@ -62,10 +84,15 @@ class ModbusDataReader:
 
         batteryState = self.batteryState()
 
+        accGridOutput = self.accGridOutput()
+        accGridInput = self.accGridInput()
+
         return {
             "gridOutput": averageGridOutput,
             "batteryCharge": averageBatteryCharge,
             "batteryState": batteryState,
             "pvInput": averagePVInput,
-            "timestamp": int(time())
+            "timestamp": int(time()),
+            "accGridOutput": accGridOutput,
+            "accGridInput": accGridInput
         }

@@ -4,12 +4,20 @@ from sqlite3 import Error
 
 DATABASE = r"db/data/database.db"
 
-def createTable(conn, sql):
+def runSql(conn, sql):
     try:
         c = conn.cursor()
         c.execute(sql)
     except Error as e:
         print(e)
+
+def checkIfColumnExists(conn, table, column):
+    sql = f"pragma table_info({table});"
+
+    cursor = conn.cursor()
+    columns = map(lambda line: line[1], cursor.execute(sql).fetchall())
+    
+    return column in columns
 
 def createForecastFactors(conn):
     sql = """INSERT INTO forecastFactor (month, hour, factor)
@@ -51,9 +59,17 @@ def getDatabaseConnection():
                                         UNIQUE(month, hour)
                                     )"""
 
-        createTable(conn, createReadingsTable)
-        createTable(conn, createForecastTable)
-        createTable(conn, createForecastFactorTable)
+        runSql(conn, createReadingsTable)
+        runSql(conn, createForecastTable)
+        runSql(conn, createForecastFactorTable)
+
+        if not checkIfColumnExists(conn, "readings", "acc_grid_output"):
+            addAccGridOutputSql = "alter table readings add acc_grid_output real not null default(0.0);"
+            runSql(conn, addAccGridOutputSql)
+
+        if not checkIfColumnExists(conn, "readings", "acc_grid_input"):
+            addAccGridInputSql = "alter table readings add acc_grid_input real not null default(0.0);"
+            runSql(conn, addAccGridInputSql)
 
     except Error as e:
         print(e)
@@ -66,12 +82,12 @@ def getDatabaseConnection():
     return conn
 
 def insertReading(reading, forecasts):
-    sql = '''   INSERT INTO readings(grid_output, battery_charge, pv_input, battery_state, timestamp) 
-                VALUES(?, ?, ?, ?, ?) '''
+    sql = '''   INSERT INTO readings(grid_output, battery_charge, pv_input, battery_state, timestamp, acc_grid_output, acc_grid_input) 
+                VALUES(?, ?, ?, ?, ?, ?, ?) '''
 
     conn = getDatabaseConnection()
     cur = conn.cursor()
-    cur.execute(sql, [reading["gridOutput"], reading["batteryCharge"], reading["pvInput"], reading["batteryState"], reading["timestamp"]])
+    cur.execute(sql, [reading["gridOutput"], reading["batteryCharge"], reading["pvInput"], reading["batteryState"], reading["timestamp"], reading["accGridOutput"], reading["accGridInput"]])
 
     if forecasts is not None:
         for timestamp, forecast in forecasts.items():
