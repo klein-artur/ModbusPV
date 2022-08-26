@@ -156,7 +156,7 @@
 
         function getTodayIncome() {
 
-            print_r(date_default_timezone_get());
+            print_r(date('Z'));
 
             echo '<br />';
 
