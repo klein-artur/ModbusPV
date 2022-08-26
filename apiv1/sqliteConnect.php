@@ -161,12 +161,15 @@ class MyDB extends SQLite3
         global $GRID_FEED_PRICE_CENT;
         global $GRID_DRAW_PRICE_CENT;
         $beginningOfDay = time() - time() % 86400 - date('Z') - ($minusDay * 86400);
+        $endOfDay = $beginningOfDay + 86400;
 
-        $incomeSql = $this->prepare('select (select max(acc_grid_output) from readings where "timestamp" >= :timestamp) - (select max(acc_grid_output) from readings where "timestamp" < :timestamp);');
-        $expensesSql = $this->prepare('select (select max(acc_grid_input) from readings where "timestamp" >= :timestamp) - (select max(acc_grid_input) from readings where "timestamp" < :timestamp);');
+        $incomeSql = $this->prepare('select (select max(acc_grid_output) from readings where "timestamp" between :timestamp and :now) - (select max(acc_grid_output) from readings where "timestamp" < :timestamp);');
+        $expensesSql = $this->prepare('select (select max(acc_grid_input) from readings where "timestamp" between :timestamp and :now) - (select max(acc_grid_input) from readings where "timestamp" < :timestamp);');
 
         $incomeSql->bindValue(':timestamp', $beginningOfDay);
+        $incomeSql->bindValue(':now', $endOfDay);
         $expensesSql->bindValue(':timestamp', $beginningOfDay);
+        $expensesSql->bindValue(':now', $endOfDay);
 
         $incomeKWh = $incomeSql->execute()->fetchArray()[0];
         $expensesKWh = $expensesSql->execute()->fetchArray()[0];
