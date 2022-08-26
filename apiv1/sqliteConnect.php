@@ -157,11 +157,10 @@ class MyDB extends SQLite3
 
     }
 
-    function getTodayIncome() {
-
+    function getIncomeForMinusDay($minusDay) {
         global $GRID_FEED_PRICE_CENT;
         global $GRID_DRAW_PRICE_CENT;
-        $beginningOfDay = time() - time() % 86400 - date('Z');
+        $beginningOfDay = time() - time() % 86400 - date('Z') - ($minusDay * 86400);
 
         $incomeSql = $this->prepare('select (select max(acc_grid_output) from readings where "timestamp" >= :timestamp) - (select max(acc_grid_output) from readings where "timestamp" < :timestamp);');
         $expensesSql = $this->prepare('select (select max(acc_grid_input) from readings where "timestamp" >= :timestamp) - (select max(acc_grid_input) from readings where "timestamp" < :timestamp);');
@@ -171,9 +170,14 @@ class MyDB extends SQLite3
 
         $incomeKWh = $incomeSql->execute()->fetchArray()[0];
         $expensesKWh = $expensesSql->execute()->fetchArray()[0];
-    
+
+        return ($incomeKWh * $GRID_FEED_PRICE_CENT - $expensesKWh * $GRID_DRAW_PRICE_CENT) / 100;
+    }
+
+    function getIncome() {
         return [
-            "income" => ($incomeKWh * $GRID_FEED_PRICE_CENT - $expensesKWh * $GRID_DRAW_PRICE_CENT) / 100
+            "today" => $this->getIncomeForMinusDay(0),
+            "yesterday" => $this->getIncomeForMinusDay(1)
         ];
     }
 

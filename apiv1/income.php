@@ -7,5 +7,5 @@
 
     include 'sqliteConnect.php';
 
-    echo json_encode((new MyDB())->getTodayIncome());
+    echo json_encode((new MyDB())->getIncome());
 ?>

@@ -119,8 +119,9 @@
                 </div>
             </div>
         </div>
-        <div id="income-info-box" class="pvbox power-string">
-            <span id="income">15,00 €</span>
+        <div id="income-info-box" class="pvbox">
+            <span id="income" class="power-string">15,00 €</span>
+            <span id="income-yesterday">15,00 €</span>
         </div>
         <div class="align-items-center pvbox" id="chart-consumption-box">
             <div id="chart-holder-consumption">

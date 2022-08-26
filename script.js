@@ -784,15 +784,26 @@ function setIncome(data) {
 
     
 
-    $('#income').text(formatter.format(data.income));
+    $('#income').text(formatter.format(data.today));
     
     $('#income').removeClass('cool')
     $('#income').removeClass('fatal')
 
-    if (data.income > 0) 
+    if (data.today > 0) 
         $('#income').addClass('cool')
     else 
         $('#income').addClass('fatal')
+
+
+    $('#income-yesterday').text(formatter.format(data.yesterday));
+    
+    $('#income-yesterday').removeClass('cool')
+    $('#income-yesterday').removeClass('fatal')
+
+    if (data.yesterday > 0) 
+        $('#income-yesterday').addClass('cool')
+    else 
+        $('#income-yesterday').addClass('fatal')
 }
 
 $(window).on('load', function () {

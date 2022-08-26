@@ -30,9 +30,15 @@ body::-webkit-scrollbar {
 
 #income {
     position: relative;
-    top: 50%;
+    top: 56px;
     display: block;
-    transform: translateY(-50%);
+    text-align: center;
+}
+
+#income-yesterday {
+    position: relative;
+    top: 51px;
+    display: block;
     text-align: center;
 }
 
