@@ -777,10 +777,10 @@ function startTimeout() {
 
 function setIncome(data) {
 
-    var formatter = new Intl.NumberFormat('en-US', {
+    var formatter = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR',
-      });
+    });
 
     
 
