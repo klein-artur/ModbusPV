@@ -156,11 +156,7 @@
 
         function getTodayIncome() {
 
-            print_r(date('Z'));
-
-            echo '<br />';
-
-            $beginningOfDay = time() - 86400 + (86400 - time() % 86400);
+            $beginningOfDay = time() - time() % 86400 - date('Z');
 
             print_r($beginningOfDay);
         }
