@@ -6,13 +6,13 @@
             $this->open('../Server/db/data/database.db');
         }
 
-        function get_current_state() {
+        function getCurrentState() {
             $result = $this->query('SELECT * from readings ORDER BY timestamp DESC LIMIT 1')->fetchArray();
 
             return $this->parse($result);
         }
 
-        function get_forecasts($backwardsSeconds, $forwardsSeconds) {
+        function getForecasts($backwardsSeconds, $forwardsSeconds) {
             $begin = time() - $backwardsSeconds;
             $end = time() + $forwardsSeconds;
 
@@ -40,7 +40,7 @@
             return $result;
         }
 
-        function get_daily_history() {
+        function getDailyHistory() {
             $h24 = time() - 86400;
 
             $fetchedResult = [];
@@ -60,12 +60,12 @@
 
         }
 
-        function get_next_hours_forecast($number) {
+        function getNextHoursForecast($number) {
             $current = time();
             $timespan = $number * 3600;
 
-            $currentState = $this->get_current_state();
-            $forecasts = $this->get_forecasts(3600, $timespan);
+            $currentState = $this->getCurrentState();
+            $forecasts = $this->getForecasts(3600, $timespan);
 
             $secondsIntoHour = $current - $forecasts[0]["timestamp"];
             $partOfHour = $secondsIntoHour / 3600;
@@ -152,6 +152,17 @@
 
             return $result;
 
+        }
+
+        function getTodayIncome() {
+
+            print_r(date_default_timezone_get());
+
+            echo '<br />';
+
+            $beginningOfDay = time() - 86400 + (86400 - time() % 86400);
+
+            print_r($beginningOfDay);
         }
 
         private function parse($data) {

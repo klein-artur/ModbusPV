@@ -7,5 +7,5 @@
 
     include 'sqliteConnect.php';
 
-    echo json_encode((new MyDB())->get_daily_history());
+    echo json_encode((new MyDB())->getDailyHistory());
 ?>
