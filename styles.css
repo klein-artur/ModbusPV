@@ -19,6 +19,23 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+#income-info-box {
+    position: absolute;
+    top: 738px;
+    left: 562px;
+    padding: 12px;
+    height: 198px;
+    width: 225px;
+}
+
+#income {
+    position: relative;
+    top: 50%;
+    display: block;
+    transform: translateY(-50%);
+    text-align: center;
+}
+
 .pictogram {
     max-width: 60px;
     max-height: 60px;

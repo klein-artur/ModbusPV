@@ -173,7 +173,7 @@ class MyDB extends SQLite3
         $expensesKWh = $expensesSql->execute()->fetchArray()[0];
     
         return [
-            "income" => $incomeKWh * $GRID_FEED_PRICE_CENT - $expensesKWh * $GRID_DRAW_PRICE_CENT
+            "income" => ($incomeKWh * $GRID_FEED_PRICE_CENT - $expensesKWh * $GRID_DRAW_PRICE_CENT) / 100
         ];
     }
 

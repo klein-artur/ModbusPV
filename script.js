@@ -775,6 +775,26 @@ function startTimeout() {
     }, 30000)
 }
 
+function setIncome(data) {
+
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+      });
+
+    
+
+    $('#income').text(formatter.format(data.income));
+    
+    $('#income').removeClass('cool')
+    $('#income').removeClass('fatal')
+
+    if (data.income > 0) 
+        $('#income').addClass('cool')
+    else 
+        $('#income').addClass('fatal')
+}
+
 $(window).on('load', function () {
 
     $(document).scrollTop(0);
@@ -794,6 +814,10 @@ $(window).on('load', function () {
 
     var nextHoursDoneFunction = function (nextHours) {
         setNextHours(nextHours)
+    }
+
+    var incomeDoneFunction = function (income) {
+        setIncome(income)
     }
 
     var loadData = function () {
@@ -852,10 +876,25 @@ $(window).on('load', function () {
             })
     }
 
+    var loadIncome = function () {
+        console.log("load new income")
+        $.ajax({
+            url: `apiv1/income.php`
+        })
+            .done(incomeDoneFunction)
+            .always(() => {
+                console.log("income got, set new timeout for income.")
+                setTimeout(() => {
+                    loadIncome()
+                }, 1000)
+            })
+    }
+
     loadData();
     loadHistory();
     loadForecast();
     loadNextHours();
+    loadIncome();
 
     placeFooterBox();
 
