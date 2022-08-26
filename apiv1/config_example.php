@@ -1,0 +1,4 @@
+<?php
+    $GRID_FEED_PRICE_CENT = 7.1;
+    $GRID_DRAW_PRICE_CENT = 27.0;
+?>
