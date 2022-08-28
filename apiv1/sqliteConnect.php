@@ -163,8 +163,8 @@ class MyDB extends SQLite3
         $beginningOfDay = time() - time() % 86400 - date('Z') - ($minusDay * 86400);
         $endOfDay = $beginningOfDay + 86400;
 
-        $incomeSql = $this->prepare('select (select max(acc_grid_output) from readings where "timestamp" between :timestamp and :now and) - (select max(acc_grid_output) from readings where "timestamp" < :timestamp);');
-        $expensesSql = $this->prepare('select (select max(acc_grid_input) from readings where "timestamp" between :timestamp and :now and acc_grid_input < 100) - (select max(acc_grid_input) from readings where "timestamp" < :timestamp and acc_grid_input < 100);');
+        $incomeSql = $this->prepare('select (select max(acc_grid_output) from readings where "timestamp" between :timestamp and :now) - (select max(acc_grid_output) from readings where "timestamp" < :timestamp);');
+        $expensesSql = $this->prepare('select (select max(acc_grid_input) from readings where ("timestamp" between :timestamp and :now) and acc_grid_input < 100) - (select max(acc_grid_input) from readings where "timestamp" < :timestamp and acc_grid_input < 100);');
 
         $incomeSql->bindValue(':timestamp', $beginningOfDay);
         $incomeSql->bindValue(':now', $endOfDay);
