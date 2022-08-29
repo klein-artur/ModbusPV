@@ -188,10 +188,10 @@ class MyDB extends SQLite3
         return [
             "gridOutput" => $data[1],
             "batteryCharge" => $data[2],
-            "pvInput" => $data[3] + max($data[2], 0),
+            "pvInput" => $data[3],
             "batteryState" => $data[4],
-            "consumption" => $data[3] - min($data[2], 0) - $data[1],
-            "pvSystemOutput" => $data[3] - min($data[2], 0),
+            "consumption" => $data[3] - $data[2] - $data[1],
+            "pvSystemOutput" => $data[3] - $data[2],
             "timestamp" => $data[5]
         ];
     }
