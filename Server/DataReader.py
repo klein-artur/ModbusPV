@@ -28,12 +28,12 @@ while (True):
 
         forecast = None
 
-        if currentTime - lastForecastRead > 1200:
+        if currentTime - lastForecastRead > 9000:
             print("read forecast")
             try:
                 forecast = combinedForecasts([
-                                ForecastPlane("48,05,28", "12,38,12", "17", "98", "21.6"),
-                                ForecastPlane("48,05,28", "12,38,12", "30", "-82", "7.9")
+                                ForecastPlane("48.091284", "12.6368852", "17", "98", "22000"),
+                                ForecastPlane("48.091284", "12.6368852", "30", "-82", "7900")
                             ])
             except Exception as err:
                 print(f"error reading forecast: {err}")
@@ -49,7 +49,7 @@ while (True):
 
         if resultDict is not None:
             insertReading(resultDict, forecast)
-            
+
     except Exception as err:
         print(f"error reading data: {err}")
         reader = ModbusDataReader(

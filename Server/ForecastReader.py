@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 import functools
 
-FORECASTURL = "https://api.forecast.solar/estimate"
+FORECASTURL = "https://solarenergyprediction.p.rapidapi.com/v2.0/solar/prediction?lat=:lat&lon=:lon&deg=:deg&az=:az&wp=:wp"
 
 @dataclass
 class ForecastPlane:
@@ -14,7 +14,7 @@ class ForecastPlane:
     longitude: str
     degrees: str
     azimuth: str
-    peakKW: str
+    wattpeak: str
 
 def sumUpForecasts(left, right):
     result = {}
@@ -29,15 +29,25 @@ def combinedForecasts(planes: List[ForecastPlane]):
     )
 
 def readForecast(plane: ForecastPlane):
-    r = requests.get(f"{FORECASTURL}/{plane.latitude}/{plane.longitude}/{plane.degrees}/{plane.azimuth}/{plane.peakKW}")
+    r = requests.get(
+        FORECASTURL.replace(':lat', plane.latitude)
+            .replace(':lon', plane.longitude)
+            .replace(':deg', plane.degrees)
+            .replace(':az', plane.azimuth)
+            .replace(':wp', plane.wattpeak),
+            headers={
+                'X-RapidAPI-Key': 'somekey',
+                'X-RapidAPI-Host': 'solarenergyprediction.p.rapidapi.com'
+            }
+        )
     jsonDict = r.json()
 
-    watts = jsonDict['result']['watts']
+    watts = jsonDict['output']
 
     result = {}
 
-    for date, value in watts.items():
-        newKey = int(time.mktime(datetime.strptime(date, '%Y-%m-%d %H:%M:%S').timetuple()))
-        result[newKey] = value / 1000
+    for value in watts:
+        newKey = value['timestamp'] / 1000
+        result[newKey] = value['wh']
     
     return result
