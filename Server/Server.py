@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Server.config import MODBUS_IP_ADDRESS
+from config import MODBUS_IP_ADDRESS
 from huawei.ModbusTCPReader import ModbusTCPReader
 from huawei.ModbusDataReader import ModbusDataReader
 from db.sqliteConnect import insertReading
@@ -15,7 +15,7 @@ PATH = pathlib.Path(__file__).parent.resolve()
 print("starting now")
 
 reader = ModbusDataReader(
-    ModbusTCPReader(IP_ADDRESS)
+    ModbusTCPReader(MODBUS_IP_ADDRESS)
 )
 
 print("connected")
