@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from Server.config import MODBUS_IP_ADDRESS
 from huawei.ModbusTCPReader import ModbusTCPReader
 from huawei.ModbusDataReader import ModbusDataReader
 from db.sqliteConnect import insertReading
@@ -10,7 +11,6 @@ from time import time
 from datetime import datetime
 
 PATH = pathlib.Path(__file__).parent.resolve()
-IP_ADDRESS = "192.168.178.77"
 
 print("starting now")
 
@@ -57,7 +57,7 @@ while (True):
     except Exception as err:
         print(f"error reading data: {err}")
         reader = ModbusDataReader(
-            ModbusTCPReader(IP_ADDRESS)
+            ModbusTCPReader(MODBUS_IP_ADDRESS)
         )
 
 #TODO: Disconnect!

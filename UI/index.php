@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <?php if (isset($_GET["kiosk"])): ?>
-        <link rel="stylesheet" href="kiosc.css">
+        <link rel="stylesheet" href="kiosk.css">
     <?php endif; ?>
 
     <script src="jquery-3.6.0.min.js"></script>
