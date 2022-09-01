@@ -20,7 +20,7 @@
 
     <link rel="stylesheet" href="styles.css">
 
-    <?php if (isset($_GET["kiosc"])): ?>
+    <?php if (isset($_GET["kiosk"])): ?>
         <link rel="stylesheet" href="kiosc.css">
     <?php endif; ?>
 
