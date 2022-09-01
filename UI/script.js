@@ -834,7 +834,7 @@ $(window).on('load', function () {
     var loadData = function () {
         console.log("Load new data.")
         $.ajax({
-            url: `apiv1/state.php`
+            url: `../apiv1/state.php`
         })
             .done(doneFunction)
             .always(() => {
@@ -848,7 +848,7 @@ $(window).on('load', function () {
     var loadHistory = function () {
         console.log("load new history.")
         $.ajax({
-            url: `apiv1/history.php`
+            url: `../apiv1/history.php`
         })
             .done(historyDoneFunction)
             .always(() => {
@@ -862,7 +862,7 @@ $(window).on('load', function () {
     var loadForecast = function () {
         console.log("load new forecast.")
         $.ajax({
-            url: `apiv1/forecasts.php`
+            url: `../apiv1/forecasts.php`
         })
             .done(forecastDoneFunction)
             .always(() => {
@@ -876,7 +876,7 @@ $(window).on('load', function () {
     var loadNextHours = function () {
         console.log("load new nextHours")
         $.ajax({
-            url: `apiv1/nextHours.php`
+            url: `../apiv1/nextHours.php`
         })
             .done(nextHoursDoneFunction)
             .always(() => {
@@ -890,7 +890,7 @@ $(window).on('load', function () {
     var loadIncome = function () {
         console.log("load new income")
         $.ajax({
-            url: `apiv1/income.php`
+            url: `../apiv1/income.php`
         })
             .done(incomeDoneFunction)
             .always(() => {
