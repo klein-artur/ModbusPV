@@ -1,6 +1,6 @@
 # Modbus PV
 
-Modbus PV is an implementation of a PV overview panel, based on an raspberry pi and it's official display.
+Modbus PV is an implementation of a Solar (Photovoltaik) overview panel, based on an raspberry pi and it's official display.
 The connection to the PV happens through Modbus TCP, hence the name. 
 Other connections, for example to a forecast api are also integrated. Please be aware that this is a very quick and dirty implementation, so 
 do not throw with stones. Better give it your own signature by contributing and make it better. I will have a look over each pullrequest. Maybe this can get something big. Maybe not. My idea was intentionally to use it just for me and my family. I know there are solutions out there, but none did fit to exactly what I need... At the end I think some can contribute to this, especially to the Modbus TCP connection to my Huawei PV.
@@ -16,7 +16,7 @@ At the top, just six bars are visible, showing the current situation and the sit
 
 ## The Modbus Connection
 
-The heart of this whole thing is the modbus connection to the PV (currently only Huawei Inverters are implemented. I see no need for me to implement other, so feel free to do it). There is a python file called "Server.py" which holds an endless loop, reading data from the PV and doing what needs to be done with it. 
+The heart of this whole thing is the modbus connection to the PV (currently only Huawei Inverters (SUN2000-10KTL-*something*) are implemented. I see no need for me to implement other, so feel free to do it). There is a python file called "Server.py" which holds an endless loop, reading data from the PV and doing what needs to be done with it. 
 
 To have modbus TCP running, you have to have it activated on the inverters side. Talk to your installation guy, if you do not know where.
 
