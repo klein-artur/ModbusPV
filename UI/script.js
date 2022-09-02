@@ -841,7 +841,7 @@ $(window).on('load', function () {
                 console.log("Data got, set new timeout for data.")
                 setTimeout(() => {
                     loadData()
-                }, 1000)
+                }, 10000)
             })
     }
 
@@ -855,7 +855,7 @@ $(window).on('load', function () {
                 console.log("History got, set new timeout for history.")
                 setTimeout(() => {
                     loadHistory()
-                }, 1000)
+                }, 10000)
             })
     }
 
@@ -869,7 +869,7 @@ $(window).on('load', function () {
                 console.log("Forecast got, set new timeout for forecast.")
                 setTimeout(() => {
                     loadForecast()
-                }, 1000)
+                }, 10000)
             })
     }
 
@@ -883,7 +883,7 @@ $(window).on('load', function () {
                 console.log("nextHours got, set new timeout for nextHours.")
                 setTimeout(() => {
                     loadNextHours()
-                }, 1000)
+                }, 10000)
             })
     }
 
@@ -897,7 +897,7 @@ $(window).on('load', function () {
                 console.log("income got, set new timeout for income.")
                 setTimeout(() => {
                     loadIncome()
-                }, 1000)
+                }, 10000)
             })
     }
 
