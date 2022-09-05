@@ -88,7 +88,14 @@ def switchDevice(device, on):
     print(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
 
     if response.json()["isok"]:
-        saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+        try:
+            saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+        except Exception as err:
+            try:
+                saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+            except Exception as err:
+                saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+        
 
 
 def controlDevices(currentPVState):
