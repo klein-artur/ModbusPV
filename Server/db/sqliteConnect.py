@@ -159,19 +159,14 @@ def getCurrentPVStateMovingAverage():
     cur = conn.cursor()
     cur.execute(sql)
 
-    rows = cur.fetchall()
-
-    result = []
-
-    for row in rows:
-        result.append({
-            "gridOutput": row[0],
-            "batteryCharge": row[1]
-        })
+    row = cur.fetchone()
 
     conn.close()
 
-    return result
+    return {
+            "gridOutput": row[0],
+            "batteryCharge": row[1]
+        }
 
 
 def saveCurrentDeviceStatus(identifier, status):
