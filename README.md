@@ -31,6 +31,9 @@ On top of all of this is a very simple API, mimicing a RESTFull API. This is the
 ## The UI
 The UI itself is just a webpage, accessing the API to get data. I for myself also implemented an apple watch app to have access to the data through this API. Maybe I will also make that repo public... 
 
+## Device Control
+The system can control devices based on how much power the PV is producing. Currently only Shelly Smart Plugs are implemented. Code is in `DeviceControl.py` and the config for the devices is in `deviceconfig.json`.
+
 ## I am not responsible for this mess!!
 Please be aware that I will not guarantee that this does not destroy anything... The Modbus connection is just reading data, but who knows what can happen.. 
 
@@ -38,6 +41,7 @@ Please be aware that I will not guarantee that this does not destroy anything...
 
  - Install pymodbus (https://github.com/riptideio/pymodbus).
  - Copy the `config_excample.py` file from the `Server` directory, call the copy `config.py` and add your data there. **DO NOT ADD THIS TO THE REPO, IT CONTAINS PRIVATE DATA!**
+ - Copy the `deviceconfig_example.json` file from the `Server` directory. call the copy `deviceconfig.json`. Add your devices to control there. Currently only Shelly Smart Plugs are implemented. **DO NOT ADD THIS TO THE REPO, IT CONTAINS PRIVATE DATA!**
  - Copy the `config_example.php` file from the `apiv1` directory and call it `config.php`. Do also not add this to the repo.
 
  ## Starting:
