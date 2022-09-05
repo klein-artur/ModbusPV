@@ -152,6 +152,28 @@ def getCurrentDeviceStates():
     return result
 
 
+def getCurrentPVStateMovingAverage():
+    sql = 'select avg(grid_output), avg(battery_charge) from (select * from readings order by "timestamp" desc limit 20)'
+
+    conn = getDatabaseConnection()
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    rows = cur.fetchall()
+
+    result = []
+
+    for row in rows:
+        result.append({
+            "gridOutput": row[0],
+            "batteryCharge": row[1]
+        })
+
+    conn.close()
+
+    return result
+
+
 def saveCurrentDeviceStatus(identifier, status):
     sql = 'insert into deviceStatus(identifier, state, timestamp) values(?, ?, ?)'
 

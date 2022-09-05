@@ -57,7 +57,7 @@ while (True):
 
         print("Control devices.")
 
-        controlDevices(resultDict)
+        controlDevices()
 
     except Exception as err:
         print(f"error reading data: {err}")

@@ -2,7 +2,7 @@ import re
 import requests
 from urllib3 import encode_multipart_formdata
 from tkinter import N
-from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus
+from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage
 import json
 from time import time, sleep
 
@@ -98,7 +98,9 @@ def switchDevice(device, on):
         
 
 
-def controlDevices(currentPVState):
+def controlDevices():
+    currentPVState = getCurrentPVStateMovingAverage()
+
     deviceStates = getCurrentDeviceStates()
     deviceConfig = readDevicesFromConfigFile()
 
