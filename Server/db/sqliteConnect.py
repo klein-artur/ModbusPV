@@ -1,3 +1,4 @@
+from cgitb import reset
 import sqlite3
 from time import time
 from sqlite3 import Error
@@ -59,9 +60,18 @@ def getDatabaseConnection():
                                         UNIQUE(month, hour)
                                     )"""
 
+        createDeviceInfoTable = """ CREATE TABLE IF NOT EXISTS deviceStatus (
+                                        id integer PRIMARY KEY AUTOINCREMENT,
+                                        identifier text,
+                                        state integer,
+                                        timestamp integer
+                                    )
+        """
+
         runSql(conn, createReadingsTable)
         runSql(conn, createForecastTable)
         runSql(conn, createForecastFactorTable)
+        runSql(conn, createDeviceInfoTable)
 
         if not checkIfColumnExists(conn, "readings", "acc_grid_output"):
             addAccGridOutputSql = "alter table readings add acc_grid_output real not null default(0.0);"
@@ -117,4 +127,38 @@ def insertReading(reading, forecasts):
     conn.commit()
 
     conn.close()
-    
+
+def getCurrentDeviceStates():
+    sql = 'select * from (select * from deviceStatus order by "timestamp" desc) group by identifier;'
+    conn = getDatabaseConnection()
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    rows = cur.fetchall()
+
+    result = []
+
+    for row in rows:
+        result.append(
+            {
+                "identifier": row[1],
+                "state": row[2],
+                "timestamp": row[3]
+            }
+        )
+
+    conn.close()
+
+    return result
+
+
+def saveCurrentDeviceStatus(identifier, status):
+    sql = 'insert into deviceStatus(identifier, state, timestamp) values(?, ?, ?)'
+
+    conn = getDatabaseConnection()
+
+    cur = conn.cursor()
+    cur.execute(sql, [identifier, status, int(time())])
+
+    conn.commit()
+    conn.close()

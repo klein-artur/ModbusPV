@@ -9,6 +9,7 @@ from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
 from time import time
 from datetime import datetime
+from DeviceController import controlDevices
 
 PATH = pathlib.Path(__file__).parent.resolve()
 
@@ -53,6 +54,10 @@ while (True):
 
         if resultDict is not None:
             insertReading(resultDict, forecast)
+
+        print("Control devices.")
+
+        controlDevices(resultDict)
 
     except Exception as err:
         print(f"error reading data: {err}")

@@ -2,3 +2,4 @@ Server/state.json
 Server/db/data/database.db
 Server/config.py
 apiv1/config.php
+Server/deviceconfig.json
