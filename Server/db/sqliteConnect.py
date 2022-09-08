@@ -1,6 +1,7 @@
 from cgitb import reset
 import sqlite3
 from time import time
+from Logger import log
 from sqlite3 import Error
 
 DATABASE = r"db/data/database.db"
@@ -10,6 +11,7 @@ def runSql(conn, sql):
         c = conn.cursor()
         c.execute(sql)
     except Error as e:
+        log(f"SQLite Error: {e}")
         print(e)
 
 def checkIfColumnExists(conn, table, column):
@@ -82,6 +84,7 @@ def getDatabaseConnection():
             runSql(conn, addAccGridInputSql)
 
     except Error as e:
+        log(f"SQLite Error: {e}")
         print(e)
 
     try:

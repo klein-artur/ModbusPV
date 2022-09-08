@@ -1,5 +1,6 @@
 import re
 import requests
+from Logger import log
 from urllib3 import encode_multipart_formdata
 from tkinter import N
 from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage
@@ -91,6 +92,7 @@ def switchDevice(device, on):
     response = requests.request("POST", url, data=payload)
 
     print(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
+    log(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
 
     if response.json()["isok"]:
         try:
