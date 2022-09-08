@@ -53,7 +53,7 @@ def calculateNeededPower(device, restWithBattery, restWithBatteryPartially, rest
     else:
         return device["needed_power"] - restWithoutBattery
 
-def isDeviceBelowExcessAndStartable(device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
+def isDeviceBelowExcess(device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
     isBelow = False
     if device["priority"] < 34:
         isBelow = device["needed_power"] <= restWithBattery
@@ -62,7 +62,7 @@ def isDeviceBelowExcessAndStartable(device, restWithBattery, restWithBatteryPart
     else:
         isBelow = device["needed_power"] <= restWithoutBattery
 
-    return isBelow and time() - device["timestamp"] > device["min_off_time"]
+    return isBelow
 
 
 def switchOffDevices(devices, needed, isMandatory):
@@ -151,30 +151,32 @@ def controlDevices():
             highestPrioDeviceHandled = False
 
             for device in offDevicesHighFirst:
-                if isDeviceBelowExcessAndStartable(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
+                if isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
                     if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
-                        toDo[device["identifier"]] = True
-                        availableWithBattery = max(availableWithBattery - device["needed_power"], 0)
-                        availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
-                        availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
+                        if time() - device["timestamp"] > device["min_off_time"]:
+                            toDo[device["identifier"]] = True
+                            availableWithBattery = max(availableWithBattery - device["needed_power"], 0)
+                            availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
+                            availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
 
                 else:
                     highestPrioDeviceHandled = True
+                    
+                    if time() - device["timestamp"] > device["min_off_time"]:
+                        needed = calculateNeededPower(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery)
 
-                    needed = calculateNeededPower(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery)
+                        tryToSwitchOff = switchOffDevices(
+                            list(filter(
+                                lambda lowerDevice: lowerDevice["priority"] <= device["priority"],
+                                onDevicesLowFirst
+                            )), 
+                            needed, 
+                            False
+                        )
 
-                    tryToSwitchOff = switchOffDevices(
-                        list(filter(
-                            lambda lowerDevice: lowerDevice["priority"] <= device["priority"],
-                            onDevicesLowFirst
-                        )), 
-                        needed, 
-                        False
-                    )
-
-                    if tryToSwitchOff is not None:
-                        toDo.update(tryToSwitchOff)
-                        toDo[device["identifier"]] = True
+                        if tryToSwitchOff is not None:
+                            toDo.update(tryToSwitchOff)
+                            toDo[device["identifier"]] = True
 
     else:
         needed = abs(restWithoutBattery)
