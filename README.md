@@ -52,5 +52,5 @@ Please be aware that I will not guarantee that this does not destroy anything...
 
  I have some basic ideas what next steps will come:
 
- - Prio 1: Add control functionality so users can control some stuff. I want to include the Shelly API to make the system control some of my Shelly devices, like Plugs. So whenever the system makes some overpower, they will switch on, otherwise switch of. Everything configurable through a config file.
+ - Prio 1: Adding some more functionality to shelly devices. Next plan is to add conditions for devices. In my case I need to switch devices only on, if a shelly hydrometer and/or thermometer gives me some values I want to switch the device on.
  - Prio 2: Make the whole UI responsive.
