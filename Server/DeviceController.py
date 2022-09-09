@@ -1,14 +1,14 @@
 import re
-import requests
+from shelly import ShellyApiConnector
 from Logger import log
 from urllib3 import encode_multipart_formdata
 from tkinter import N
 from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage
 import json
-from time import time, sleep
+from time import time
 
 def readDevicesFromConfigFile():
-    f = open('deviceconfig.json')
+    f = open('../deviceconfig.json')
     return json.load(f)
 
 def getStateFromList(list, identifier):
@@ -23,28 +23,6 @@ def getStateFromList(list, identifier):
 def combine(device, state):
     device.update(state)
     return device
-
-
-# def selectDevices(devices, restWithBattery, restWithBatteryPartially, restWithoutBattery, isRest, resultDict):
-#     isPositive = restWithoutBattery > 0
-    
-#     if isPositive:
-#         offDevices = list(filter(lambda device: device["state"] == 0, devices))
-        
-#         for device in offDevices:
-#             toCheckPower = 0
-#             if device["priority"] < 34:
-#                 toCheckPower = restWithBattery
-#             elif device["priority"] > 34 and device["priority"] < 67:
-#                 toCheckPower = restWithBatteryPartially
-#             else:
-#                 toCheckPower = restWithoutBattery
-            
-#             if device["needed_power"] <= toCheckPower and time() - device["timestamp"] > device["min_off_time"]:
-#                 resultDict[device["identifier"]] = True
-#                 break
-
-#     else:
 
 def calculateNeededPower(device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
     if device["priority"] < 34:
@@ -81,20 +59,16 @@ def switchOffDevices(devices, needed, isMandatory):
 
     return toDo if isMandatory or switchedOff >= needed else None
 
-
 def switchDevice(device, on):
 
-    url = device["control_url"]
+    result = False
 
-    payload = device["parameter"]
-    payload[device["on_off_parameter_name"]] = device["on_parameter_value"] if on else device["off_parameter_value"]
+    if device["device"] == "shelly":
+        result = ShellyApiConnector.switchDevice(device, on)
 
-    response = requests.request("POST", url, data=payload)
-
-    print(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
-    log(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
-
-    if response.json()["isok"]:
+    if result:
+        print(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
+        log(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
         try:
             saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
         except Exception as err:
@@ -190,4 +164,3 @@ def controlDevices():
             next(filter(lambda item: item["identifier"] == identifier, devices)),
             on
         )
-        sleep(1.5)

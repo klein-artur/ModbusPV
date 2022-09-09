@@ -4,3 +4,5 @@ Server/config.py
 apiv1/config.php
 Server/deviceconfig.json
 Server/logfile.log
+deviceconfig_example.json
+deviceconfig.json
