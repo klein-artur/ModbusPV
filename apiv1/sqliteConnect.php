@@ -118,11 +118,30 @@ class MyDB extends SQLite3
         //     ]
         // ];
 
+        $onDevicesSql = 'select * from (select * from (select * from deviceStatus order by "timestamp" desc) group by identifier) where state == 1;';
+        $deviceStateRows = $this->prepare($onDevicesSql)->execute();
+
+        $deviceConfigString = file_get_contents("../deviceconfig.json");
+        $deviceConfig = json_decode($deviceConfigString);
+
+        $onDevicesPower = 0.0;
+
+        while ($element = $deviceStateRows->fetchArray()) {
+            $identifier = $element['identifier'];
+
+            foreach ($deviceConfig as $device) {
+                if ($device->identifier == $identifier) {
+                    $onDevicesPower += $device->needed_power;
+                }
+            }
+        }
+
         $result = [];
+
+        $consumption = $currentState["consumption"] - $onDevicesPower / 1000;
 
         for ($step = 0; $step < $number; $step++) {
             $forecast = $forecasts[$step];
-            $consumption = $currentState["consumption"];
             
             // THIS PART SHOULD BE CHANGED WHEN PV IS NOT LOWERED!!!
             
