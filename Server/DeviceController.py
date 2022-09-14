@@ -3,7 +3,7 @@ from shelly import ShellyApiConnector
 from Logger import log
 from urllib3 import encode_multipart_formdata
 from tkinter import N
-from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage
+from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage, getCurrentDeviceStatus
 import json
 from time import time
 
@@ -44,6 +44,30 @@ class DeviceController:
             isBelow = device["needed_power"] <= restWithoutBattery
 
         return isBelow
+
+    
+    def __isFullfillingCondition(self, device):
+        if 'condition' in device:
+            condition = device['condition']
+            currentDeviceStatus = getCurrentDeviceStatus(condition['device'])
+            
+            if condition['comparision'] == '>':
+                return currentDeviceStatus[condition['field']] > condition['value']
+            elif condition['comparision'] == '<':
+                return currentDeviceStatus[condition['field']] < condition['value']
+            elif condition['comparision'] == '>=':
+                return currentDeviceStatus[condition['field']] >= condition['value']
+            elif condition['comparision'] == '<=':
+                return currentDeviceStatus[condition['field']] <= condition['value']
+            elif condition['comparision'] == '==':
+                return currentDeviceStatus[condition['field']] == condition['value']
+            elif condition['comparision'] == '!=':
+                return currentDeviceStatus[condition['field']] != condition['value']
+            else:
+                return False
+
+        else:
+            return True
 
 
     def __switchOffDevices(self, devices, needed, isMandatory):
@@ -123,6 +147,11 @@ class DeviceController:
             key=lambda i: i['priority']
         )
 
+        for device in list(onDevicesLowFirst):
+            if not self.__isFullfillingCondition(device):
+                toDo[device["identifier"]] = False
+                onDevicesLowFirst.remove(device)
+
         if hasExcess:
 
             offDevicesHighFirst = sorted(
@@ -145,7 +174,7 @@ class DeviceController:
                 highestPrioDeviceHandled = False
 
                 for device in offDevicesHighFirst:
-                    if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
+                    if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device):
                         if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
                             if time() - device["timestamp"] > device["min_off_time"]:
                                 toDo[device["identifier"]] = True
@@ -153,7 +182,7 @@ class DeviceController:
                                 availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
                                 availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
 
-                    else:
+                    elif self.__isFullfillingCondition(device):
                         highestPrioDeviceHandled = True
                         
                         if time() - device["timestamp"] > device["min_off_time"]:

@@ -191,6 +191,27 @@ def getCurrentPVStateMovingAverage():
         }
 
 
+def getCurrentDeviceStatus(identifier):
+    sql = 'select * from deviceStatus where identifier == ? order by "timestamp" desc limit 1;'
+
+    conn = getDatabaseConnection()
+    cur = conn.cursor()
+    cur.execute(sql, [identifier])
+
+    row = cur.fetchone()
+
+    conn.close()
+
+    return {
+            "identifier": row[1],
+            "state": row[2],
+            "timestamp": row[3],
+            "temperature_c": row[4],
+            "temperature_f": row[5],
+            "humidity": row[6]
+        }
+
+
 def saveCurrentDeviceStatus(identifier, state=None, temperature_c=None, temperature_f=None, humidity=None):
     sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity) values(?, ?, ?, ?, ?, ?)'
 

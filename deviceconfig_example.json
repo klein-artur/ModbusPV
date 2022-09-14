@@ -44,13 +44,12 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
             "auth_key": "yourapikey",
             "id": "thedeviceid"
         },
-        "conditions": [
-            {
-                "type": "temperature",
-                "device": "someOtherUniqueIdentifier",
-                "temperature_c": 22.0
-            }
-        ]
+        "condition": {
+            "device": "someOtherUniqueIdentifier",
+            "field": "temperature_c",
+            "value": 26.0,
+            "comparision": "<"
+        },
         "on_off_parameter_name": "turn",
         "on_parameter_value": "on",
         "off_parameter_value": "off",
