@@ -2,9 +2,12 @@ from datetime import datetime
 
 def log(message=None):
     current = ''
-    with open("logfile.log", 'r+') as logfile:
-        current = logfile.read()
-        logfile.close()
+    try:
+        with open("logfile.log", 'r+') as logfile:
+            current = logfile.read()
+            logfile.close()
+    except:
+        print("No logfile existent yet.")
 
     with open("logfile.log", "w+") as logfile:
         if message is not None:
