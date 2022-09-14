@@ -79,13 +79,13 @@ class DeviceController:
         while switchedOff < needed and index < len(devices):
             device = devices[index]
             if time() - device["timestamp"] > device["min_on_time"]:
-                toDo[device["identifier"]] = False
+                toDo[device["identifier"]] = { False, "not enough power available" if isMandatory else "clear needed power" }
                 switchedOff += device["needed_power"]
             index += 1
 
         return toDo if isMandatory or switchedOff >= needed else None
 
-    def __switchDevice(self, device, on):
+    def __switchDevice(self, device, on, reason):
 
         result = False
 
@@ -93,8 +93,8 @@ class DeviceController:
             result = ShellyApiConnector.switchDevice(device, on)
 
         if result:
-            print(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
-            log(f"Did switch device {device['identifier']} {'on' if on else 'off'}")
+            print(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
+            log(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             try:
                 saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
             except Exception as err:
@@ -102,6 +102,7 @@ class DeviceController:
                     saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
                 except Exception as err:
                     saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+                    log("failed to save device state.")
             
 
     
@@ -149,7 +150,7 @@ class DeviceController:
 
         for device in list(onDevicesLowFirst):
             if not self.__isFullfillingCondition(device):
-                toDo[device["identifier"]] = False
+                toDo[device["identifier"]] = { False, "condition not fullfilled" }
                 onDevicesLowFirst.remove(device)
 
         if hasExcess:
@@ -177,7 +178,7 @@ class DeviceController:
                     if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device):
                         if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
                             if time() - device["timestamp"] > device["min_off_time"]:
-                                toDo[device["identifier"]] = True
+                                toDo[device["identifier"]] = { True, "enought power available."}
                                 availableWithBattery = max(availableWithBattery - device["needed_power"], 0)
                                 availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
                                 availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
@@ -199,7 +200,7 @@ class DeviceController:
 
                             if tryToSwitchOff is not None:
                                 toDo.update(tryToSwitchOff)
-                                toDo[device["identifier"]] = True
+                                toDo[device["identifier"]] = { True, "cleared enough power" }
 
         else:
             needed = abs(restWithoutBattery)
@@ -209,7 +210,8 @@ class DeviceController:
         for identifier, on in toDo.items():
             self.__switchDevice(
                 next(filter(lambda item: item["identifier"] == identifier, devices)),
-                on
+                on[0],
+                on[1]
             )
 
 
