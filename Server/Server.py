@@ -10,7 +10,7 @@ from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
 from time import time
 from datetime import datetime
-from DeviceController import controlDevices
+from DeviceController import DeviceController
 import signal
 import sys
 
@@ -25,6 +25,8 @@ reader = ModbusDataReader(
     ModbusTCPReader(MODBUS_IP_ADDRESS)
 )
 
+deviceController = DeviceController()
+
 print("connected")
 
 def signal_handler(sig, frame):
@@ -35,6 +37,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 lastForecastRead = 0
+lastSensorRead = 0
 
 while (True):
     try:
@@ -74,7 +77,14 @@ while (True):
 
         print("Control devices.")
 
-        controlDevices()
+        if currentTime - lastSensorRead > 600:
+            print("Will Read Sensor Data.")
+            log("Will Read Sensor Data.")
+
+            deviceController.readSensorData()
+            lastSensorRead = currentTime
+
+        deviceController.controlDevices()
 
     except Exception as err:
         print(f"error reading data: {err}")

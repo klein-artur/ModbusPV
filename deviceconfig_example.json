@@ -23,6 +23,42 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
         "min_off_time": 1200,
         "needed_power": 600,
         "use_waiting_power": false
-    }
+    },
+    {
+        "identifier": "someOtherUniqueIdentifier",
+        "device": "shelly",
+        "type": "sensor",
+        "api_url": "https://shelly-40-eu.shelly.cloud",
+        "parameter": {
+            "auth_key": "yourapikey",
+            "id": "thedeviceid"
+        }
+    },
+    {
+        "identifier": "someNextUniqueIdentifier",
+        "device": "shelly",
+        "type": "relay",
+        "api_url": "https://shelly-40-eu.shelly.cloud",
+        "parameter": {
+            "channel": 0,
+            "auth_key": "yourapikey",
+            "id": "thedeviceid"
+        },
+        "conditions": [
+            {
+                "type": "temperature",
+                "device": "someOtherUniqueIdentifier",
+                "temperature_c": 22.0
+            }
+        ]
+        "on_off_parameter_name": "turn",
+        "on_parameter_value": "on",
+        "off_parameter_value": "off",
+        "priority": 60,
+        "min_on_time": 1200,
+        "min_off_time": 1200,
+        "needed_power": 600,
+        "use_waiting_power": false
+    },
     
 ]

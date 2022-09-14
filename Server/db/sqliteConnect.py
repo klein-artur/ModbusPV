@@ -82,6 +82,22 @@ def getDatabaseConnection():
         if not checkIfColumnExists(conn, "readings", "acc_grid_input"):
             addAccGridInputSql = "alter table readings add acc_grid_input real not null default(0.0);"
             runSql(conn, addAccGridInputSql)
+        
+        if not checkIfColumnExists(conn, "deviceStatus", "temperature_c"):
+            addAccGridInputSql = "alter table deviceStatus add temperature_c real;"
+            runSql(conn, addAccGridInputSql)
+        
+        if not checkIfColumnExists(conn, "deviceStatus", "temperature_f"):
+            addAccGridInputSql = "alter table deviceStatus add temperature_f real;"
+            runSql(conn, addAccGridInputSql)
+        
+        if not checkIfColumnExists(conn, "deviceStatus", "temperature_f"):
+            addAccGridInputSql = "alter table deviceStatus add temperature_f real;"
+            runSql(conn, addAccGridInputSql)
+        
+        if not checkIfColumnExists(conn, "deviceStatus", "humidity"):
+            addAccGridInputSql = "alter table deviceStatus add humidity real;"
+            runSql(conn, addAccGridInputSql)
 
     except Error as e:
         log(f"SQLite Error: {e}")
@@ -146,7 +162,10 @@ def getCurrentDeviceStates():
             {
                 "identifier": row[1],
                 "state": row[2],
-                "timestamp": row[3]
+                "timestamp": row[3],
+                "temperature_c": row[4],
+                "temperature_f": row[5],
+                "humidity": row[6]
             }
         )
 
@@ -172,13 +191,13 @@ def getCurrentPVStateMovingAverage():
         }
 
 
-def saveCurrentDeviceStatus(identifier, status):
-    sql = 'insert into deviceStatus(identifier, state, timestamp) values(?, ?, ?)'
+def saveCurrentDeviceStatus(identifier, state=None, temperature_c=None, temperature_f=None, humidity=None):
+    sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity) values(?, ?, ?, ?, ?, ?)'
 
     conn = getDatabaseConnection()
 
     cur = conn.cursor()
-    cur.execute(sql, [identifier, status, int(time())])
+    cur.execute(sql, [identifier, state, int(time()), temperature_c, temperature_f, humidity])
 
     conn.commit()
     conn.close()
