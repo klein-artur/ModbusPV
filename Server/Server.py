@@ -79,7 +79,7 @@ while (True):
 
         print("Control devices.")
 
-        if currentTime - lastSensorRead > 600:
+        if currentTime - lastSensorRead > 120:
             print("Will Read Sensor Data.")
             log("Will Read Sensor Data.")
 

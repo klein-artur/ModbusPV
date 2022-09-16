@@ -89,10 +89,10 @@ class DeviceController:
 
     def __switchDevice(self, device, on, reason, dbConnection):
 
-        result = True
+        result = False
 
-        # if device["device"] == "shelly":
-        #     result = ShellyApiConnector.switchDevice(device, on)
+        if device["device"] == "shelly":
+            result = ShellyApiConnector.switchDevice(device, on)
 
         if result:
             print(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
@@ -107,17 +107,10 @@ class DeviceController:
     def readSensorData(self, dbConnection):
         deviceConfig = self.__readDevicesFromConfigFile()
 
-        sensorDevices = list(
-            filter(
-                lambda device: device["type"] == "sensor",
-                deviceConfig
-            )
-        )
-
-        for sensor in sensorDevices:
-            if sensor['device'] == "shelly":
-                data = ShellyApiConnector.readSensorData(sensor)
-                dbConnection.saveCurrentDeviceStatus(sensor['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'])
+        for device in deviceConfig:
+            if device['device'] == "shelly":
+                data = ShellyApiConnector.readSensorData(device)
+                dbConnection.saveCurrentDeviceStatus(device['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'], consumption=data['consumption'])
 
 
     def controlDevices(self, dbConnection):

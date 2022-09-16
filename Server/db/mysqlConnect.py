@@ -65,7 +65,8 @@ class MySqlConnector:
                                             timestamp integer,
                                             temperature_c real,
                                             temperature_f real,
-                                            humidity real
+                                            humidity real,
+                                            consumption real
                                         );""")
 
             self.mydb.commit()
@@ -93,33 +94,33 @@ class MySqlConnector:
                 forecastUpdateSql = "insert into forecasts (timestamp, forecast) values (%s, %s) on duplicate key update forecast=%s;"
                 cursor.execute(forecastUpdateSql, (timestamp, forecast, forecast))
 
-                # if timestamp < time() - 21600 and forecast > 0:
-                cursor = self.mydb.cursor(prepared=True)
-                cursor.execute('''
-                    SELECT
-                        avg(pv_input)
-                    FROM
-                        readings
-                    WHERE
-                        timestamp BETWEEN %s - 3600 AND %s
-                    ''',
-                    (timestamp, timestamp)
-                )
-                averageInput = cursor.fetchone()[0]
-                if averageInput is not None:
+                if timestamp < time() - 21600 and forecast > 0:
                     cursor = self.mydb.cursor(prepared=True)
-                    factorUpdateSQL = '''      
-                                        UPDATE
-                                            forecastFactor
-                                        SET
-                                            factor = (factor * numberOfInputs + %s / %s) / (numberOfInputs + 1), numberOfInputs = numberOfInputs + 1
-                                            WHERE
-                                                month = DATE_FORMAT (FROM_UNIXTIME (%s), "%m")
-                                                AND hour = DATE_FORMAT (FROM_UNIXTIME (%s), "%H");
-                                                
-                                    '''
-                    
-                    cursor.execute(factorUpdateSQL, (averageInput, forecast, timestamp, timestamp))
+                    cursor.execute('''
+                        SELECT
+                            avg(pv_input)
+                        FROM
+                            readings
+                        WHERE
+                            timestamp BETWEEN %s - 3600 AND %s
+                        ''',
+                        (timestamp, timestamp)
+                    )
+                    averageInput = cursor.fetchone()[0]
+                    if averageInput is not None:
+                        cursor = self.mydb.cursor(prepared=True)
+                        factorUpdateSQL = '''      
+                                            UPDATE
+                                                forecastFactor
+                                            SET
+                                                factor = (factor * numberOfInputs + %s / %s) / (numberOfInputs + 1), numberOfInputs = numberOfInputs + 1
+                                                WHERE
+                                                    month = DATE_FORMAT (FROM_UNIXTIME (%s), "%m")
+                                                    AND hour = DATE_FORMAT (FROM_UNIXTIME (%s), "%H");
+                                                    
+                                        '''
+                        
+                        cursor.execute(factorUpdateSQL, (averageInput, forecast, timestamp, timestamp))
 
         self.mydb.commit()
 
@@ -172,19 +173,57 @@ class MySqlConnector:
 
         row = cursor.fetchone()
 
+        if row is None:
+            return None
+
         return {
                 "identifier": row[1],
                 "state": row[2],
                 "timestamp": row[3],
                 "temperature_c": row[4],
                 "temperature_f": row[5],
-                "humidity": row[6]
+                "humidity": row[6],
+                "consumption": row[7]
             }
 
-    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None):
-        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity) values(%s, %s, %s, %s, %s, %s)'
+    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None, consumption=None):
+        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption) values(%s, %s, %s, %s, %s, %s, %s)'
 
         cur = self.mydb.cursor(prepared=True)
-        cur.execute(sql, (identifier, state, int(time()), temperature_c, temperature_f, humidity))
+
+        current = self.getCurrentDeviceStatus(identifier)
+
+        toSaveState = state
+        if toSaveState is None:
+            toSaveState = current['state'] if current is not None else None
+
+        toSaveTemperature_c = temperature_c
+        if toSaveTemperature_c is None:
+            toSaveTemperature_c = current['temperature_c'] if current is not None else None
+
+        toSaveTemperature_f = temperature_f
+        if toSaveTemperature_f is None:
+            toSaveTemperature_f = current['temperature_f'] if current is not None else None
+
+        toSaveHumidity = humidity
+        if toSaveHumidity is None:
+            toSaveHumidity = current['humidity'] if current is not None else None
+
+        toSaveConsumption = consumption
+        if toSaveConsumption is None:
+            toSaveConsumption = current['consumption'] if current is not None else None
+
+        cur.execute(
+            sql, 
+            (
+                identifier, 
+                toSaveState, 
+                int(time()), 
+                toSaveTemperature_c, 
+                toSaveTemperature_f, 
+                toSaveHumidity, 
+                toSaveConsumption
+            )
+        )
 
         self.mydb.commit()

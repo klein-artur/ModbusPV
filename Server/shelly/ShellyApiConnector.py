@@ -12,11 +12,20 @@ def readSensorData(device):
     data = response.json()
 
     if data['isok']:
-        return {
-            'temperature_c': data['data']['device_status']['temperature:0']['tC'],
-            'temperature_f': data['data']['device_status']['temperature:0']['tF'],
-            'humidity': data['data']['device_status']['humidity:0']['rh']
-        }
+        if device['type'] == 'sensor':
+            return {
+                'temperature_c': data['data']['device_status']['temperature:0']['tC'],
+                'temperature_f': data['data']['device_status']['temperature:0']['tF'],
+                'humidity': data['data']['device_status']['humidity:0']['rh'],
+                'consumption': None
+            }
+        else:
+            return {
+                'temperature_c': None,
+                'temperature_f': None,
+                'humidity': None,
+                'consumption': data['data']['device_status']['meters'][0]['power']
+            }
     
 
 def switchDevice(device, on):
