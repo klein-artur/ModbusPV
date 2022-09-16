@@ -3,7 +3,6 @@ from shelly import ShellyApiConnector
 from Logger import log
 from urllib3 import encode_multipart_formdata
 from tkinter import N
-from db.sqliteConnect import getCurrentDeviceStates, saveCurrentDeviceStatus, getCurrentPVStateMovingAverage, getCurrentDeviceStatus
 import json
 from time import time
 
@@ -46,10 +45,10 @@ class DeviceController:
         return isBelow
 
     
-    def __isFullfillingCondition(self, device):
+    def __isFullfillingCondition(self, device, dbConnection):
         if 'condition' in device:
             condition = device['condition']
-            currentDeviceStatus = getCurrentDeviceStatus(condition['device'])
+            currentDeviceStatus = dbConnection.getCurrentDeviceStatus(condition['device'])
             
             if condition['comparision'] == '>':
                 return currentDeviceStatus[condition['field']] > condition['value']
@@ -88,28 +87,24 @@ class DeviceController:
 
         return toDo if isMandatory or switchedOff >= needed else None
 
-    def __switchDevice(self, device, on, reason):
+    def __switchDevice(self, device, on, reason, dbConnection):
 
-        result = False
+        result = True
 
-        if device["device"] == "shelly":
-            result = ShellyApiConnector.switchDevice(device, on)
+        # if device["device"] == "shelly":
+        #     result = ShellyApiConnector.switchDevice(device, on)
 
         if result:
             print(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             log(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             try:
-                saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+                dbConnection.saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
             except Exception as err:
-                try:
-                    saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
-                except Exception as err:
-                    saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
-                    log("failed to save device state.")
+                log(f"failed to save device state: {err}")
             
 
     
-    def readSensorData(self):
+    def readSensorData(self, dbConnection):
         deviceConfig = self.__readDevicesFromConfigFile()
 
         sensorDevices = list(
@@ -122,13 +117,13 @@ class DeviceController:
         for sensor in sensorDevices:
             if sensor['device'] == "shelly":
                 data = ShellyApiConnector.readSensorData(sensor)
-                saveCurrentDeviceStatus(sensor['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'])
+                dbConnection.saveCurrentDeviceStatus(sensor['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'])
 
 
-    def controlDevices(self):
-        currentPVState = getCurrentPVStateMovingAverage()
+    def controlDevices(self, dbConnection):
+        currentPVState = dbConnection.getCurrentPVStateMovingAverage()
 
-        deviceStates = getCurrentDeviceStates()
+        deviceStates = dbConnection.getCurrentDeviceStates()
         deviceConfig = self.__readDevicesFromConfigFile()
 
         devices = list(map(lambda item: self.__combine(item, self.__getStateFromList(deviceStates, item["identifier"])), deviceConfig))
@@ -152,7 +147,7 @@ class DeviceController:
         )
 
         for device in list(onDevicesLowFirst):
-            if not self.__isFullfillingCondition(device):
+            if not self.__isFullfillingCondition(device, dbConnection):
                 toDo[device["identifier"]] = { 
                     'on': False, 
                     'reason': "condition not fullfilled"
@@ -181,7 +176,7 @@ class DeviceController:
                 highestPrioDeviceHandled = False
 
                 for device in offDevicesHighFirst:
-                    if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device):
+                    if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device, dbConnection):
                         if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
                             if time() - device["timestamp"] > device["min_off_time"]:
                                 toDo[device["identifier"]] = { 
@@ -192,7 +187,7 @@ class DeviceController:
                                 availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
                                 availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
 
-                    elif self.__isFullfillingCondition(device):
+                    elif self.__isFullfillingCondition(device, dbConnection):
                         highestPrioDeviceHandled = True
                         
                         if time() - device["timestamp"] > device["min_off_time"]:
@@ -223,7 +218,8 @@ class DeviceController:
             self.__switchDevice(
                 next(filter(lambda item: item["identifier"] == identifier, devices)),
                 on['on'],
-                on['reason']
+                on['reason'],
+                dbConnection
             )
 
 

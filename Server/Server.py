@@ -4,7 +4,7 @@ from Logger import log
 from config import MODBUS_IP_ADDRESS
 from huawei.ModbusTCPReader import ModbusTCPReader
 from huawei.ModbusDataReader import ModbusDataReader
-from db.sqliteConnect import insertReading
+from db.mysqlConnect import MySqlConnector
 import pathlib
 from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
@@ -38,6 +38,8 @@ signal.signal(signal.SIGINT, signal_handler)
 
 lastForecastRead = 0
 lastSensorRead = 0
+
+db = MySqlConnector()
 
 while (True):
     try:
@@ -73,7 +75,7 @@ while (True):
         print("Done, write")
 
         if resultDict is not None:
-            insertReading(resultDict, forecast)
+            db.insertReading(resultDict, forecast)
 
         print("Control devices.")
 
@@ -81,10 +83,10 @@ while (True):
             print("Will Read Sensor Data.")
             log("Will Read Sensor Data.")
 
-            deviceController.readSensorData()
+            deviceController.readSensorData(db)
             lastSensorRead = currentTime
 
-        deviceController.controlDevices()
+        deviceController.controlDevices(db)
 
     except Exception as err:
         print(f"error reading data: {err}")
