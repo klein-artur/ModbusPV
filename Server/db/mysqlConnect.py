@@ -115,8 +115,8 @@ class MySqlConnector:
                                             SET
                                                 factor = (factor * numberOfInputs + %s / %s) / (numberOfInputs + 1), numberOfInputs = numberOfInputs + 1
                                                 WHERE
-                                                    month = DATE_FORMAT (FROM_UNIXTIME (%s), "%m")
-                                                    AND hour = DATE_FORMAT (FROM_UNIXTIME (%s), "%H");
+                                                    month = DATE_FORMAT(FROM_UNIXTIME(%s), "%m")
+                                                    AND hour = DATE_FORMAT(FROM_UNIXTIME(%s), "%H");
                                                     
                                         '''
                         

@@ -35,10 +35,13 @@ class MyDB {
         SELECT max(a.timestamp) as `timestamp`, max(a.forecast * IF(a.timestamp > ?, c.factor, 1)) as `forecast`, avg(b.pv_input) as `pv_input`, avg(b.battery_charge) as `battery_charge`, a.forecast as `orig_forecast`
         from forecasts a 
             left join readings b on b.timestamp between a.timestamp - 3600  and a.timestamp
-            left join forecastFactor c on c.month = DATE_FORMAT (FROM_UNIXTIME (a.timestamp), "%m") and c.hour = DATE_FORMAT (FROM_UNIXTIME (a.timestamp), "%H")
+            left join forecastFactor c on c.month = DATE_FORMAT(FROM_UNIXTIME(a.timestamp), "%m") and c.hour = DATE_FORMAT(FROM_UNIXTIME(a.timestamp), "%H")
         where a.timestamp between ? and ?
         group by a.timestamp
         order by a.timestamp ASC;');
+
+
+
         $dataStatement->bind_param('sss', $current, $begin, $end);
         $dataStatement->execute();
         $dataResult = $dataStatement->get_result();
