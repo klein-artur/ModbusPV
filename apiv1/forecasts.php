@@ -5,7 +5,7 @@
 
     header('Content-type: application/json');
 
-    include 'sqliteConnect.php';
+    include 'mysqlconnect.php';
 
     echo json_encode((new MyDB())->getForecasts(86400, 86400));
 ?>

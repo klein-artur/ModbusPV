@@ -5,7 +5,7 @@
 
     header('Content-type: application/json');
 
-    include 'sqliteConnect.php';
+    include 'mysqlConnect.php';
 
     echo json_encode((new MyDB())->getDailyHistory());
 ?>
