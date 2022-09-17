@@ -3,7 +3,7 @@ from . import ModbusTCPReader
 import collections
 from time import sleep
 
-DEBUG = True
+DEBUG = False
 
 from time import time
 
