@@ -69,6 +69,9 @@ class MySqlConnector:
                                             consumption real
                                         );""")
 
+            cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS last_change integer;""")
+            cursor.execute("""Update """)
+
             self.mydb.commit()
         except mysql.connector.Error as e:
             log(f"MySQL Error: {e}")
@@ -146,14 +149,16 @@ class MySqlConnector:
                     "timestamp": row[3],
                     "temperature_c": row[4],
                     "temperature_f": row[5],
-                    "humidity": row[6]
+                    "humidity": row[6],
+                    "consumption": row[7],
+                    "lastChange": row[8]
                 }
             )
 
         return result
 
     def getCurrentPVStateMovingAverage(self):
-        sql = 'select avg(subtable.grid_output), avg(subtable.battery_charge) from (select * from readings order by `timestamp` desc limit 20) as subtable;'
+        sql = 'select avg(subtable.grid_output), avg(subtable.battery_charge) from (select * from readings order by `timestamp` desc limit 10) as subtable;'
 
         cur = self.mydb.cursor()
         cur.execute(sql)
@@ -183,11 +188,12 @@ class MySqlConnector:
                 "temperature_c": row[4],
                 "temperature_f": row[5],
                 "humidity": row[6],
-                "consumption": row[7]
+                "consumption": row[7],
+                "lastChange": row[8]
             }
 
-    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None, consumption=None):
-        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption) values(%s, %s, %s, %s, %s, %s, %s)'
+    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None, consumption=None, lastChange=None):
+        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption, last_change) values(%s, %s, %s, %s, %s, %s, %s, %s)'
 
         cur = self.mydb.cursor(prepared=True)
 
@@ -213,6 +219,10 @@ class MySqlConnector:
         if toSaveConsumption is None:
             toSaveConsumption = current['consumption'] if current is not None else None
 
+        toSaveLastChange = lastChange
+        if toSaveLastChange is None:
+            toSaveLastChange = current['lastChange'] if current is not None else None
+
         cur.execute(
             sql, 
             (
@@ -222,7 +232,8 @@ class MySqlConnector:
                 toSaveTemperature_c, 
                 toSaveTemperature_f, 
                 toSaveHumidity, 
-                toSaveConsumption
+                toSaveConsumption,
+                toSaveLastChange
             )
         )
 

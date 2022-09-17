@@ -16,7 +16,8 @@ class DeviceController:
         result = next(filter(lambda item: item["identifier"] == identifier, list), {
             "identifier": identifier,
             "state": 0,
-            "timestamp": 0
+            "timestamp": 0,
+            "lastChange": 0
         })
 
         return result
@@ -77,12 +78,12 @@ class DeviceController:
         index = 0
         while switchedOff < needed and index < len(devices):
             device = devices[index]
-            if time() - device["timestamp"] > device["min_on_time"]:
+            if device['lastChange'] is None or time() - device["lastChange"] > device["min_on_time"]:
                 toDo[device["identifier"]] = { 
                     'on': False, 
                     'reason': "not enough power available" if isMandatory else "clear needed power" 
                 }
-                switchedOff += device["needed_power"]
+                switchedOff += device["consumption"]
             index += 1
 
         return toDo if isMandatory or switchedOff >= needed else None
@@ -98,7 +99,7 @@ class DeviceController:
             print(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             log(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             try:
-                dbConnection.saveCurrentDeviceStatus(device['identifier'], 1 if on else 0)
+                dbConnection.saveCurrentDeviceStatus(device['identifier'], state=1 if on else 0, lastChange=time())
             except Exception as err:
                 log(f"failed to save device state: {err}")
             
@@ -152,7 +153,7 @@ class DeviceController:
             offDevicesHighFirst = sorted(
                 list(
                     filter(
-                        lambda device: device["state"] == 0 or device['state'] is None, 
+                        lambda device: (device["state"] == 0 or device['state'] is None) and 'priority' in device,
                         devices
                     )
                 ), 
@@ -171,7 +172,7 @@ class DeviceController:
                 for device in offDevicesHighFirst:
                     if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device, dbConnection):
                         if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
-                            if time() - device["timestamp"] > device["min_off_time"]:
+                            if device['lastChange'] is None or time() - device["lastChange"] > device["min_off_time"]:
                                 toDo[device["identifier"]] = { 
                                                                 'on': True, 
                                                                 'reason': "enought power available"
