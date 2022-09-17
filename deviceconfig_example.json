@@ -8,6 +8,7 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
     {
         "identifier": "someUniqueIdentifier",
         "device": "shelly",
+        "name": "Human Readable Name",
         "type": "relay",
         "api_url": "https://shelly-40-eu.shelly.cloud",
         "parameter": {
@@ -26,6 +27,7 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
     },
     {
         "identifier": "someOtherUniqueIdentifier",
+        "name": "Human Readable Name",
         "device": "shelly",
         "type": "sensor",
         "api_url": "https://shelly-40-eu.shelly.cloud",
@@ -36,6 +38,7 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
     },
     {
         "identifier": "someNextUniqueIdentifier",
+        "name": "Human Readable Name",
         "device": "shelly",
         "type": "relay",
         "api_url": "https://shelly-40-eu.shelly.cloud",

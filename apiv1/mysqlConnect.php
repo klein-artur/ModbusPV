@@ -55,6 +55,34 @@ class MyDB {
         return $result;
     }
 
+    function getDeviceLog($limit) {
+        $sql = $this->connection->prepare("
+            select deviceStatus.* 
+            from deviceStatus, (
+                select `last_change`, `identifier`, max(`timestamp`) as `timestamp` from `deviceStatus` where `last_change` > 0 group by `last_change`, `identifier`
+            ) max_states 
+            where deviceStatus.last_change = max_states.last_change 
+            and deviceStatus.`timestamp` = max_states.timestamp 
+            and deviceStatus.identifier = max_states.identifier 
+            limit $limit;
+        ");
+        
+        $sql->execute();
+        $dataResult = $sql->get_result();
+
+        $result = [];
+
+        while ($element = $dataResult->fetch_assoc()) {
+            $result[] =  [
+                "identifier" => $element['identifier'],
+                "isOn" => $element['state'] == 1 ? TRUE : FALSE,
+                "lastChange" => $element['last_change']
+            ];
+        }
+        
+        return $result;
+    }
+
     function getDailyHistory() {
         $h24 = time() - 86400;
 
