@@ -152,7 +152,7 @@ class DeviceController:
             offDevicesHighFirst = sorted(
                 list(
                     filter(
-                        lambda device: device["state"] == 0, 
+                        lambda device: device["state"] == 0 or device['state'] is None, 
                         devices
                     )
                 ), 
