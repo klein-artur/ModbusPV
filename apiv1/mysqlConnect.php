@@ -64,6 +64,7 @@ class MyDB {
             where deviceStatus.last_change = max_states.last_change 
             and deviceStatus.`timestamp` = max_states.timestamp 
             and deviceStatus.identifier = max_states.identifier 
+            order by deviceStatus.last_change desc 
             limit $limit;
         ");
         

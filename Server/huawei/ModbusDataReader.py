@@ -3,7 +3,7 @@ from . import ModbusTCPReader
 import collections
 from time import sleep
 
-DEBUG = False
+DEBUG = True
 
 from time import time
 
@@ -66,10 +66,10 @@ class ModbusDataReader:
         if DEBUG:
             sleep(1.5)
             return {
-                "gridOutput": 18.6115,
-                "batteryCharge": 0.0,
+                "gridOutput": -0.01,
+                "batteryCharge": -2.0,
                 "batteryState": 100,
-                "pvInput": 19.1125,
+                "pvInput": 0.0,
                 "timestamp": int(time()),
                 "accGridOutput": 421.02,
                 "accGridInput": 47.5
