@@ -72,6 +72,8 @@ class MySqlConnector:
             cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS last_change integer;""")
             cursor.execute("""Update """)
 
+            cursor.close()
+
             self.mydb.commit()
         except mysql.connector.Error as e:
             log(f"MySQL Error: {e}")
@@ -125,6 +127,8 @@ class MySqlConnector:
                         
                         cursor.execute(factorUpdateSQL, (averageInput, forecast, timestamp, timestamp))
 
+        cursor.close()
+
         self.mydb.commit()
 
     def getCurrentDeviceStates(self):
@@ -155,6 +159,8 @@ class MySqlConnector:
                 }
             )
 
+        cursor.close()
+
         return result
 
     def getCurrentPVStateMovingAverage(self):
@@ -164,6 +170,8 @@ class MySqlConnector:
         cur.execute(sql)
 
         row = cur.fetchone()
+
+        cur.close()
 
         return {
                 "gridOutput": row[0],
@@ -180,6 +188,8 @@ class MySqlConnector:
 
         if row is None:
             return None
+
+        cursor.close()
 
         return {
                 "identifier": row[1],
@@ -236,5 +246,7 @@ class MySqlConnector:
                 toSaveLastChange
             )
         )
+
+        cur.close()
 
         self.mydb.commit()
