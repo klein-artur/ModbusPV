@@ -50,19 +50,24 @@ class DeviceController:
         if 'condition' in device:
             condition = device['condition']
             currentDeviceStatus = dbConnection.getCurrentDeviceStatus(condition['device'])
+
+            fieldValue = currentDeviceStatus[condition['field']]
+
+            if fieldValue is None:
+                return False
             
             if condition['comparision'] == '>':
-                return currentDeviceStatus[condition['field']] > condition['value']
+                return  fieldValue> condition['value']
             elif condition['comparision'] == '<':
-                return currentDeviceStatus[condition['field']] < condition['value']
+                return fieldValue < condition['value']
             elif condition['comparision'] == '>=':
-                return currentDeviceStatus[condition['field']] >= condition['value']
+                return fieldValue >= condition['value']
             elif condition['comparision'] == '<=':
-                return currentDeviceStatus[condition['field']] <= condition['value']
+                return fieldValue <= condition['value']
             elif condition['comparision'] == '==':
-                return currentDeviceStatus[condition['field']] == condition['value']
+                return fieldValue == condition['value']
             elif condition['comparision'] == '!=':
-                return currentDeviceStatus[condition['field']] != condition['value']
+                return fieldValue != condition['value']
             else:
                 return False
 
