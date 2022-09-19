@@ -37,7 +37,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 lastForecastRead = 0
-lastSensorRead = 0
+lastDeviceControl = 0
 
 db = MySqlConnector()
 
@@ -79,14 +79,15 @@ while (True):
 
         print("Control devices.")
 
-        if currentTime - lastSensorRead > 120:
+        if currentTime - lastDeviceControl > 180:
             print("Will Read Sensor Data.")
             log("Will Read Sensor Data.")
 
             deviceController.readSensorData(db)
-            lastSensorRead = currentTime
+            deviceController.controlDevices(db)
 
-        deviceController.controlDevices(db)
+            lastDeviceControl = currentTime
+
 
     except Exception as err:
         print(f"error reading data: {err}")

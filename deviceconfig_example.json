@@ -16,13 +16,10 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
             "auth_key": "yourapikey",
             "id": "thedeviceid"
         },
-        "on_off_parameter_name": "turn",
-        "on_parameter_value": "on",
-        "off_parameter_value": "off",
         "priority": 60,
         "min_on_time": 1200,
         "min_off_time": 1200,
-        "needed_power": 600,
+        "estimated_consumption": 600,
         "use_waiting_power": false
     },
     {
@@ -53,13 +50,10 @@ Loading the battery with 5kw has prio 34, loading it with 2kw has prio 67.
             "value": 26.0,
             "comparision": "<"
         },
-        "on_off_parameter_name": "turn",
-        "on_parameter_value": "on",
-        "off_parameter_value": "off",
         "priority": 60,
         "min_on_time": 1200,
         "min_off_time": 1200,
-        "needed_power": 600,
+        "estimated_consumption": 600,
         "use_waiting_power": false
     },
     

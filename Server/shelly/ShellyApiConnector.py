@@ -38,7 +38,7 @@ def switchDevice(device, on):
     url = f'{device["api_url"]}{controlPart}'
 
     payload = device["parameter"]
-    payload[device["on_off_parameter_name"]] = device["on_parameter_value"] if on else device["off_parameter_value"]
+    payload['turn'] = 'on' if on else 'off'
 
     response = requests.request("POST", url, data=payload)
 

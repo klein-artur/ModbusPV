@@ -164,7 +164,7 @@ class MySqlConnector:
         return result
 
     def getCurrentPVStateMovingAverage(self):
-        sql = 'select avg(subtable.grid_output), avg(subtable.battery_charge) from (select * from readings order by `timestamp` desc limit 10) as subtable;'
+        sql = 'select avg(subtable.grid_output), avg(subtable.battery_charge), avg(subtable.battery_state) from (select * from readings order by `timestamp` desc limit 10) as subtable;'
 
         cur = self.mydb.cursor()
         cur.execute(sql)
@@ -175,7 +175,8 @@ class MySqlConnector:
 
         return {
                 "gridOutput": row[0],
-                "batteryCharge": row[1]
+                "batteryCharge": row[1],
+                "batteryState": row[2]
             }
 
     def getCurrentDeviceStatus(self, identifier):

@@ -28,23 +28,27 @@ class DeviceController:
 
     def __calculateNeededPower(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
         if device["priority"] < 34:
-            return device["needed_power"] - restWithBattery
+            return device["estimated_consumption"] - restWithBattery
         elif device["priority"] > 34 and device["priority"] < 67:
-            return device["needed_power"] - restWithBatteryPartially
+            return device["estimated_consumption"] - restWithBatteryPartially
         else:
-            return device["needed_power"] - restWithoutBattery
+            return device["estimated_consumption"] - restWithoutBattery
+
+    def __isOverpowered(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
+        if device["priority"] < 34:
+            return restWithBattery < 0
+        elif device["priority"] > 34 and device["priority"] < 67:
+            return restWithBatteryPartially < 0
+        else:
+            return restWithoutBattery < 0
 
     def __isDeviceBelowExcess(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
-        isBelow = False
         if device["priority"] < 34:
-            isBelow = device["needed_power"] <= restWithBattery
+            return device["estimated_consumption"] <= restWithBattery
         elif device["priority"] > 34 and device["priority"] < 67:
-            isBelow = device["needed_power"] <= restWithBatteryPartially
+            return device["estimated_consumption"] <= restWithBatteryPartially
         else:
-            isBelow = device["needed_power"] <= restWithoutBattery
-
-        return isBelow
-
+            return device["estimated_consumption"] <= restWithoutBattery
     
     def __isFullfillingCondition(self, device, dbConnection):
         if 'condition' in device:
@@ -127,18 +131,24 @@ class DeviceController:
 
         devices = list(map(lambda item: self.__combine(item, self.__getStateFromList(deviceStates, item["identifier"])), deviceConfig))
 
-        restWithBattery = currentPVState["gridOutput"] * 1000
-        restWithBatteryPartially = (max(currentPVState["batteryCharge"] - 2, 0) + currentPVState["gridOutput"]) * 1000
-        restWithoutBattery = (currentPVState["gridOutput"] + currentPVState["batteryCharge"]) * 1000
+        batteryStateFactor = 0
+        if currentPVState["batteryState"] <= 98:
+            batteryStateFactor = 1
+        elif currentPVState["batteryState"] == 99:
+            batteryStateFactor = 0.5
+        else:
+            batteryStateFactor = 0
 
-        hasExcess = restWithoutBattery > 0
+        availableWithBattery = (currentPVState["gridOutput"] + (currentPVState["batteryCharge"] - (5 * batteryStateFactor))) * 1000
+        availableWithBatteryPartially = (currentPVState["gridOutput"] + (currentPVState["batteryCharge"] - (2 * batteryStateFactor))) * 1000
+        availableWithoutBattery = (currentPVState["gridOutput"] + currentPVState["batteryCharge"]) * 1000
 
         toDo = {}
 
         onDevicesLowFirst = sorted(
             list(
                 filter(
-                    lambda device: device["state"] == 1, 
+                    lambda device: device["state"] == 1 and 'priority' in device, 
                     devices
                 )
             ), 
@@ -146,72 +156,65 @@ class DeviceController:
         )
 
         for device in list(onDevicesLowFirst):
-            if not self.__isFullfillingCondition(device, dbConnection):
+
+            if not self.__isFullfillingCondition(device, dbConnection) or self.__isOverpowered(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
                 toDo[device["identifier"]] = { 
                     'on': False, 
                     'reason': "condition not fullfilled"
                 }
                 onDevicesLowFirst.remove(device)
+                availableWithBattery = availableWithBattery + device['consumption']
+                availableWithBatteryPartially = availableWithBatteryPartially + device['consumption']
+                availableWithoutBattery = availableWithoutBattery + device['consumption']
 
-        if hasExcess:
+        offDevicesHighFirst = sorted(
+            list(
+                filter(
+                    lambda device: (device["state"] == 0 or device['state'] is None) and 'priority' in device,
+                    devices
+                )
+            ), 
+            key=lambda i: i['priority'],
+            reverse=True
+        )
 
-            offDevicesHighFirst = sorted(
-                list(
-                    filter(
-                        lambda device: (device["state"] == 0 or device['state'] is None) and 'priority' in device,
-                        devices
-                    )
-                ), 
-                key=lambda i: i['priority'],
-                reverse=True
-            )
+        if len(offDevicesHighFirst) > 0:
 
-            if len(offDevicesHighFirst) > 0:
+            highestPrioDeviceHandled = False
 
-                availableWithBattery = restWithBattery
-                availableWithBatteryPartially = restWithBatteryPartially
-                availableWithoutBattery = restWithoutBattery
-
-                highestPrioDeviceHandled = False
-
-                for device in offDevicesHighFirst:
-                    if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device, dbConnection):
-                        if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
-                            if device['lastChange'] is None or time() - device["lastChange"] > device["min_off_time"]:
-                                toDo[device["identifier"]] = { 
-                                                                'on': True, 
-                                                                'reason': "enought power available"
-                                                            }
-                                availableWithBattery = max(availableWithBattery - device["needed_power"], 0)
-                                availableWithBatteryPartially = max(availableWithBatteryPartially - device["needed_power"], 0)
-                                availableWithoutBattery = max(availableWithoutBattery - device["needed_power"], 0)
-
-                    elif self.__isFullfillingCondition(device, dbConnection):
-                        highestPrioDeviceHandled = True
-                        
-                        if time() - device["timestamp"] > device["min_off_time"]:
-                            needed = self.__calculateNeededPower(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery)
-
-                            tryToSwitchOff = self.__switchOffDevices(
-                                list(filter(
-                                    lambda lowerDevice: lowerDevice["priority"] <= device["priority"],
-                                    onDevicesLowFirst
-                                )), 
-                                needed, 
-                                False
-                            )
-
-                            if tryToSwitchOff is not None:
-                                toDo.update(tryToSwitchOff)
-                                toDo[device["identifier"]] = { 
+            for device in offDevicesHighFirst:
+                if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device, dbConnection):
+                    if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
+                        if device['lastChange'] is None or time() - device["lastChange"] > device["min_off_time"]:
+                            toDo[device["identifier"]] = { 
                                                             'on': True, 
-                                                            'reason': "cleared enough power"
+                                                            'reason': "enought power available"
                                                         }
+                            availableWithBattery = max(availableWithBattery - device["estimated_consumption"], 0)
+                            availableWithBatteryPartially = max(availableWithBatteryPartially - device["estimated_consumption"], 0)
+                            availableWithoutBattery = max(availableWithoutBattery - device["estimated_consumption"], 0)
 
-        else:
-            needed = abs(restWithoutBattery)
+                elif self.__isFullfillingCondition(device, dbConnection):
+                    highestPrioDeviceHandled = True
+                    
+                    if time() - device["timestamp"] > device["min_off_time"]:
+                        needed = self.__calculateNeededPower(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery)
 
-            toDo = self.__switchOffDevices(onDevicesLowFirst, needed, True)
+                        tryToSwitchOff = self.__switchOffDevices(
+                            list(filter(
+                                lambda lowerDevice: lowerDevice["priority"] <= device["priority"],
+                                onDevicesLowFirst
+                            )), 
+                            needed, 
+                            False
+                        )
+
+                        if tryToSwitchOff is not None:
+                            toDo.update(tryToSwitchOff)
+                            toDo[device["identifier"]] = { 
+                                                        'on': True, 
+                                                        'reason': "cleared enough power"
+                                                    }
 
         for identifier, on in toDo.items():
             self.__switchDevice(
