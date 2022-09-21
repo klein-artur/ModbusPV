@@ -158,14 +158,15 @@ class DeviceController:
         for device in list(onDevicesLowFirst):
 
             if not self.__isFullfillingCondition(device, dbConnection) or self.__isOverpowered(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
-                toDo[device["identifier"]] = { 
-                    'on': False, 
-                    'reason': "condition not fullfilled"
-                }
-                onDevicesLowFirst.remove(device)
-                availableWithBattery = availableWithBattery + device['consumption']
-                availableWithBatteryPartially = availableWithBatteryPartially + device['consumption']
-                availableWithoutBattery = availableWithoutBattery + device['consumption']
+                if device['lastChange'] is None or time() - device['lastChange'] > device['min_on_time']:
+                    toDo[device["identifier"]] = { 
+                        'on': False, 
+                        'reason': "condition not fullfilled"
+                    }
+                    onDevicesLowFirst.remove(device)
+                    availableWithBattery = availableWithBattery + device['consumption']
+                    availableWithBatteryPartially = availableWithBatteryPartially + device['consumption']
+                    availableWithoutBattery = availableWithoutBattery + device['consumption']
 
         offDevicesHighFirst = sorted(
             list(
