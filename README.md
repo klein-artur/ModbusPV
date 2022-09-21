@@ -39,10 +39,12 @@ Please be aware that I will not guarantee that this does not destroy anything...
 
 # Installation and Starting
 
+ - Have some MySQL server. There are tons of tutorials how to install one on raspberry pi. 
  - Install pymodbus (https://github.com/riptideio/pymodbus).
  - Copy the `config_excample.py` file from the `Server` directory, call the copy `config.py` and add your data there. **DO NOT ADD THIS TO THE REPO, IT CONTAINS PRIVATE DATA!**
+ - Copy the `mysqlconfig_example.py` file from the `Server/db` directory, call it `mysqlconfig.py`. Add your database infos there. Also do not add this to the repo. 
  - Copy the `deviceconfig_example.json` file from the `Server` directory. call the copy `deviceconfig.json`. Add your devices to control there. Currently only Shelly Smart Plugs are implemented. **DO NOT ADD THIS TO THE REPO, IT CONTAINS PRIVATE DATA!**
- - Copy the `config_example.php` file from the `apiv1` directory and call it `config.php`. Do also not add this to the repo.
+ - Copy the `config_example.php` file from the `apiv1` directory and call it `config.php`. Change the values to fit your needs. Do also not add this to the repo.
 
  ## Starting:
  If you only want the server to run, it is enough to start the `Server.py` file and serve the `apiv1` through any webserver.
