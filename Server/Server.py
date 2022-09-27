@@ -8,7 +8,7 @@ from db.mysqlConnect import MySqlConnector
 import pathlib
 from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
-from time import time
+from time import sleep, time
 from datetime import datetime
 from DeviceController import DeviceController
 import signal
@@ -92,6 +92,7 @@ while (True):
     except Exception as err:
         print(f"error reading data: {err}")
         log(f"error reading data: {err}")
+        sleep(1)
         reader = ModbusDataReader(
             ModbusTCPReader(MODBUS_IP_ADDRESS)
         )

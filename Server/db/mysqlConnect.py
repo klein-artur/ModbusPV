@@ -70,7 +70,6 @@ class MySqlConnector:
                                         );""")
 
             cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS last_change integer;""")
-            cursor.execute("""Update """)
 
             cursor.close()
 
@@ -93,11 +92,15 @@ class MySqlConnector:
 
         cursor.execute(sql, (reading["gridOutput"], reading["batteryCharge"], reading["pvInput"], reading["batteryState"], reading["timestamp"], reading["accGridOutput"], reading["accGridInput"]))
 
+        cursor.close()
+
         if forecasts is not None:
             for timestamp, forecast in forecasts.items():
                 cursor = self.mydb.cursor(prepared=True)
                 forecastUpdateSql = "insert into forecasts (timestamp, forecast) values (%s, %s) on duplicate key update forecast=%s;"
                 cursor.execute(forecastUpdateSql, (timestamp, forecast, forecast))
+
+                cursor.close()
 
                 if timestamp < time() - 21600 and forecast > 0:
                     cursor = self.mydb.cursor(prepared=True)
@@ -112,6 +115,7 @@ class MySqlConnector:
                         (timestamp, timestamp)
                     )
                     averageInput = cursor.fetchone()[0]
+                    cursor.close()
                     if averageInput is not None:
                         cursor = self.mydb.cursor(prepared=True)
                         factorUpdateSQL = '''      
@@ -126,6 +130,8 @@ class MySqlConnector:
                                         '''
                         
                         cursor.execute(factorUpdateSQL, (averageInput, forecast, timestamp, timestamp))
+                        cursor.close()
+
 
         cursor.close()
 
