@@ -22,14 +22,19 @@
 
     $deviceLog = (new MyDB())->getDeviceLog(50);
 
+    $result = [];
+
     foreach ( $deviceLog as &$device ) {
         $deviceConfig = findDevice($device['identifier'], $config);
-        $name = $deviceConfig['identifier'];
-        if (isset($deviceConfig['name'])) {
-            $name = $deviceConfig['name'];
+        if ($deviceConfig) {
+            $name = $deviceConfig['identifier'];
+            if (isset($deviceConfig['name'])) {
+                $name = $deviceConfig['name'];
+            }
+            $device['name'] = $name;
+            $result[] = $device;
         }
-        $device['name'] = $name;
     }
 
-    echo json_encode($deviceLog);
+    echo json_encode($result);
 ?>
