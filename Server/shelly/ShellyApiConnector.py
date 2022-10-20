@@ -1,4 +1,5 @@
 from time import sleep
+from Logger import log
 import requests
 
 def readSensorData(device):
@@ -44,5 +45,10 @@ def switchDevice(device, on):
 
     # Make sure that the shelly api is not called twice in a second. This is a dirty workaround!
     sleep(1.5)
+
+    responseJson = response.json()
+
+    print(responseJson)
+    log(responseJson)
 
     return response.json()["isok"]

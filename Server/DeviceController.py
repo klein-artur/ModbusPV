@@ -161,7 +161,7 @@ class DeviceController:
                 if device['lastChange'] is None or time() - device['lastChange'] > device['min_on_time']:
                     toDo[device["identifier"]] = { 
                         'on': False, 
-                        'reason': "condition not fullfilled"
+                        'reason': "condition not fullfilled or not enough power available"
                     }
                     onDevicesLowFirst.remove(device)
                     availableWithBattery = availableWithBattery + device['consumption']
