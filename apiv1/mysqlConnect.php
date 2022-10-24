@@ -84,6 +84,26 @@ class MyDB {
         return $result;
     }
 
+    function getDeviceInfo($identifier) {
+        $sql = $this->connection->prepare("select * from deviceStatus where `identifier` = ? order by `timestamp` desc limit 1;");
+        
+        $sql->bind_param('s', $identifier);
+        $sql->execute();
+        $dataResult = $sql->get_result();
+
+        while ($element = $dataResult->fetch_assoc()) {
+            return [
+                "identifier" => $element['identifier'],
+                "isOn" => $element['state'] == 1 ? TRUE : FALSE,
+                "lastChange" => $element['last_change'],
+                "consumption" => $element['consumption'],
+                "temperature" => $element['temperature_c']
+            ];
+        }
+        
+        
+    }
+
     function getDailyHistory() {
         $h24 = time() - 86400;
 
