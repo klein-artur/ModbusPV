@@ -20,9 +20,11 @@
     $string = file_get_contents("../deviceconfig.json");
     $config = json_decode($string,true);
 
-    $deviceLog = (new MyDB())->getDeviceLog(50);
+    $identifier = isset($_GET['identifier']) ? $_GET['identifier'] : NULL;
 
     $result = [];
+
+    $deviceLog = (new MyDB())->getDeviceLog(50, $identifier);
 
     foreach ( $deviceLog as &$device ) {
         $deviceConfig = findDevice($device['identifier'], $config);
