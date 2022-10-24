@@ -26,6 +26,7 @@
                     $name = $deviceConfig['name'];
                 }
                 $device['name'] = $name;
+                $device['log'] = $dbRepo->getDeviceLog(50, $deviceConfig['identifier']);
                 $result[] = $device;
             }
         }

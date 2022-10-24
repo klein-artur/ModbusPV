@@ -55,18 +55,36 @@ class MyDB {
         return $result;
     }
 
-    function getDeviceLog($limit) {
-        $sql = $this->connection->prepare("
-            select deviceStatus.* 
-            from deviceStatus, (
-                select `last_change`, `identifier`, max(`timestamp`) as `timestamp` from `deviceStatus` where `last_change` > 0 group by `last_change`, `identifier`
-            ) max_states 
-            where deviceStatus.last_change = max_states.last_change 
-            and deviceStatus.`timestamp` = max_states.timestamp 
-            and deviceStatus.identifier = max_states.identifier 
-            order by deviceStatus.last_change desc 
-            limit $limit;
-        ");
+    function getDeviceLog($limit, $identifier = NULL) {
+        $sql;
+        if ($identifier) {
+            $sql = $this->connection->prepare("
+                select deviceStatus.* 
+                from deviceStatus, (
+                    select `last_change`, `identifier`, max(`timestamp`) as `timestamp` from `deviceStatus` where `last_change` > 0 group by `last_change`, `identifier`
+                ) max_states 
+                where deviceStatus.last_change = max_states.last_change 
+                and deviceStatus.`timestamp` = max_states.timestamp 
+                and deviceStatus.identifier = max_states.identifier 
+                and deviceStatus.identifier = ?
+                order by deviceStatus.last_change desc 
+                limit $limit;
+            ");
+
+            $sql->bind_param('s', $identifier);
+        } else {
+            $sql = $this->connection->prepare("
+                select deviceStatus.* 
+                from deviceStatus, (
+                    select `last_change`, `identifier`, max(`timestamp`) as `timestamp` from `deviceStatus` where `last_change` > 0 group by `last_change`, `identifier`
+                ) max_states 
+                where deviceStatus.last_change = max_states.last_change 
+                and deviceStatus.`timestamp` = max_states.timestamp 
+                and deviceStatus.identifier = max_states.identifier 
+                order by deviceStatus.last_change desc 
+                limit $limit;
+            ");
+        }
         
         $sql->execute();
         $dataResult = $sql->get_result();
