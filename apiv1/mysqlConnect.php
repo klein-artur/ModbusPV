@@ -110,11 +110,15 @@ class MyDB {
         $dataResult = $sql->get_result();
 
         while ($element = $dataResult->fetch_assoc()) {
+            $consumption = NULL;
+            if (array_key_exists('consumption', $element)) {
+                $consumption = $element['consumption'] / 1000;
+            }
             return [
                 "identifier" => $element['identifier'],
                 "isOn" => $element['state'] == 1 ? TRUE : FALSE,
                 "lastChange" => $element['last_change'],
-                "consumption" => $element['consumption'],
+                "consumption" => $consumption,
                 "temperature" => $element['temperature_c']
             ];
         }
