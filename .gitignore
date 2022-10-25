@@ -9,3 +9,4 @@ deviceconfig.json
 apiv1/sqliteConnect.php
 Server/db/data/database.db-journal
 Server/db/mysqlconfig.py
+apiv2/.htpasswd
