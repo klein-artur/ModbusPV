@@ -97,7 +97,7 @@ class MyDB {
 
         $dataResult = $sql->get_result();
 
-        logMessage('result fetched.')
+        logMessage('result fetched.');
 
         $result = [];
 
