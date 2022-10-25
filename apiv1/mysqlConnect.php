@@ -1,6 +1,7 @@
 <?php
 
 include 'config.php';
+require_once('log.php');
 
 class MyDB {
 
@@ -11,7 +12,9 @@ class MyDB {
         global $MYSQL_USER;
         global $MYSQL_PASSWORD;
         global $MYSQL_DATABASE;
+        logMessage('opening the database now.');
 		$this->connection = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASSWORD, $MYSQL_DATABASE);
+        logMessage('database openede.');
 		if ($this->connection->connect_error) {
 			$this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
 		}
@@ -57,6 +60,7 @@ class MyDB {
 
     function getDeviceLog($limit, $identifier = NULL) {
         $sql;
+        logMessage('getting device logs from the database.');
         if ($identifier) {
             $sql = $this->connection->prepare("
                 select deviceStatus.* 
@@ -86,8 +90,11 @@ class MyDB {
             ");
         }
         
+        logMessage('trying to execute the sql.');
         $sql->execute();
         $dataResult = $sql->get_result();
+
+        logMessage('sql executed.');
 
         $result = [];
 
@@ -98,6 +105,8 @@ class MyDB {
                 "lastChange" => $element['last_change']
             ];
         }
+
+        logMessage('logs fetched. Return them now.');
         
         return $result;
     }
