@@ -92,9 +92,12 @@ class MyDB {
         
         logMessage('trying to execute the sql.');
         $sql->execute();
+
+        logMessage('sql executed. Trying to get the result.');
+
         $dataResult = $sql->get_result();
 
-        logMessage('sql executed.');
+        logMessage('result fetched.')
 
         $result = [];
 
