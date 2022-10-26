@@ -216,7 +216,7 @@ class MyDB {
         $config = json_decode(file_get_contents("../deviceconfig.json"), true);
 
         foreach ($config as $deviceConfig) {
-            $device = $this->getDeviceInfo($config['identifier']);
+            $device = $this->getDeviceInfo($deviceConfig['identifier']);
             if ($device['consumption'] && !$device['forced'] && $device['state']) { 
                 $onDevicesPower += $device['consumption'];
             }
