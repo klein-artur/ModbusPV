@@ -211,18 +211,12 @@ class MyDB {
         //     ]
         // ];
 
-        $onDevicesSql = 'select deviceStatus.consumption as consumption from deviceStatus,
-        (select identifier, max(`timestamp`) as `timestamp` from deviceStatus group by identifier) max_states
-            where deviceStatus.identifier = max_states.identifier
-            and deviceStatus.timestamp = max_states.timestamp
-            and deviceStatus.`state` = 1;';
-        $deviceStateSql = $this->connection->prepare($onDevicesSql);
-        $deviceStateSql->execute();
-        $deviceStateRows = $deviceStateSql->get_result();
-
         $onDevicesPower = 0.0;
-        while ($element = $deviceStateRows->fetch_assoc()) {
-            if ($element['consumption']) { 
+        
+        $config = json_decode(file_get_contents("../deviceconfig.json"), true);
+
+        foreach ($config as $deviceConfig) {
+            if ($config['consumption'] && !$config['forced'] && $config['state']) { 
                 $onDevicesPower += $element['consumption'];
             }
         }
