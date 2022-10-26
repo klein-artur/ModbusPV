@@ -131,7 +131,8 @@ class MyDB {
                 "isOn" => $element['state'] == 1 ? TRUE : FALSE,
                 "lastChange" => $element['last_change'],
                 "consumption" => $consumption,
-                "temperature" => $element['temperature_c']
+                "temperature" => $element['temperature_c'],
+                "forced" => $element['forced']
             ];
         }
         

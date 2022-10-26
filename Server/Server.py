@@ -10,7 +10,7 @@ from pathlib import Path
 from ForecastReader import combinedForecasts, ForecastPlane
 from time import sleep, time
 from datetime import datetime
-from DeviceController import DeviceController
+from devices.DeviceController import DeviceController
 import signal
 import sys
 
@@ -77,9 +77,9 @@ while (True):
         if resultDict is not None:
             db.insertReading(resultDict, forecast)
 
-        print("Control devices.")
-
         if currentTime - lastDeviceControl > 180:
+
+            print("Control devices.")
             print("Will Read Sensor Data.")
             log("Will Read Sensor Data.")
 
