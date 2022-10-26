@@ -22,7 +22,7 @@ device = list(filter(
 if splittedCommand[0] == 'switch':
 
     newState = splittedCommand[1] == 'on'
-    newForced = False if device['forced'] else True
+    newForced = True
 
     if newState != device['state']:
         deviceController.switchDevice(
