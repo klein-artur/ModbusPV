@@ -42,6 +42,7 @@ class MySqlConnector:
                                             acc_grid_output real,
                                             acc_grid_input real,
                                             timestamp integer
+                                            index(timestamp)
                                         ); """)
 
             cursor.execute(""" CREATE TABLE IF NOT EXISTS forecasts (
@@ -60,13 +61,16 @@ class MySqlConnector:
 
             cursor.execute("""CREATE TABLE IF NOT EXISTS deviceStatus (
                                             id integer PRIMARY KEY AUTO_INCREMENT,
-                                            identifier text,
+                                            identifier varchar(2048),
                                             state integer,
                                             timestamp integer,
                                             temperature_c real,
                                             temperature_f real,
                                             humidity real,
-                                            consumption real
+                                            consumption real,
+                                            last_change integer,
+                                            index(timestamp, last_change)
+                                            index(identifier)
                                         );""")
 
             cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS last_change integer;""")
@@ -141,10 +145,10 @@ class MySqlConnector:
 
     def getCurrentDeviceStates(self):
         sql = ''' 
-        select deviceStatus.* from deviceStatus,
-            (select identifier, max(`timestamp`) as `timestamp` from deviceStatus group by identifier) max_states
-                where deviceStatus.identifier = max_states.identifier
-                and deviceStatus.timestamp = max_states.timestamp;
+        select deviceStatus.* from deviceStatus inner join
+        (select identifier, max(`timestamp`) as `timestamp` from deviceStatus group by identifier) as max_states
+        on deviceStatus.identifier = max_states.identifier
+        and deviceStatus.timestamp = max_states.timestamp;
         '''
         cursor = self.mydb.cursor()
         cursor.execute(sql)

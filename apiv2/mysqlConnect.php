@@ -70,7 +70,7 @@ class MyDB {
                 and deviceStatus.identifier = max_states.identifier
                 where deviceStatus.identifier = ?
                 order by deviceStatus.last_change desc 
-                limit 100;	
+                limit $limit;	
             ");
 
             $sql->bind_param('s', $identifier);
