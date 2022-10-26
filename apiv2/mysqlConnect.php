@@ -218,12 +218,12 @@ class MyDB {
         foreach ($config as $deviceConfig) {
             $device = $this->getDeviceInfo($config['identifier']);
             if ($device['consumption'] && !$device['forced'] && $device['state']) { 
-                $onDevicesPower += $element['consumption'];
+                $onDevicesPower += $device['consumption'];
             }
         }
 
         $result = [];
-        $consumption = $currentState["consumption"] - $onDevicesPower / 1000;
+        $consumption = $currentState["consumption"] - $onDevicesPower;
 
         for ($step = 0; $step < $number; $step++) {
             $forecast = $forecasts[$step];
