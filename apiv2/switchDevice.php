@@ -13,7 +13,8 @@
         $output = shell_exec('cd ../Server; '.$command);
 
         echo json_encode([
-            'result' => true
+            'result' => true,
+            'output' => $output
         ]);
     } else {
         echo json_encode([
