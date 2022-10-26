@@ -7,9 +7,45 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $deviceIdentifier = $_POST['identifier'];
-        $switch = $_POST['switch'];
+        $type = $_POST['type'];
+        $value = $_POST['value'];
 
-        $command = escapeshellcmd('../Server/control.py "'.$deviceIdentifier.'" switch='.$switch);
+        if ($value != "on" && $value != "off") {
+            echo json_encode([
+                'result' => false,
+                'output' => "value not valid."
+            ]);
+            exit;
+        }
+        if ($type != "switch" && $type != "mode") {
+            echo json_encode([
+                'result' => false,
+                'output' => "type not valid."
+            ]);
+            exit;
+        }
+
+        $string = file_get_contents("../deviceconfig.json");
+        $config = json_decode($string,true);
+
+        $found = false;
+
+        foreach ($config as $device) {
+            if ($device['identifier'] == $deviceIdentifier) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            echo json_encode([
+                'result' => false,
+                'output' => "device identifier not valid."
+            ]);
+            exit;
+        }
+
+        $command = escapeshellcmd('./control.py "'.$deviceIdentifier.'" '.$type.'='.$value);
         $output = shell_exec('cd ../Server; '.$command);
 
         echo json_encode([
