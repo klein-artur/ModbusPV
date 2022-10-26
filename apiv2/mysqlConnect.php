@@ -128,7 +128,7 @@ class MyDB {
                 "lastChange" => $element['last_change'],
                 "consumption" => $consumption,
                 "temperature" => $element['temperature_c'],
-                "forced" => $element['forced']
+                "forced" => $element['forced'] == 1 ? TRUE : FALSE
             ];
         }
         
