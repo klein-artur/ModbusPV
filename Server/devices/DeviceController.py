@@ -1,5 +1,9 @@
 import re
-from shelly import ShellyApiConnector
+import sys
+
+sys.path.append('..')
+
+from devices.shelly import ShellyApiConnector
 from Logger import log
 from urllib3 import encode_multipart_formdata
 from tkinter import N
@@ -97,7 +101,7 @@ class DeviceController:
 
         return toDo if isMandatory or switchedOff >= needed else None
 
-    def __switchDevice(self, device, on, reason, dbConnection):
+    def switchDevice(self, device, on, reason, dbConnection, forced=False):
 
         result = False
 
@@ -108,7 +112,7 @@ class DeviceController:
             print(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             log(f"Did switch device {device['identifier']} {'on' if on else 'off'} because {reason}.")
             try:
-                dbConnection.saveCurrentDeviceStatus(device['identifier'], state=1 if on else 0, lastChange=time())
+                dbConnection.saveCurrentDeviceStatus(device['identifier'], state=1 if on else 0, lastChange=time(), forced=forced)
             except Exception as err:
                 log(f"failed to save device state: {err}")
             
@@ -122,14 +126,23 @@ class DeviceController:
                 data = ShellyApiConnector.readSensorData(device)
                 dbConnection.saveCurrentDeviceStatus(device['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'], consumption=data['consumption'])
 
-
-    def controlDevices(self, dbConnection):
-        currentPVState = dbConnection.getCurrentPVStateMovingAverage()
-
+    
+    def getDevices(self, dbConnection):
         deviceStates = dbConnection.getCurrentDeviceStates()
         deviceConfig = self.__readDevicesFromConfigFile()
 
-        devices = list(map(lambda item: self.__combine(item, self.__getStateFromList(deviceStates, item["identifier"])), deviceConfig))
+        return list(map(lambda item: self.__combine(item, self.__getStateFromList(deviceStates, item["identifier"])), deviceConfig))
+
+
+    def controlDevices(self, dbConnection, identifier = None):
+        currentPVState = dbConnection.getCurrentPVStateMovingAverage()
+
+        devices = self.getDevices(dbConnection)
+
+        if identifier is not None:
+            devices = list(filter(lambda item: item["identifier"] == identifier, devices))
+
+        devices = list(filter(lambda item: not item["forced"], devices))
 
         batteryStateFactor = 0
         if currentPVState["batteryState"] <= 98:
@@ -218,7 +231,7 @@ class DeviceController:
                                                     }
 
         for identifier, on in toDo.items():
-            self.__switchDevice(
+            self.switchDevice(
                 next(filter(lambda item: item["identifier"] == identifier, devices)),
                 on['on'],
                 on['reason'],

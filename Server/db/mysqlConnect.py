@@ -71,6 +71,8 @@ class MySqlConnector:
 
             cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS last_change integer;""")
 
+            cursor.execute("""ALTER TABLE deviceStatus ADD COLUMN IF NOT EXISTS forced tinyint;""")
+
             cursor.close()
 
             self.mydb.commit()
@@ -161,7 +163,8 @@ class MySqlConnector:
                     "temperature_f": row[5],
                     "humidity": row[6],
                     "consumption": row[7],
-                    "lastChange": row[8]
+                    "lastChange": row[8],
+                    "forced": row[9]
                 }
             )
 
@@ -206,11 +209,12 @@ class MySqlConnector:
                 "temperature_f": row[5],
                 "humidity": row[6],
                 "consumption": row[7],
-                "lastChange": row[8]
+                "lastChange": row[8],
+                "forced": row[9]
             }
 
-    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None, consumption=None, lastChange=None):
-        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption, last_change) values(%s, %s, %s, %s, %s, %s, %s, %s)'
+    def saveCurrentDeviceStatus(self, identifier, state=None, temperature_c=None, temperature_f=None, humidity=None, consumption=None, lastChange=None, forced=None):
+        sql = 'insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption, last_change, forced) values(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
 
         cur = self.mydb.cursor(prepared=True)
 
@@ -240,6 +244,10 @@ class MySqlConnector:
         if toSaveLastChange is None:
             toSaveLastChange = current['lastChange'] if current is not None else None
 
+        toSaveForced = forced
+        if toSaveForced is None:
+            toSaveForced = current['forced'] if current is not None else None
+
         cur.execute(
             sql, 
             (
@@ -250,7 +258,8 @@ class MySqlConnector:
                 toSaveTemperature_f, 
                 toSaveHumidity, 
                 toSaveConsumption,
-                toSaveLastChange
+                toSaveLastChange,
+                toSaveForced
             )
         )
 
