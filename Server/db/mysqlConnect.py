@@ -41,7 +41,7 @@ class MySqlConnector:
                                             battery_state real,
                                             acc_grid_output real,
                                             acc_grid_input real,
-                                            timestamp integer
+                                            timestamp integer,
                                             index(timestamp)
                                         ); """)
 
@@ -69,7 +69,7 @@ class MySqlConnector:
                                             humidity real,
                                             consumption real,
                                             last_change integer,
-                                            index(timestamp, last_change)
+                                            index(timestamp, last_change),
                                             index(identifier)
                                         );""")
 
