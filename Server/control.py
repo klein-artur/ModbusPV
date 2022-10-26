@@ -14,10 +14,14 @@ splittedCommand = command.split('=')
 deviceController = DeviceController()
 db = MySqlConnector()
 
-device = list(filter(
-    lambda device: device["identifier"] == deviceIdentifier, 
-    deviceController.getDevices(db)
-))[0]
+device = db.getCurrentDeviceStatus(deviceIdentifier);
+deviceConfig = list(
+    filter(
+        lambda config: config['identifier'] == deviceIdentifier,
+        deviceController.readDevicesFromConfigFile()
+    )
+)[0]
+device.update(deviceConfig)
 
 if splittedCommand[0] == 'switch':
 

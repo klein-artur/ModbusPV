@@ -12,7 +12,7 @@ from time import time
 
 class DeviceController:
 
-    def __readDevicesFromConfigFile(self):
+    def readDevicesFromConfigFile(self):
         f = open('../deviceconfig.json')
         return json.load(f)
 
@@ -121,16 +121,15 @@ class DeviceController:
 
     
     def readSensorData(self, dbConnection):
-        deviceConfig = self.__readDevicesFromConfigFile()
+        deviceConfig = self.readDevicesFromConfigFile()
 
         for device in deviceConfig:
             if device['device'] == "shelly":
                 data = ShellyApiConnector.readSensorData(device)
                 dbConnection.saveCurrentDeviceStatus(device['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'], consumption=data['consumption'])
-
     
     def getDevices(self, dbConnection):
-        deviceConfig = self.__readDevicesFromConfigFile()
+        deviceConfig = self.readDevicesFromConfigFile()
 
         return list(
             map(lambda item: self.__combine(item, dbConnection.getCurrentDeviceStatus(item['identifier'])), deviceConfig)
