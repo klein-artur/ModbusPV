@@ -16,18 +16,20 @@ class DeviceController:
         f = open('../deviceconfig.json')
         return json.load(f)
 
-    def __getStateFromList(self, list, identifier):
-        result = next(filter(lambda item: item["identifier"] == identifier, list), {
-            "identifier": identifier,
-            "state": 0,
-            "timestamp": 0,
-            "lastChange": 0
-        })
-
-        return result
-
     def __combine(self, device, state):
-        device.update(state)
+        theState = state
+        if theState is None:
+            theState = {
+                "state": 0,
+                "timestamp": 0,
+                "temperature_c": None,
+                "temperature_f": None,
+                "humidity": None,
+                "consumption": None,
+                "lastChange": 0,
+                "forced": 0
+            }
+        device.update(theState)
         return device
 
     def __calculateNeededPower(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
@@ -128,10 +130,11 @@ class DeviceController:
 
     
     def getDevices(self, dbConnection):
-        deviceStates = dbConnection.getCurrentDeviceStates()
         deviceConfig = self.__readDevicesFromConfigFile()
 
-        return list(map(lambda item: self.__combine(item, self.__getStateFromList(deviceStates, item["identifier"])), deviceConfig))
+        return list(
+            map(lambda item: self.__combine(item, dbConnection.getCurrentDeviceStatus(item['identifier'])), deviceConfig)
+        )
 
 
     def controlDevices(self, dbConnection, identifier = None):

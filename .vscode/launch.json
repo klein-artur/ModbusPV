@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: control",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/Server/control.py",
+            
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/Server",
+            "justMyCode": true
+        },
+        {
             "name": "Python: Server",
             "type": "python",
             "request": "launch",
@@ -12,6 +22,6 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/Server",
             "justMyCode": true
-        }
+        },
     ]
 }
