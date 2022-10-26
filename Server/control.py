@@ -57,7 +57,7 @@ if splittedCommand[0] == 'switch':
 
 if splittedCommand[0] == 'mode':
 
-    log(f'It is a switch action. So let´s switch the device')
+    log(f'It is a mode action. So let´s switch the mode of the device')
     
     newState = splittedCommand[1] == 'on'
     if newState != device['forced']:
