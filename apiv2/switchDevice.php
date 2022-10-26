@@ -54,7 +54,8 @@
         ]);
     } else {
         echo json_encode([
-            'result' => false
+            'result' => false,
+            'output' => 'Only POST method is allowed.'
         ]);
     }
     
