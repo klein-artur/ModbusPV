@@ -47,3 +47,5 @@ if splittedCommand[0] == 'mode':
         )
         if not newState:
             deviceController.controlDevices(db, deviceIdentifier)
+
+    print("Done changing the mode.")
