@@ -217,7 +217,7 @@ class MyDB {
 
         foreach ($config as $deviceConfig) {
             $device = $this->getDeviceInfo($deviceConfig['identifier']);
-            if ($device['consumption'] && !$device['forced'] && $device['state']) { 
+            if ($device['consumption'] && !$device['forced'] && $device['isOn']) { 
                 $onDevicesPower += $device['consumption'];
             }
         }
