@@ -10,6 +10,8 @@ from tkinter import N
 import json
 from time import time
 
+logVerbous = False
+
 class DeviceController:
 
     def readDevicesFromConfigFile(self):
@@ -137,7 +139,8 @@ class DeviceController:
 
 
     def controlDevices(self, dbConnection, identifier = None):
-        log('starting control device cycle.')
+        if logVerbous:
+            log('starting control device cycle.')
         currentPVState = dbConnection.getCurrentPVStateMovingAverage()
 
         devices = self.getDevices(dbConnection)
@@ -159,7 +162,8 @@ class DeviceController:
         availableWithBatteryPartially = (currentPVState["gridOutput"] + (currentPVState["batteryCharge"] - (2 * batteryStateFactor))) * 1000
         availableWithoutBattery = (currentPVState["gridOutput"] + currentPVState["batteryCharge"]) * 1000
 
-        log(f'Values are: availableWithBattery({availableWithBattery}), availableWithBatteryPartially({availableWithBatteryPartially}), availableWithoutBattery({availableWithoutBattery})')
+        if logVerbous:
+            log(f'Values are: availableWithBattery({availableWithBattery}), availableWithBatteryPartially({availableWithBatteryPartially}), availableWithoutBattery({availableWithoutBattery})')
 
         toDo = {}
 
@@ -173,21 +177,25 @@ class DeviceController:
             key=lambda i: i['priority']
         )
 
-        log(f'On devices are: {onDevicesLowFirst}.')
+        if logVerbous:
+            log(f'On devices are: {onDevicesLowFirst}.')
 
         for device in list(onDevicesLowFirst):
 
             if not self.__isFullfillingCondition(device, dbConnection) or self.__isOverpowered(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
                 
                 if not self.__isFullfillingCondition(device, dbConnection):
-                    log(f'Device {device["identifier"]} is not fullfilling condition.')
+                    if logVerbous:
+                        log(f'Device {device["identifier"]} is not fullfilling condition.')
 
                 if self.__isOverpowered(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery):
-                    log(f'Device {device["identifier"]} is overpowered.')
+                    if logVerbous:
+                        log(f'Device {device["identifier"]} is overpowered.')
 
                 if device['lastChange'] is None or time() - device['lastChange'] > device['min_on_time']:
 
-                    log(f'Will switch off that device.')
+                    if logVerbous:
+                        log(f'Will switch off that device.')
                     toDo[device["identifier"]] = { 
                         'on': False, 
                         'reason': "condition not fullfilled or not enough power available"
@@ -197,7 +205,8 @@ class DeviceController:
                     availableWithBatteryPartially = availableWithBatteryPartially + device['consumption']
                     availableWithoutBattery = availableWithoutBattery + device['consumption']
                     
-                    log(f'Values are: availableWithBattery({availableWithBattery}), availableWithBatteryPartially({availableWithBatteryPartially}), availableWithoutBattery({availableWithoutBattery})')
+                    if logVerbous:
+                        log(f'Values are: availableWithBattery({availableWithBattery}), availableWithBatteryPartially({availableWithBatteryPartially}), availableWithoutBattery({availableWithoutBattery})')
 
 
         offDevicesHighFirst = sorted(
@@ -211,7 +220,8 @@ class DeviceController:
             reverse=True
         )
 
-        log(f'Off devices are: {offDevicesHighFirst}.')
+        if logVerbous:
+            log(f'Off devices are: {offDevicesHighFirst}.')
 
         if len(offDevicesHighFirst) > 0:
 
@@ -220,10 +230,12 @@ class DeviceController:
             for device in offDevicesHighFirst:
                 if self.__isDeviceBelowExcess(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery) and self.__isFullfillingCondition(device, dbConnection):
 
-                    log(f'Device {device["identifier"]} is below excess and fulfilling condition. Highest priority is {"handled" if highestPrioDeviceHandled else "not handled"} {"but we will start anyway" if device["use_waiting_power"] else "and we will not start"}.')
+                    if logVerbous:
+                        log(f'Device {device["identifier"]} is below excess and fulfilling condition. Highest priority is {"handled" if highestPrioDeviceHandled else "not handled"} {"but we will start anyway" if device["use_waiting_power"] else "and we will not start"}.')
 
                     if (highestPrioDeviceHandled and device["use_waiting_power"]) or not highestPrioDeviceHandled:
-                        log(f'Will switch on that device.')
+                        if logVerbous:
+                            log(f'Will switch on that device.')
                         if device['lastChange'] is None or time() - device["lastChange"] > device["min_off_time"]:
                             toDo[device["identifier"]] = { 
                                                             'on': True, 
@@ -235,14 +247,16 @@ class DeviceController:
 
                 elif self.__isFullfillingCondition(device, dbConnection):
 
-                    log(f'Device {device["identifier"]} is fullfilling the condition but not enough power available.')
+                    if logVerbous:
+                        log(f'Device {device["identifier"]} is fullfilling the condition but not enough power available.')
 
                     highestPrioDeviceHandled = True
                     
                     if time() - device["timestamp"] > device["min_off_time"]:
                         needed = self.__calculateNeededPower(device, availableWithBattery, availableWithBatteryPartially, availableWithoutBattery)
 
-                        log(f'Power needed to switch that device: {needed}. will try to switch of devices')
+                        if logVerbous:
+                            log(f'Power needed to switch that device: {needed}. will try to switch of devices')
 
                         tryToSwitchOff = self.__switchOffDevices(
                             list(filter(
@@ -256,14 +270,16 @@ class DeviceController:
 
                         if tryToSwitchOff is not None:
 
-                            log(f'Seems that enough devices are switched off.')
+                            if logVerbous:
+                                log(f'Seems that enough devices are switched off.')
                             switchedOffDeviceIds = list(tryToSwitchOff.keys())
                             onDevicesLowFirst = list(filter(
                                 lambda device: device['identifier'] not in switchedOffDeviceIds,
                                 onDevicesLowFirst
                             ))
 
-                            log(f'New on devices are {onDevicesLowFirst}')
+                            if logVerbous:
+                                log(f'New on devices are {onDevicesLowFirst}')
 
                             toDo.update(tryToSwitchOff)
                             toDo[device["identifier"]] = { 

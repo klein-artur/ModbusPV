@@ -1,7 +1,10 @@
+Satisfy any
+
 AuthType Basic
 AuthName "Authentication Required"
 AuthUserFile /var/www/html/ModbusPV/apiv2/.htpasswd
 Require valid-user
 
-Allow from all
-Options -Indexes
+order deny, allow
+deny from all
+allow from 127.0.0.1
