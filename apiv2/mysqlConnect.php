@@ -70,10 +70,8 @@ class MyDB {
                 $pvData = $pvDataResult->fetch_assoc();
     
                 $forecast['pv_input'] = $pvData['pv_input'];
-                $forecast['battery_charge'] = $pvData['battery_charge'];
             } else {
                 $forecast['pv_input'] = NULL;
-                $forecast['battery_charge'] = NULL;
             }
 
             $forecast['orig_forecast'] = $forecast['forecast'];
