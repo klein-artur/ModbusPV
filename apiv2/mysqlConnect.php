@@ -62,7 +62,7 @@ class MyDB {
 
             if ($forecast['timestamp'] <= $current) {
                 $pvDataStatement = $this->connection->prepare('
-                select avg(pv_input) as `pv_input`, avg(battery_charge) as `battery_charge` from readings where timestamp between ? - 3600 and ?
+                select avg(pv_input) as `pv_input` from readings where timestamp between ? - 3600 and ?
                 ');
                 $pvDataStatement->bind_param('ss', $forecast['timestamp'], $forecast['timestamp']);
                 $pvDataStatement->execute();
@@ -341,7 +341,7 @@ class MyDB {
         return [
             "timestamp" => $data['timestamp'],
             "forecast" => $data['forecast'],
-            "data" => !is_null($data['pv_input']) ? max($data['pv_input'] + max($data['battery_charge'], 0), 0) : NULL,
+            "data" => !is_null($data['pv_input']) ? max($data['pv_input'], 0) : NULL,
             "origForecast" => $data['orig_forecast']
         ];
     }
