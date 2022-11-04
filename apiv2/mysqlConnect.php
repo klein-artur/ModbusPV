@@ -33,26 +33,57 @@ class MyDB {
         $begin = $current - $backwardsSeconds;
         $end = $current + $forwardsSeconds;
 
+        $currentMonth = getdate($current)['mon'];
+
+        $factorStatement = $this->connection->prepare('
+            select * from forecastFactor where `month` = ?;
+        ');
+        $factorStatement->bind_param('s', $currentMonth);
+        $factorStatement->execute();
+        $factorResult = $factorStatement->get_result();
+
+        $factors = [];
+
+        while ($factor = $factorResult->fetch_assoc()) {
+            $factors[$factor['hour']] = $factor['factor'];
+        }
+
         $fetchedResult = [];
         $dataStatement = $this->connection->prepare('
-        SELECT max(a.timestamp) as `timestamp`, max(a.forecast * IF(a.timestamp > ?, c.factor, 1)) as `forecast`, avg(b.pv_input) as `pv_input`, avg(b.battery_charge) as `battery_charge`, a.forecast as `orig_forecast`
-        from forecasts a 
-            left join readings b on b.timestamp between a.timestamp - 3600  and a.timestamp
-            left join forecastFactor c on c.month = DATE_FORMAT(FROM_UNIXTIME(a.timestamp), "%m") and c.hour = DATE_FORMAT(FROM_UNIXTIME(a.timestamp), "%H")
-        where a.timestamp between ? and ?
-        group by a.timestamp
-        order by a.timestamp ASC;');
+        SELECT * from forecasts where timestamp between ? and ?;');
 
-
-
-        $dataStatement->bind_param('sss', $current, $begin, $end);
-        $dataStatement->execute();
+        $dataStatement->bind_param('ss', $begin, $end);
+        $dataStatement->execute(); 
         $dataResult = $dataStatement->get_result();
         
         $result = [];
 
-        while ($element = $dataResult->fetch_assoc()) {
-            $result[] = $this->parseForecast($element);
+        while ($forecast = $dataResult->fetch_assoc()) {
+
+            if ($forecast['timestamp'] <= $current) {
+                $pvDataStatement = $this->connection->prepare('
+                select avg(pv_input) as `pv_input`, avg(battery_charge) as `battery_charge` from readings where timestamp between ? - 3600 and ?
+                ');
+                $pvDataStatement->bind_param('ss', $forecast['timestamp'], $forecast['timestamp']);
+                $pvDataStatement->execute();
+                $pvDataResult = $pvDataStatement->get_result();
+                $pvData = $pvDataResult->fetch_assoc();
+    
+                $forecast['pv_input'] = $pvData['pv_input'];
+                $forecast['battery_charge'] = $pvData['battery_charge'];
+            } else {
+                $forecast['pv_input'] = NULL;
+                $forecast['battery_charge'] = NULL;
+            }
+
+            $forecast['orig_forecast'] = $forecast['forecast'];
+
+            if ($forecast['timestamp'] > $current) {
+                $date = getdate($forecast['timestamp']);
+                $forecast['forecast'] *= $factors[$date['hours']];
+            }
+            
+            $result[] = $this->parseForecast($forecast);
         }
         
         return $result;
