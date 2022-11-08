@@ -58,7 +58,7 @@
                 }
 
                 if (switchDevice($device, $value == 'on')) {
-                    (new MyDB())->saveDeviceStatus($device['identifier'], $value == 'on', time(), NULL);
+                    (new MyDB())->saveDeviceStatus($device['identifier'], $value == 'on', time(), true);
                     $result = true;
                     $output = 'done';
                 } else {
