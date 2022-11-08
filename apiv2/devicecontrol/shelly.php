@@ -6,7 +6,7 @@
         $tries = 0;
         $shouldTry = true;
 
-        while ($shouldTry && $tries != 4) {
+        while ($shouldTry && $tries < 4) {
             $tries++;
             $shouldTry = false;
             $curl = curl_init();
@@ -39,8 +39,12 @@
                     if (property_exists($result, 'errors')) {
                         $errors = $result->errors;
                         if (property_exists($errors, 'max_req')) {
-                            $shouldTry = true;
-                            sleep(1);
+                            if ($tries < 4) {
+                                $shouldTry = true;
+                                sleep(1);
+                            } else {
+                                print_r($result);
+                            }
                         } else {
                             print_r($result);
                         }
