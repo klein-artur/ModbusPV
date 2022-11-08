@@ -5,6 +5,8 @@
 
     header('Content-type: application/json');
 
+    require_once('mysqlConnect.php');
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $deviceIdentifier = $_POST['identifier'];
         $type = $_POST['type'];
@@ -17,7 +19,7 @@
             ]);
             exit;
         }
-        if ($type != "switch" && $type != "mode" && $type != "switchNew") {
+        if ($type != "switch" && $type != "mode") {
             echo json_encode([
                 'result' => false,
                 'output' => "type not valid."
@@ -45,24 +47,30 @@
             exit;
         }
 
+        $result = false;
         $output = "";
 
         switch ($type) {
-            case 'switchNew':
+            case 'switch':
                 switch ($device['device']) {
                     case 'shelly':
                         require_once('devicecontrol/shelly.php');
                 }
 
-                switchDevice($device, $value == 'on');
-
-                $output = "I did the right track!";
+                if (switchDevice($device, $value == 'on')) {
+                    (new MyDB())->saveDeviceStatus($device['identifier'], $value == 'on', time(), NULL);
+                    $result = true;
+                    $output = 'done';
+                } else {
+                    $result = false;
+                    $output = 'Switching the device did not work.';
+                }
 
                 break;
             case 'mode':
-            case 'switch':
-                $command = escapeshellcmd('./control.py "'.$deviceIdentifier.'" '.$type.'='.$value);
-                $output = shell_exec('cd ../Server; '.$command);
+                (new MyDB())->saveDeviceStatus($device['identifier'], NULL, NULL, $value == 'on');
+                $result = true;
+                $output = 'done';
                 break;
         }
 

@@ -4,7 +4,6 @@
         $curl = curl_init();
 
         $url = $device['api_url'].'/device/relay/control';
-        echo $url;
 
         $postfields = $device['parameter'];
         $postfields['turn'] = $on ? 'on' : 'off';
@@ -23,10 +22,14 @@
         
         $response = curl_exec($curl);
 
+        $isSuccess = false;
         if ($response === false) 
-            $response = curl_error($curl);
+            echo curl_error($curl);
+        else {
+            $isSuccess = json_decode($response)['isok'];
+        }
         
         curl_close($curl);
-        echo $response;
+        return $isSuccess;
     }
 ?>

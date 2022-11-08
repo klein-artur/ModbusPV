@@ -25,7 +25,7 @@ class MyDB {
         $dataStatement->execute();
         $dataResult = $dataStatement->get_result();
         
-        return $this->parse($dataResult->fetch_assoc());;
+        return $this->parse($dataResult->fetch_assoc());
     }
 
     function getForecasts($backwardsSeconds, $forwardsSeconds) {
@@ -320,7 +320,45 @@ class MyDB {
         ];
     }
 
+    function getCurrentDeviceStatus(string $identifier) {
+        $sql = $this->connection->prepare("select * from deviceStatus where identifier = ? order by `timestamp` desc limit 1;");
+        $sql->bind_param('s', $identifier);
+        $sql->execute();
+        $dataResult = $sql->get_result();
+        
+        return $dataResult->fetch_assoc();
+    }
 
+    function saveDeviceStatus(string $identifier, ?bool $state, ?int $lastChange, ?bool $forced) {
+        $current = $this->getCurrentDeviceStatus($identifier);
+        
+        $sql = $this->connection->prepare("insert into deviceStatus(identifier, state, timestamp, temperature_c, temperature_f, humidity, consumption, last_change, forced) values(?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+        $toSaveState = $current['state'];
+        if (!is_null($state)) {
+            $toSaveState = $state ? 1 : 0;
+        }
+
+        $toSaveTemperature_c = $current['temperature_c'];
+        $toSaveTemperature_f = $current['temperature_f'];
+        $toSaveHumidity = $current['humidity'];
+        $toSaveConsumption = $current['consumption'];
+        
+        $toSaveLastChange = $current['last_change'];
+        if (!is_null($lastChange)) {
+            $toSaveLastChange = $lastChange;
+        }
+
+        $toSaveForced = $current['forced'];
+        if (!is_null($forced)) {
+            $toSaveForced = $forced ? 1 : 0;
+        }
+
+        $time = time();
+
+        $sql->bind_param('sssssssss', $identifier, $toSaveState, $time, $toSaveTemperature_c, $toSaveTemperature_f, $toSaveHumidity, $toSaveConsumption, $toSaveLastChange, $toSaveForced);
+        $sql->execute();
+    }
 
 
     private function parse($data) {
