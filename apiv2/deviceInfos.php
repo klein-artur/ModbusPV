@@ -33,6 +33,7 @@
                 $name = $deviceConfig['name'];
             }
             $device['name'] = $name;
+            $device['priority'] = $deviceConfig['priority'];
         }
         return $device;
     }
