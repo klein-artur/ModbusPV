@@ -5,6 +5,6 @@ AuthName "Authentication Required"
 AuthUserFile /var/www/html/ModbusPV/apiv2/.htpasswd
 Require valid-user
 
-order deny, allow
+order deny,allow
 deny from all
 allow from 127.0.0.1
