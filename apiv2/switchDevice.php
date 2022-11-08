@@ -75,7 +75,7 @@
         }
 
         echo json_encode([
-            'result' => true,
+            'result' => $result,
             'output' => $output
         ]);
     } else {

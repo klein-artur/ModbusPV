@@ -26,7 +26,7 @@
         if ($response === false) 
             echo curl_error($curl);
         else {
-            $isSuccess = json_decode($response)['isok'];
+            $isSuccess = json_decode($response)->isok;
         }
         
         curl_close($curl);
