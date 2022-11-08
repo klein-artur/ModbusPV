@@ -59,7 +59,7 @@
             exit;
         }
 
-        $found['priority'] = $prio;
+        $found['priority'] = intval($prio);
 
         $result = [];
         foreach ($config as $device) {
