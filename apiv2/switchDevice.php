@@ -17,7 +17,7 @@
             ]);
             exit;
         }
-        if ($type != "switch" && $type != "mode") {
+        if ($type != "switch" && $type != "mode" && $type != "switchNew") {
             echo json_encode([
                 'result' => false,
                 'output' => "type not valid."
@@ -45,8 +45,26 @@
             exit;
         }
 
-        $command = escapeshellcmd('./control.py "'.$deviceIdentifier.'" '.$type.'='.$value);
-        $output = shell_exec('cd ../Server; '.$command);
+        $output = "";
+
+        switch ($type) {
+            case 'switchNew':
+                switch ($device['device']) {
+                    case 'shelly':
+                        require_once('devicecontrol/shelly.php');
+                }
+
+                switchDevice($device, $value == 'on');
+
+                $output = "I did the right track!";
+
+                break;
+            case 'mode':
+            case 'switch':
+                $command = escapeshellcmd('./control.py "'.$deviceIdentifier.'" '.$type.'='.$value);
+                $output = shell_exec('cd ../Server; '.$command);
+                break;
+        }
 
         echo json_encode([
             'result' => true,
