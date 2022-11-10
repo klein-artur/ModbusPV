@@ -37,7 +37,7 @@ class DeviceController:
     def __calculateNeededPower(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
         if device["priority"] < 34:
             return device["estimated_consumption"] - restWithBattery
-        elif device["priority"] > 34 and device["priority"] < 67:
+        elif device["priority"] >= 34 and device["priority"] < 67:
             return device["estimated_consumption"] - restWithBatteryPartially
         else:
             return device["estimated_consumption"] - restWithoutBattery
@@ -45,7 +45,7 @@ class DeviceController:
     def __isOverpowered(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
         if device["priority"] < 34:
             return restWithBattery < 0
-        elif device["priority"] > 34 and device["priority"] < 67:
+        elif device["priority"] >= 34 and device["priority"] < 67:
             return restWithBatteryPartially < 0
         else:
             return restWithoutBattery < 0
@@ -53,7 +53,7 @@ class DeviceController:
     def __isDeviceBelowExcess(self, device, restWithBattery, restWithBatteryPartially, restWithoutBattery):
         if device["priority"] < 34:
             return device["estimated_consumption"] <= restWithBattery
-        elif device["priority"] > 34 and device["priority"] < 67:
+        elif device["priority"] >= 34 and device["priority"] < 67:
             return device["estimated_consumption"] <= restWithBatteryPartially
         else:
             return device["estimated_consumption"] <= restWithoutBattery
