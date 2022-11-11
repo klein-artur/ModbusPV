@@ -6,8 +6,6 @@
     header('Content-type: application/json');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $deviceIdentifier = $_POST['identifier'];
-
         $string = file_get_contents("../deviceconfig.json");
         $config = json_decode($string,true);
 
