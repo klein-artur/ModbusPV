@@ -9,16 +9,14 @@
         $string = file_get_contents("../deviceconfig.json");
         $config = json_decode($string,true);
 
-        $result = [];
         foreach ($config as &$device) {
-            if (isset($_POST[$device['identifier']])) {
-                $device['priority'] = $_POST[$device['identifier']];
+            $searchIdentifier = str_replace(' ', '_', $device['identifier']);
+            if (isset($_POST[$searchIdentifier])) {
+                $device['priority'] = intval($_POST[$searchIdentifier]);
             }
-            
-            $result[] = $device;
         }
 
-        $newContent = json_encode($result, JSON_PRETTY_PRINT);
+        $newContent = json_encode($config, JSON_PRETTY_PRINT);
 
         file_put_contents("../deviceconfig.json", $newContent);
 
