@@ -11,8 +11,8 @@
 
         $result = [];
         foreach ($config as &$device) {
-            if (isset($_POST[$device['identifier']]) {
-                $device['priority'] = $_POST[$device['identifier'];
+            if (isset($_POST[$device['identifier']])) {
+                $device['priority'] = $_POST[$device['identifier']];
             }
             
             $result[] = $device;
