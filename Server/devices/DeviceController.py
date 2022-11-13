@@ -127,8 +127,11 @@ class DeviceController:
 
         for device in deviceConfig:
             if device['device'] == "shelly":
-                data = ShellyApiConnector.readSensorData(device)
-                dbConnection.saveCurrentDeviceStatus(device['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'], consumption=data['consumption'])
+                try:
+                    data = ShellyApiConnector.readSensorData(device)
+                    dbConnection.saveCurrentDeviceStatus(device['identifier'], temperature_c=data['temperature_c'], temperature_f=data['temperature_f'], humidity=data['humidity'], consumption=data['consumption'])
+                except Exception as err:
+                    log(f"failed to get device data: {err}")
     
     def getDevices(self, dbConnection):
         deviceConfig = self.readDevicesFromConfigFile()
