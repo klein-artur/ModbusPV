@@ -21,11 +21,19 @@ def readSensorData(device):
                 'consumption': None
             }
         else:
+            deviceStatus = data['data']['device_status']
+
+            consumption = 0.0
+            if "meters" in deviceStatus:
+                consumption = deviceStatus['meters'][0]['power']
+            else:
+                consumption = deviceStatus['switch:0']['apower']
+
             return {
                 'temperature_c': None,
                 'temperature_f': None,
                 'humidity': None,
-                'consumption': data['data']['device_status']['meters'][0]['power']
+                'consumption': consumption
             }
     
 
