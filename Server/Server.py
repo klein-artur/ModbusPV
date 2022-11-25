@@ -48,7 +48,7 @@ while (True):
 
         forecast = None
 
-        if currentTime - lastForecastRead > 3600:
+        if currentTime - lastForecastRead > 86400:
             print("read forecast")
             log("Will read forecast.")
             try:
