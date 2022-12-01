@@ -34,6 +34,9 @@ The UI itself is just a webpage, accessing the API to get data. I for myself als
 ## Device Control
 The system can control devices based on how much power the PV is producing. Currently only Shelly Smart Plugs are implemented. Code is in `DeviceControl.py` and the config for the devices is in `deviceconfig.json`.
 
+## Forecasting
+To fetch forecasts this implementation uses the `SolarEnergyPrediction` API from https://www.stromdao.de on RapidAPI https://rapidapi.com/stromdao-stromdao-default/api/solarenergyprediction/
+
 ## I am not responsible for this mess!!
 Please be aware that I will not guarantee that this does not destroy anything... The Modbus connection is just reading data, but who knows what can happen.. 
 
@@ -47,7 +50,7 @@ Please be aware that I will not guarantee that this does not destroy anything...
  - Copy the `config_example.php` file from the `apiv1` directory and call it `config.php`. Change the values to fit your needs. Do also not add this to the repo.
 
  ## Starting:
- If you only want the server to run, it is enough to start the `Server.py` file and serve the `apiv1` through any webserver.
+ If you only want the server to run, it is enough to start the `Server.py` file and serve the `apiv1` or `apiv2` through any webserver.
  If you want to start the whole system, call `launchModbusPV.py`. It will start the server and the UI by opening chromium in kiosk mode. 
 
  # Next Steps
