@@ -48,7 +48,7 @@ while (True):
 
         forecast = None
 
-        if currentTime - lastForecastRead > 86400:
+        if currentTime - lastForecastRead > 3600:
             print("read forecast")
             log("Will read forecast.")
             try:
@@ -58,7 +58,7 @@ while (True):
                             ])
 
                 log("Forecast read.")
-                
+
             except Exception as err:
                 print(f"error reading forecast: {err}")
                 log(f"error reading forecast: {err}")
