@@ -58,11 +58,12 @@ while (True):
                             ])
 
                 log("Forecast read.")
-
-                lastForecastRead = currentTime
+                
             except Exception as err:
                 print(f"error reading forecast: {err}")
                 log(f"error reading forecast: {err}")
+            
+            lastForecastRead = currentTime
 
         print("Last time forecast was read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
