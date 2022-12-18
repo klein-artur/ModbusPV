@@ -34,9 +34,6 @@
             }
             $device['name'] = $name;
             $device['priority'] = $deviceConfig['priority'];
-            if (isset($deviceConfig['automatic'])) {
-                $device['forced'] = !$deviceConfig['automatic'];
-            }
         }
         return $device;
     }
