@@ -161,7 +161,14 @@ class MyDB {
             ];
         }
         
-        
+        return [
+            "identifier" => "",
+            "isOn" => FALSE,
+            "lastChange" => time(),
+            "consumption" => 0.0,
+            "temperature" => NULL,
+            "forced" => FALSE
+        ];
     }
 
     function getDailyHistory() {
