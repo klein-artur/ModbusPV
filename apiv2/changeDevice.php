@@ -59,11 +59,11 @@
 
         }
 
-        if (isset($_GET['name'])) {
+        if (isset($_POST['name'])) {
             $found['name'] = $_POST['name'];
         }
 
-        if (isset($_GET['estimated_consumption'])) {
+        if (isset($_POST['estimated_consumption'])) {
             $found['estimated_consumption'] = intval($_POST['estimated_consumption']);
         }
 
