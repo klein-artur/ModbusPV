@@ -34,6 +34,7 @@
             }
             $device['name'] = $name;
             $device['priority'] = $deviceConfig['priority'];
+            $device['estimated_consumption'] = $deviceConfig['estimated_consumption'];
         }
         return $device;
     }
