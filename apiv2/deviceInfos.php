@@ -35,6 +35,9 @@
             $device['name'] = $name;
             $device['priority'] = $deviceConfig['priority'];
             $device['estimatedConsumption'] = $deviceConfig['estimated_consumption'];
+            $device['minOnTime'] = $deviceConfig['min_on_time'];
+            $device['minOffTime'] = $deviceConfig['min_off_time'];
+            $device['useWaitingPower'] = $deviceConfig['use_waiting_power'];
         }
         return $device;
     }
