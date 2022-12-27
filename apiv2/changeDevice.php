@@ -68,11 +68,11 @@
         }
 
         if (isset($_POST['min_on_time'])) {
-            $found['min_on_time'] = $_POST['min_on_time'];
+            $found['min_on_time'] = intval($_POST['min_on_time']);
         }
 
         if (isset($_POST['min_off_time'])) {
-            $found['min_off_time'] = $_POST['min_off_time'];
+            $found['min_off_time'] = intval($_POST['min_off_time']);
         }
 
         $result = [];
