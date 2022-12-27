@@ -67,6 +67,14 @@
             $found['estimated_consumption'] = intval($_POST['estimated_consumption']);
         }
 
+        if (isset($_POST['min_on_time'])) {
+            $found['min_on_time'] = $_POST['min_on_time'];
+        }
+
+        if (isset($_POST['min_off_time'])) {
+            $found['min_off_time'] = $_POST['min_off_time'];
+        }
+
         $result = [];
         foreach ($config as $device) {
             if ($device['identifier'] == $deviceIdentifier) {
