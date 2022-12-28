@@ -5,7 +5,9 @@ The connection to the PV happens through Modbus TCP, hence the name.
 Other connections, for example to a forecast api are also integrated. Please be aware that this is a very quick and dirty implementation, so 
 do not throw with stones. Better give it your own signature by contributing and make it better. I will have a look over each pullrequest. Maybe this can get something big. Maybe not. My idea was intentionally to use it just for me and my family. I know there are solutions out there, but none did fit to exactly what I need... At the end I think some can contribute to this, especially to the Modbus TCP connection to my Huawei PV.
 
-Whoever is interested just in the Modbus Part, have a look at "The Modbus Connection"
+Whoever is interested just in the Modbus Part, have a look at "The Modbus Connection".
+
+You can find the iOS app using the API in this project [here](https://github.com/klein-artur/Home-iOS).
 
 ## So what is the goal
 
