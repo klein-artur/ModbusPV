@@ -376,7 +376,7 @@ class MyDB {
             "batteryState" => $data['battery_state'],
             "consumption" => $data['pv_input'] - $data['battery_charge'] - $data['grid_output'],
             "pvSystemOutput" => $data['pv_input'] - $data['battery_charge'],
-            "timestamp" => $data['timestamp']
+            "timestamp" => intval($data['timestamp'])
         ];
     }
 
