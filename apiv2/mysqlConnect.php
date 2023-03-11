@@ -176,7 +176,7 @@ class MyDB {
 
         $fetchedResult = [];
 
-        $dataStatement = $this->connection->prepare("SELECT avg(id) as `id`, avg(grid_output) as `grid_output`, avg(battery_charge) as `battery_charge`, avg(pv_input) as `pv_input`, round(avg(battery_state)) as `battery_state`, avg(`timestamp`) as `timestamp` FROM readings WHERE `timestamp` BETWEEN ? and ? GROUP BY round(`timestamp` / 60 / 20)  ORDER BY `timestamp` ASC;");
+        $dataStatement = $this->connection->prepare("SELECT avg(id) as `id`, avg(grid_output) as `grid_output`, avg(battery_charge) as `battery_charge`, avg(pv_input) as `pv_input`, round(avg(battery_state)) as `battery_state`, avg(`timestamp`) as `timestamp` FROM readings WHERE `timestamp` BETWEEN ? and ? GROUP BY round(`timestamp` / 60 / 5)  ORDER BY `timestamp` ASC;");
         $timeInAnHour = time() + 3600;
         $dataStatement->bind_param('ss', $h24, $timeInAnHour);
         $dataStatement->execute();
