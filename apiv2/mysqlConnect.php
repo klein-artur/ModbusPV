@@ -171,8 +171,8 @@ class MyDB {
         ];
     }
 
-    function getDailyHistory() {
-        $h24 = time() - 86400;
+    function getDailyHistory($days = 1) {
+        $h24 = time() - 86400 * $days;
 
         $fetchedResult = [];
 

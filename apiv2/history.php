@@ -7,5 +7,7 @@
 
     include 'mysqlConnect.php';
 
-    echo json_encode((new MyDB())->getDailyHistory());
+    $days = isset($_GET['days']) ? $_GET['days'] : 1;
+
+    echo json_encode((new MyDB())->getDailyHistory($days));
 ?>
