@@ -9,7 +9,7 @@
 
     $days = isset($_GET['days']) ? $_GET['days'] : 1;
     $resolution = isset($_GET['resolution']) ? $_GET['resolution'] : 20;
-    $sum = isset($_GET['sum']) ? TRUE : FALSe
+    $sum = isset($_GET['sum']) ? TRUE : FALSE;
 
     if ($sum) {
         echo json_encode((new MyDB())->getHistory($days, $resolution));
