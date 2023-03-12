@@ -191,6 +191,26 @@ class MyDB {
         return $result;
     }
 
+    function getHistory($days = 1, $resolution = 20) {
+        $h24 = time() - 86400 * $days;
+
+        $fetchedResult = [];
+
+        $dataStatement = $this->connection->prepare("SELECT avg(id) as `id`, sum(grid_output) as `grid_output`, sum(battery_charge) as `battery_charge`, sum(pv_input) as `pv_input`, round(avg(battery_state)) as `battery_state`, sum(`timestamp`) as `timestamp` FROM readings WHERE `timestamp` BETWEEN ? and ? GROUP BY round(`timestamp` / 60 / ?)  ORDER BY `timestamp` ASC;");
+        $timeInAnHour = time() + 3600;
+        $dataStatement->bind_param('sss', $h24, $timeInAnHour, $resolution);
+        $dataStatement->execute();
+        $dataResult = $dataStatement->get_result();
+
+        $result = [];
+
+        while ($element = $dataResult->fetch_assoc()) {
+            $result[] = $this->parse($element);
+        }
+        
+        return $result;
+    }
+
     function getNextHoursForecast($number) {
         $current = time();
         $timespan = $number * 3600;
