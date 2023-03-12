@@ -8,6 +8,7 @@
     include 'mysqlConnect.php';
 
     $days = isset($_GET['days']) ? $_GET['days'] : 1;
+    $resolution = isset($_GET['resolution']) ? $_GET['resolution'] : 20;
 
-    echo json_encode((new MyDB())->getDailyHistory($days));
+    echo json_encode((new MyDB())->getDailyHistory($days, $resolution));
 ?>
