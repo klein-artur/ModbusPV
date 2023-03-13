@@ -33,10 +33,6 @@ class MyDB {
         $begin = $current - $backwardsSeconds;
         $end = $current + $forwardsSeconds;
 
-        while ($factor = $factorResult->fetch_assoc()) {
-            $factors[$factor['hour']] = $factor['factor'];
-        }
-
         $fetchedResult = [];
         $dataStatement = $this->connection->prepare('
         SELECT * from forecasts where timestamp between ? and ?;');
@@ -64,7 +60,7 @@ class MyDB {
             }
 
             $date = getdate($forecast['timestamp']);
-            $month = $date["mon"] + 1;
+            $month = $date["mon"];
             $hour = $date["hours"];
 
             $factorStatement = $this->connection->prepare('
