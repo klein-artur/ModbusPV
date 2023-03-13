@@ -33,17 +33,6 @@ class MyDB {
         $begin = $current - $backwardsSeconds;
         $end = $current + $forwardsSeconds;
 
-        $currentMonth = getdate($current)['mon'];
-
-        $factorStatement = $this->connection->prepare('
-            select * from forecastFactor where `month` = ?;
-        ');
-        $factorStatement->bind_param('s', $currentMonth);
-        $factorStatement->execute();
-        $factorResult = $factorStatement->get_result();
-
-        $factors = [];
-
         while ($factor = $factorResult->fetch_assoc()) {
             $factors[$factor['hour']] = $factor['factor'];
         }
@@ -74,11 +63,22 @@ class MyDB {
                 $forecast['pv_input'] = NULL;
             }
 
-            $forecast['orig_forecast'] = $forecast['forecast'];
+            $date = getdate($forecast['timestamp']);
+            $month = $date["mon"] + 1;
+            $hour = $date["hours"];
+
+            $factorStatement = $this->connection->prepare('
+            select `factor` from `forecastFactor` where `month` = ? and `hour` = ?;
+            ');
+            $factorStatement->bind_param('ss', $month, $hour);
+            $factorStatement->execute();
+            $factor = $factorStatement->get_result()->fetch_assoc()['factor'];
+
+            $forecast['orig_forecast'] = $forecast['forecast'] * $factor;
 
             if ($forecast['timestamp'] > $current) {
                 $date = getdate($forecast['timestamp']);
-                $forecast['forecast'] *= $factors[$date['hours']];
+                $forecast['forecast'] *= $factor;
             }
             
             $result[] = $this->parseForecast($forecast);
