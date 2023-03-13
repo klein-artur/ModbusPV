@@ -70,8 +70,6 @@ class MyDB {
             $factorStatement->execute();
             $factor = $factorStatement->get_result()->fetch_assoc()['factor'];
 
-            $forecast['orig_forecast'] = $forecast['forecast'] * $factor;
-
             if ($forecast['timestamp'] > $current) {
                 $date = getdate($forecast['timestamp']);
                 $forecast['forecast'] *= $factor;
