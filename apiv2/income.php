@@ -9,5 +9,5 @@
 
     include 'mysqlConnect.php';
 
-    echo json_encode((new MyDB())->getIncome(TimePeriod::from($period)));
+    echo json_encode((new MyDB())->getIncome(TimePeriod::fromString($period)));
 ?>

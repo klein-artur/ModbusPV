@@ -8,6 +8,7 @@ enum TimePeriod {
     case Month;
     case Week;
     case Year;
+    case FullYear;
 
     function beginAndEndTimestamps(int $offset): array {
         $date = new DateTime();
@@ -28,8 +29,24 @@ enum TimePeriod {
             TimePeriod::Year => [
                 $date->modify("-$offset year")->setDate((int)$date->format('Y'), 1, 1)->setTime(0, 0, 0)->getTimestamp(),
                 $date->setDate((int)$date->format('Y'), 12, 31)->setTime(23, 59, 59)->getTimestamp()
-            ]
+            ],
+            TimePeriod::FullYear => [
+                $date->modify("-" . (($offset + 1) * 365) . " day")->setTime(0, 0, 0)->getTimestamp(),
+                (new DateTime())->modify("-" . ($offset * 366) . " day")->setTime(23, 59, 59)->getTimestamp()
+            ],
         };
+    }
+ 
+    public static function fromString(string $string): ?TimePeriod {
+        $stringToEnum = [
+            'Day' => TimePeriod::Day,
+            'Month' => TimePeriod::Month,
+            'Week' => TimePeriod::Week,
+            'Year' => TimePeriod::Year,
+            'FullYear' => TimePeriod::FullYear,
+        ];
+
+        return isset($stringToEnum[$string]) ? $stringToEnum[$string] : null;
     }
 };
 
@@ -380,12 +397,11 @@ class MyDB {
     private function getIncomeForMinusPeriod($minusPeriod, TimePeriod $period) {
         global $GRID_FEED_PRICE_CENT;
         global $GRID_DRAW_PRICE_CENT;
-        $beginningAndEndTimestamps = $minusPeriod->beginAndEndTimestamps($minusPeriod);
+        $beginningAndEndTimestamps = $period->beginAndEndTimestamps($minusPeriod);
         $beginningOfPeriod = $beginningAndEndTimestamps[0];
-        $endOfPeriod = $beginningAndEndTimestamps[0];
-
-        $incomeSql = $this->connection->prepare('select (select acc_grid_output from readings where `timestamp` between ? and ? order by `timestamp` desc limit 1) - (select acc_grid_output from readings where `timestamp` < ? order by `timestamp` desc limit 1) as income;');
-        $expensesSql = $this->connection->prepare('select (select acc_grid_input from readings where (`timestamp` between ? and ?) order by `timestamp` desc limit 1) - (select acc_grid_input from readings where `timestamp` < ? order by `timestamp` desc limit 1) as expense;');
+        $endOfPeriod = $beginningAndEndTimestamps[1];
+        $incomeSql = $this->connection->prepare('select IFNULL((select acc_grid_output from readings where `timestamp` between ? and ? order by `timestamp` desc limit 1), 0) - IFNULL((select acc_grid_output from readings where `timestamp` < ? and `acc_grid_output` is not null order by `timestamp` desc limit 1), 0) as income;');
+        $expensesSql = $this->connection->prepare('select IFNULL((select acc_grid_input from readings where (`timestamp` between ? and ?) order by `timestamp` desc limit 1), 0) - IFNULL((select acc_grid_input from readings where `timestamp` < ? order by `timestamp` desc limit 1), 0) as expense;');
 
         $incomeSql->bind_param('sss', $beginningOfPeriod, $endOfPeriod, $beginningOfPeriod);
         $expensesSql->bind_param('sss', $beginningOfPeriod, $endOfPeriod, $beginningOfPeriod);
@@ -403,8 +419,8 @@ class MyDB {
 
     function getIncome(TimePeriod $period) {
         return [
-            "today" => $this->getIncomeForMinusDay(0),
-            "yesterday" => $this->getIncomeForMinusDay(1)
+            "today" => $this->getIncomeForMinusPeriod(0, $period),
+            "yesterday" => $this->getIncomeForMinusPeriod(1, $period)
         ];
     }
 
