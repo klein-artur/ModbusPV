@@ -3,6 +3,90 @@
 include 'config.php';
 require_once('log.php');
 
+enum TimePeriod {
+    case Day;
+    case Month;
+    case Week;
+    case Year;
+
+    function beginAndEndTimestamps(int $offset): array {
+        $date = new DateTime();
+
+        return match($this) {
+            TimePeriod::Day => [
+                $date->modify("-$offset day")->setTime(0, 0, 0)->getTimestamp(),
+                $date->setTime(23, 59, 59)->getTimestamp()
+            ],
+            TimePeriod::Month => [
+                $date->modify("-$offset month")->setDate((int)$date->format('Y'), (int)$date->format('m'), 1)->setTime(0, 0, 0)->getTimestamp(),
+                $date->setDate((int)$date->format('Y'), (int)$date->format('m'), (int)cal_days_in_month(CAL_GREGORIAN, (int)$date->format('m'), (int)$date->format('Y')))->setTime(23, 59, 59)->getTimestamp()
+            ],
+            TimePeriod::Week => [
+                $date->modify("-$offset week")->modify('monday this week')->setTime(0, 0, 0)->getTimestamp(),
+                $date->modify('sunday this week')->setTime(23, 59, 59)->getTimestamp()
+            ],
+            TimePeriod::Year => [
+                $date->modify("-$offset year")->setDate((int)$date->format('Y'), 1, 1)->setTime(0, 0, 0)->getTimestamp(),
+                $date->setDate((int)$date->format('Y'), 12, 31)->setTime(23, 59, 59)->getTimestamp()
+            ]
+        };
+    }
+};
+
+function secondsInMonthWithOffset(int $offset) {
+    // Get the current date minus the offset
+    $date = new DateTime();
+    $date->modify("-$offset month");
+
+    // Get the month and year of the modified date
+    $currentMonth = $date->format('m');
+    $currentYear = $date->format('Y');
+
+    // Get the number of days in the modified month
+    $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+
+    // Calculate the number of seconds in the modified month
+    $secondsInMonth = $daysInMonth * 24 * 60 * 60;
+
+    return $secondsInMonth;
+}
+
+function secondsInYearWithOffset(int $offset) {
+    // Get the current date minus the offset
+    $date = new DateTime();
+    $date->modify("-$offset year");
+
+    // Get the year of the modified date
+    $currentYear = $date->format('Y');
+
+    // Check if the year is a leap year
+    $isLeapYear = (($currentYear % 4 == 0) && ($currentYear % 100 != 0)) || ($currentYear % 400 == 0);
+
+    // Calculate the number of seconds in the year
+    $secondsInYear = ($isLeapYear ? 366 : 365) * 24 * 60 * 60;
+
+    return $secondsInYear;
+}
+
+function secondsInWeekWithOffset(int $offset) {
+    // Get the current date
+    $date = new DateTime();
+
+    // Find the number of days between the current date and the last Monday
+    $daysSinceMonday = ($date->format('N') - 1) % 7;
+
+    // Move to the last Monday (beginning of the week)
+    $date->modify("-$daysSinceMonday days");
+
+    // Apply the offset
+    $date->modify("-$offset weeks");
+
+    // Calculate the number of seconds in the week
+    $secondsInWeek = 7 * 24 * 60 * 60;
+
+    return $secondsInWeek;
+}
+
 class MyDB {
 
     protected $connection;
@@ -291,17 +375,18 @@ class MyDB {
 
     }
 
-    private function getIncomeForMinusDay($minusDay) {
+    private function getIncomeForMinusPeriod($minusPeriod, TimePeriod $period) {
         global $GRID_FEED_PRICE_CENT;
         global $GRID_DRAW_PRICE_CENT;
-        $beginningOfDay = time() - time() % 86400 - date('Z') - ($minusDay * 86400);
-        $endOfDay = $beginningOfDay + 86400;
+        $beginningAndEndTimestamps = $minusPeriod->beginAndEndTimestamps($minusPeriod);
+        $beginningOfPeriod = $beginningAndEndTimestamps[0];
+        $endOfPeriod = $beginningAndEndTimestamps[0];
 
         $incomeSql = $this->connection->prepare('select (select acc_grid_output from readings where `timestamp` between ? and ? order by `timestamp` desc limit 1) - (select acc_grid_output from readings where `timestamp` < ? order by `timestamp` desc limit 1) as income;');
         $expensesSql = $this->connection->prepare('select (select acc_grid_input from readings where (`timestamp` between ? and ?) order by `timestamp` desc limit 1) - (select acc_grid_input from readings where `timestamp` < ? order by `timestamp` desc limit 1) as expense;');
 
-        $incomeSql->bind_param('sss', $beginningOfDay, $endOfDay, $beginningOfDay);
-        $expensesSql->bind_param('sss', $beginningOfDay, $endOfDay, $beginningOfDay);
+        $incomeSql->bind_param('sss', $beginningOfPeriod, $endOfPeriod, $beginningOfPeriod);
+        $expensesSql->bind_param('sss', $beginningOfPeriod, $endOfPeriod, $beginningOfPeriod);
 
         $incomeSql->execute();
 
@@ -314,7 +399,7 @@ class MyDB {
         return ($incomeKWh * $GRID_FEED_PRICE_CENT - $expensesKWh * $GRID_DRAW_PRICE_CENT) / 100;
     }
 
-    function getIncome() {
+    function getIncome(TimePeriod $period) {
         return [
             "today" => $this->getIncomeForMinusDay(0),
             "yesterday" => $this->getIncomeForMinusDay(1)

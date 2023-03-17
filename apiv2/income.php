@@ -5,7 +5,9 @@
 
     header('Content-type: application/json');
 
+    $period = isset($_GET['period']) ? $_GET['period'] : "Day";
+
     include 'mysqlConnect.php';
 
-    echo json_encode((new MyDB())->getIncome());
+    echo json_encode((new MyDB())->getIncome(TimePeriod::from($period)));
 ?>
