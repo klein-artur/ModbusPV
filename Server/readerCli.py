@@ -4,8 +4,8 @@ from huawei.ModbusTCPReader import ModbusTCPReader
 from huawei.ModbusDataReader import ModbusDataReader
 import sys
 
-IP_ADDRESS = "192.168.178.77"
+IP_ADDRESS = sys.argv[1]
 
 reader = ModbusTCPReader(IP_ADDRESS)
 
-print(reader.readData(int(sys.argv[1]), int(sys.argv[2])))
+print(reader.readData(int(sys.argv[2]), int(sys.argv[3]), unit= int(sys.argv[4])))
