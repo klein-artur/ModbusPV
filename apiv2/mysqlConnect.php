@@ -173,10 +173,7 @@ class MyDB {
             
             $forecast['orig_forecast'] = $forecast['forecast'];
 
-            if ($forecast['timestamp'] > $current) {
-                $date = getdate($forecast['timestamp']);
-                $forecast['forecast'] *= $factor;
-            }
+            $forecast['forecast'] *= $factor;
             
             $result[] = $this->parseForecast($forecast);
         }
