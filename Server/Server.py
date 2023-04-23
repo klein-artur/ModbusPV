@@ -67,11 +67,11 @@ while (True):
 
         print("Last time forecast was read: " + datetime.utcfromtimestamp(lastForecastRead).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
-        print("Read Modbus")
+        print("Read Modbus" + datetime.utcfromtimestamp(int(time())).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
         resultDict = reader.getPVDataSmoothed()
 
-        print("Modbus read.")
+        print("Modbus read." + datetime.utcfromtimestamp(int(time())).strftime('%Y-%m-%d %H:%M:%S UTC'))
 
         print("Done, write")
 
@@ -80,7 +80,7 @@ while (True):
 
         if currentTime - lastDeviceControl > 180:
 
-            print("Control devices.")
+            print("Control devices." + datetime.utcfromtimestamp(int(time())).strftime('%Y-%m-%d %H:%M:%S UTC'))
             print("Will Read Sensor Data.")
             log("Will Read Sensor Data.")
 
