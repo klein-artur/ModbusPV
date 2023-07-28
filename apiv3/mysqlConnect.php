@@ -490,9 +490,7 @@ class MyDB {
     private function parseSimpleForecast($data) {
         return [
             "timestamp" => $data['timestamp'],
-            "forecast" => $data['forecast'],
-            "data" => !is_null($data['pv_input']) ? max($data['pv_input'], 0) : NULL,
-            "origForecast" => $data['orig_forecast']
+            "forecast" => $data['forecast']
         ];
     }
 
